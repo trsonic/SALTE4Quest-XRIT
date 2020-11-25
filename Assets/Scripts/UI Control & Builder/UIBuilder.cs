@@ -24,8 +24,6 @@ public class UIBuilder : MonoBehaviour
   
    int _numberOfSliders;
    int _numberOfLabels;
-   
-
 
     // List of Sliders, Labels and on screen instructions
     List<GameObject> activeSliders = new List<GameObject>(); 
@@ -34,7 +32,6 @@ public class UIBuilder : MonoBehaviour
 
     // LisButton Variables
    [SerializeField] List<GameObject> _activeButtons = new List<GameObject>(); 
-
 
     // If test is Mushra or 3G
     bool isMushra;
@@ -71,11 +68,9 @@ public class UIBuilder : MonoBehaviour
 
         // set test type
         this.isMushra = OSCInput.Instance.isMushra;
-        
-        
+
         int numberOfSliders = OSCInput.Instance.slidersNum;       
         int numberofLabels = OSCInput.Instance.labelsNum;
-        
 
         ResetCanvas();
         SplitCanvas(numberOfSliders, numberofLabels);
@@ -145,7 +140,7 @@ public class UIBuilder : MonoBehaviour
 
         for (int i = 0; i < this.activeLabels.Count; i++)
         {
-            activeLabels[i].GetComponent<TextMeshProUGUI>().text = OSCInput.Instance.labelStrings[i];
+            activeLabels[i].GetComponent<TextMeshProUGUI>().text = OSCInput.Instance.ratingLabels[i];
         }
     }
 
@@ -229,7 +224,7 @@ public class UIBuilder : MonoBehaviour
             
             if (j != 0) 
             {
-            y  = height * j;
+                y  = height * j;
             }
 
             tmpRectTransform.offsetMin = new Vector2(x, y);
@@ -243,7 +238,4 @@ public class UIBuilder : MonoBehaviour
             labelSettings.UpdateIndex(j);
         }
     }
-       
-  
-
 }
