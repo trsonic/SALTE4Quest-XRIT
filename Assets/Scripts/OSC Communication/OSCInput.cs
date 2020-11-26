@@ -5,7 +5,7 @@ using OscJack;
 public class OSCInput : MonoBehaviour
 {
     /// <summary>
-    /// OSC input class handles all osc messages recieved from the binaural audio engine.  Messages are used to build the user interface according
+    /// OSC input class handles all osc messages recieved from the binaural audio engine. Messages are used to build the user interface according
     /// to the test parameters stated in the audio engine. 
     /// </summary>
 
@@ -30,11 +30,6 @@ public class OSCInput : MonoBehaviour
     }
     #endregion
 
-
-    //[HideInInspector]
-    //public int toolbarTab;
-    //public string currentTab;
-
     // OSC variables
     public string IPAddress = "127.0.0.1"; // IP address for OSC 
     public int oscPortIN = 6000; // Port for OSC
@@ -52,36 +47,12 @@ public class OSCInput : MonoBehaviour
     public bool referenceButtonPresent;   
     public bool ABbuttonsPresent;
 
-    public bool uiStart;
-    public bool isMushra;
-    public int labelsNum;
-    public int slidersNum;
-    //private int numberOfAttributeLabels;
-
-    #region Events
-    // used to clear and build new UI
-    public delegate void UpdateTest();
-    public static event UpdateTest updateTest;
-    #endregion
-   
     private void Start()
     {
-        initOSCServer();
-
-        this.visibleUI = false;
-
-        TestEvent();
+        initOscServer();
     }
 
-    public void TestEvent()
-    {
-        updateTest();
-    }
-
-    /// <summary>
-    /// Initialise the OSC server to input messages from audio engine 
-    /// </summary>
-    private void initOSCServer()
+    private void initOscServer()
     {
         var server = new OscServer(oscPortIN); // Create OSC server with port number
         Debug.Log("OSC server created");
@@ -95,7 +66,6 @@ public class OSCInput : MonoBehaviour
                    {
                        if (data.GetElementAsInt(0) == 1)
                        {
-                           //updateTest();
                            visibleUI = true;
                        }
                        else
@@ -111,11 +81,12 @@ public class OSCInput : MonoBehaviour
                "/screenMessages", // OSC address
                (string address, OscDataHandle data) =>
                {
-                   if (data.GetElementAsString(0) != null && data.GetElementAsString(1) != null)
+                   if (data.GetElementAsString(0) != null && data.GetElementAsString(1) != null && data.GetElementAsString(2) != null)
                    {
                        screenMessages.Clear();
                        screenMessages.Add(data.GetElementAsString(0));
                        screenMessages.Add(data.GetElementAsString(1));
+                       screenMessages.Add(data.GetElementAsString(2));
                    }
                }
            );
@@ -166,7 +137,7 @@ public class OSCInput : MonoBehaviour
                      && data.GetElementAsFloat(3) != null
                      && data.GetElementAsFloat(4) != null)
                      {
-                         slidersNum = data.GetElementAsInt(0);
+                         int slidersNum = data.GetElementAsInt(0);
                          slidersMinVal = data.GetElementAsFloat(2);
                          slidersMaxVal = data.GetElementAsFloat(3);
                          while (sliderValues.Count < slidersNum) sliderValues.Add(0);

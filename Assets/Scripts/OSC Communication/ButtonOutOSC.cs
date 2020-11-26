@@ -10,8 +10,6 @@ public class ButtonOutOSC : MonoBehaviour
     /// msg string.
     /// </summary>
 
-
-
     // OSC Variables
     string IPAddress = OSCInput.Instance.IPAddress;
     int oscPortOut = OSCInput.Instance.oscPortOut;

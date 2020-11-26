@@ -1,5 +1,4 @@
-﻿
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 using OscJack;
@@ -10,7 +9,6 @@ public class SliderSettings : MonoBehaviour
     /// This Class is used to Setup the slider according to the test paradigms.
     /// It is also used to export the slider values to the renderer via OSC for experimental results
     /// </summary>
-
 
     #region Slider Setting Variables
     public bool isMushra;
@@ -86,7 +84,6 @@ public class SliderSettings : MonoBehaviour
             slider.maxValue = 3;
             oscInput = GameObject.Find("OSC.IN").GetComponent<OSCInput>();
             slider.value = this.oscInput.sliderValues[sliderIndex];
-
         }
     }
 
@@ -94,15 +91,13 @@ public class SliderSettings : MonoBehaviour
     {
         sliderIndex = index;
         buttonLabel.text = _buttonText[index];
-        
     } 
-
 
     public void SendButtonMsg()
     {
         client = new OscClient(IPAddress, oscPortOut);
         string buttonAddress = "/button";
-        client.Send(buttonAddress, buttonmsg);
+        //client.Send(buttonAddress, buttonmsg);
     }     
 
     private void UpdateSliderVale()
@@ -118,8 +113,7 @@ public class SliderSettings : MonoBehaviour
 
         Debug.Log(sliderIndex + ":" + value);
         sliderValue = value;
-
-        SendData();
+        // SendData();
         
     }
 
