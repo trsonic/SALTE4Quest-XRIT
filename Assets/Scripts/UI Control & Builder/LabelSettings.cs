@@ -3,7 +3,6 @@ using TMPro;
 
 public class LabelSettings : MonoBehaviour
 {
-
     TextMeshProUGUI _labelText;
     public int _labelIndex;
 

@@ -52,9 +52,14 @@ public class OSCInput : MonoBehaviour
         initOscServer();
     }
 
+    void OnDestroy()
+    {
+        server.Dispose();
+    }
+
     private void initOscServer()
     {
-        var server = new OscServer(oscPortIN); // Create OSC server with port number
+        server = new OscServer(oscPortIN); // Create OSC server with port number
         Debug.Log("OSC server created");
 
         // Receives OSC data to show / hide UI
