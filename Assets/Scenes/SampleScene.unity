@@ -5611,13 +5611,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b180b0ccbe16cf844bb667522afa3c33, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  sliderIndex: 0
-  sliderValue: 0
-  lastSliderValue: 0
   valueUI: {fileID: 6770391731112857234}
+  buttonObject: {fileID: 8778485122296589151}
   buttonLabel: {fileID: 7632564177141190458}
   sliderAttribute: {fileID: 61743447676130893}
-  buttonObject: {fileID: 8778485122296589151}
 --- !u!222 &5460489925363048081
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -5673,7 +5670,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 100
+  m_text: XXX
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 59f2281699e61394f866b1a8aee47d66, type: 2}
   m_sharedMaterial: {fileID: 21643135994243944, guid: 59f2281699e61394f866b1a8aee47d66, type: 2}
@@ -5802,8 +5799,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 30
-  m_fontSizeBase: 30
+  m_fontSize: 20
+  m_fontSizeBase: 20
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
@@ -6284,8 +6281,8 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 4467390098881407034}
         m_TargetAssemblyTypeName: SliderSettings, Assembly-CSharp
-        m_MethodName: GetValue
-        m_Mode: 0
+        m_MethodName: updateSliderValue
+        m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine

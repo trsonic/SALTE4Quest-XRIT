@@ -4,24 +4,32 @@ using TMPro;
 
 public class SliderSettings : MonoBehaviour
 {
-    public int sliderIndex;
-    public float sliderValue, lastSliderValue;
+    int sliderIndex;
 
-    Slider slider;
     [SerializeField] TextMeshProUGUI valueUI;
+    [SerializeField] GameObject buttonObject;
     [SerializeField] TextMeshProUGUI buttonLabel;
     [SerializeField] TextMeshProUGUI sliderAttribute;
-    [SerializeField] GameObject buttonObject;
 
     private string[] _buttonText = { "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z" };
 
-    void Start()
+    public void setSliderIndex(int index)
     {
-        slider = GetComponent<Slider>();
+        sliderIndex = index;
+        buttonLabel.text = _buttonText[index];
+        buttonObject.SetActive(true);
+        sliderAttribute.text = "";
+    }
+
+    public void setAttributeLabel(string label)
+    {
+        buttonObject.SetActive(false);
+        sliderAttribute.text = label;
     }
 
     public void updateSliderValue()
     {
-        //valueUI.text = slider.value.ToString();
+        Slider slider = GetComponent<Slider>();
+        valueUI.text = slider.value.ToString();
     }
 }

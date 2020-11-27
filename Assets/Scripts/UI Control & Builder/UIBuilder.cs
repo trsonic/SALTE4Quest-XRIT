@@ -121,16 +121,13 @@ public class UIBuilder : MonoBehaviour
             activeSliders[i].GetComponent<Slider>().minValue = OSCInput.Instance.slidersMinVal;
             activeSliders[i].GetComponent<Slider>().maxValue = OSCInput.Instance.slidersMaxVal;
             activeSliders[i].GetComponent<Slider>().value = OSCInput.Instance.sliderValues[i];
-
-
-
-            //SliderSettings sliderSettings = activeSliders[i].GetComponent<SliderSettings>();
-            //sliderSettings.SetUpIndex(i);
-            //
-            //sliderSettings.isMushra = false;
-            //sliderSettings.SetUpIndex(i);
-            //activeSliders[i].GetComponent<Slider>().value = OSCInput.Instance.sliderValues[i];
-            //activeSliders[i].GetComponent<SliderSettings>().SetAttribute(OSCInput.Instance.attributeLabels[i]);
+            activeSliders[i].GetComponent<SliderSettings>().setSliderIndex(i);
+            activeSliders[i].GetComponent<SliderSettings>().updateSliderValue();
+            if (OSCInput.Instance.ABbuttonsPresent)
+            {
+                string label = OSCInput.Instance.attributeLabels[i];
+                activeSliders[i].GetComponent<SliderSettings>().setAttributeLabel(label);
+            }
         }
 
     }
