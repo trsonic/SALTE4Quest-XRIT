@@ -32,4 +32,12 @@ public class SliderSettings : MonoBehaviour
         Slider slider = GetComponent<Slider>();
         valueUI.text = slider.value.ToString();
     }
+
+    public void setButtonActiveState(bool state)
+    {
+        var colors = buttonObject.GetComponent<Button>().colors;
+        if(state) colors.normalColor = Color.red;
+        else colors.normalColor = Color.white;
+        buttonObject.GetComponent<Button>().colors = colors;
+    }
 }

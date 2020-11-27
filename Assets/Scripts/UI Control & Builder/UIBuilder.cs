@@ -23,15 +23,17 @@ public class UIBuilder : MonoBehaviour
     RectTransform labelCanvasTransform;
     RectTransform sliderCanvasTransform;
 
-    // List of Sliders, Labels, Buttons
-    [SerializeField] List<GameObject> activeSliders = new List<GameObject>();
     [SerializeField] List<GameObject> activeLabels = new List<GameObject>();
-    [SerializeField] List<GameObject> _activeButtons = new List<GameObject>();
+    [SerializeField] List<GameObject> activeSliders = new List<GameObject>();
+    [SerializeField] List<GameObject> buttonList = new List<GameObject>();
 
+    int lastTrialIndex;
+    int[] lastButtonStates = new int[6];
+    List<int> lastTrigStates = new List<int>();
 
     void Start()
     {
-        localIp = LocalIPAddress(); //Network.player.ipAddress;// GetLocalIPv4();
+        localIp = LocalIPAddress();
         trialIndexMessage = GameObject.Find("TrialIndexMessage").GetComponent<TextMeshProUGUI>();
         trialNameMessage = GameObject.Find("TrialNameMessage").GetComponent<TextMeshProUGUI>();
         instructionMessage = GameObject.Find("InstructionMessage").GetComponent<TextMeshProUGUI>();
@@ -43,28 +45,46 @@ public class UIBuilder : MonoBehaviour
         sliderPrefab = GameObject.Find("SliderPrefab");
         Canvas sliderCanvas = GameObject.Find("SliderCanvas").GetComponent<Canvas>();
         sliderCanvasTransform = sliderCanvas.GetComponent<RectTransform>();
+
+        buttonList.Add(transform.Find("Button Canvas/ReferenceButton").gameObject);
+        buttonList.Add(transform.Find("Button Canvas/AButton").gameObject);
+        buttonList.Add(transform.Find("Button Canvas/BButton").gameObject);
+        buttonList.Add(transform.Find("Button Canvas/PlayButton").gameObject);
+        buttonList.Add(transform.Find("Button Canvas/StopButton").gameObject);
+        buttonList.Add(transform.Find("Button Canvas/LoopButton").gameObject);
+        buttonList.Add(transform.Find("Button Canvas/PreviousButton").gameObject);
+        buttonList.Add(transform.Find("Button Canvas/NextButton").gameObject);
+
+        trialIndexMessage.text = localIp;
+        trialNameMessage.text = "Spatial Audio Listening Test Environment";
+        instructionMessage.text = "Enter the displayed IP address in the audio renderer OSC config window";
     }
 
     public void Update()
     {
-        if (OSCInput.Instance.screenMessages.Count == 3)
+        if(OSCInput.Instance.UIUpdateNeeded)
         {
-            trialIndexMessage.text = OSCInput.Instance.screenMessages[0];
-            trialNameMessage.text = OSCInput.Instance.screenMessages[1];
-            instructionMessage.text = OSCInput.Instance.screenMessages[2];
-        }
-        else
-        {
-            trialIndexMessage.text = localIp;
-            trialNameMessage.text = "Spatial Audio Listening Test Environment";
-            instructionMessage.text = "Enter the displayed IP address in the audio renderer OSC config window";
-        }
+            if(lastTrialIndex != OSCInput.Instance.trialIndex)
+            {
+                if (OSCInput.Instance.screenMessages.Count == 3)
+                {
+                    trialIndexMessage.text = OSCInput.Instance.screenMessages[0];
+                    trialNameMessage.text = OSCInput.Instance.screenMessages[1];
+                    instructionMessage.text = OSCInput.Instance.screenMessages[2];
+                }
 
-        createLabels();
-        createSliders();
+                createLabels();
+                updateLabels();
+                createSliders();
+                updateButtons();
+                lastTrialIndex = OSCInput.Instance.trialIndex;
+            }
 
-        updateLabels();
-        updateSliders();
+            updateSliders();
+            updateButtonStates();
+
+            OSCInput.Instance.UIUpdateNeeded = false;
+        }
     }
 
     private void createLabels()
@@ -132,7 +152,47 @@ public class UIBuilder : MonoBehaviour
 
     }
 
-    public static string LocalIPAddress()
+    private void updateButtons()
+    {
+        bool referenceButtonPresent = OSCInput.Instance.referenceButtonPresent;
+        bool ABbuttonsPresent = OSCInput.Instance.ABbuttonsPresent;
+
+        buttonList[0].SetActive(referenceButtonPresent);
+        buttonList[1].SetActive(ABbuttonsPresent);
+        buttonList[2].SetActive(ABbuttonsPresent);
+    }
+
+    private void updateButtonStates()
+    {
+        if (!lastButtonStates.Equals(OSCInput.Instance.buttonStates))
+        {
+            for (int i = 0; i < 6; ++i)
+            {
+                var colors = buttonList[i].GetComponent<Button>().colors;
+                if (OSCInput.Instance.buttonStates[i] == 1) colors.normalColor = Color.red;
+                else colors.normalColor = Color.white;
+                buttonList[i].GetComponent<Button>().colors = colors;
+            }
+
+            OSCInput.Instance.buttonStates.CopyTo(lastButtonStates, 0);
+        }
+
+        if(!lastTrigStates.Equals(OSCInput.Instance.condTrigStates) && !OSCInput.Instance.ABbuttonsPresent)
+        {
+            int numOfCondTrigBtns = OSCInput.Instance.condTrigStates.Count;
+            for (int i = 0; i < numOfCondTrigBtns; ++i)
+            {
+                if (OSCInput.Instance.condTrigStates[i] == 1)
+                    activeSliders[i].GetComponent<SliderSettings>().setButtonActiveState(true);
+                else
+                    activeSliders[i].GetComponent<SliderSettings>().setButtonActiveState(false);
+            }
+
+            lastTrigStates = new List<int>(OSCInput.Instance.condTrigStates);
+        }
+    }
+
+    private static string LocalIPAddress()
     {
         IPHostEntry host;
         string localIP = "0.0.0.0";
@@ -148,18 +208,3 @@ public class UIBuilder : MonoBehaviour
         return localIP;
     }
 }
-
-//    private void UpdateButtons()
-//    {
-//        bool referenceButtonPresent = OSCInput.Instance.referenceButtonPresent;
-//        bool ABbuttonsPresent = OSCInput.Instance.ABbuttonsPresent;
-
-//        if (_activeButtons.Count != 0)
-//        {
-//            _activeButtons[0].SetActive(referenceButtonPresent); // reference Button 
-//            _activeButtons[1].SetActive(ABbuttonsPresent); // reference Button 
-//            _activeButtons[2].SetActive(ABbuttonsPresent); // reference Button 
-//        }
-//        else
-//            return;
-//    }

@@ -36,7 +36,8 @@ public class OSCInput : MonoBehaviour
     public int oscPortOut = 9000;
     OscServer server;
 
-    public bool visibleUI;
+    public bool visibleUI, UIUpdateNeeded;
+    public int numOfTrials, trialIndex;
     public List<string> screenMessages = new List<string>();
     public List<string> ratingLabels = new List<string>();
     public int[] buttonStates = new int[6];
@@ -72,11 +73,24 @@ public class OSCInput : MonoBehaviour
                        if (data.GetElementAsInt(0) == 1)
                        {
                            visibleUI = true;
+                           UIUpdateNeeded = true;
                        }
                        else
                        {
                            visibleUI = false;
                        }
+                   }
+               }
+           );
+
+        server.MessageDispatcher.AddCallback(
+               "/trialIndex", // OSC address
+               (string address, OscDataHandle data) =>
+               {
+                   if (data.GetElementAsInt(0) != null && data.GetElementAsInt(1) != null)
+                   {
+                       numOfTrials = data.GetElementAsInt(0);
+                       trialIndex = data.GetElementAsInt(1);
                    }
                }
            );
@@ -121,12 +135,12 @@ public class OSCInput : MonoBehaviour
                        string oscButton = data.GetElementAsString(0);
                        int state = data.GetElementAsInt(1);
 
-                       if (oscButton == "play") buttonStates[0] = state;
-                       else if (oscButton == "stop") buttonStates[1] = state;
-                       else if (oscButton == "loop") buttonStates[2] = state;
-                       else if (oscButton == "A") buttonStates[3] = state;
-                       else if (oscButton == "B") buttonStates[4] = state;
-                       else if (oscButton == "reference") buttonStates[5] = state;
+                       if (oscButton == "reference") buttonStates[0] = state;
+                       else if (oscButton == "A") buttonStates[1] = state;
+                       else if (oscButton == "B") buttonStates[2] = state;
+                       else if (oscButton == "play") buttonStates[3] = state;
+                       else if (oscButton == "stop") buttonStates[4] = state;
+                       else if (oscButton == "loop") buttonStates[5] = state;
                    }
                }
            );
