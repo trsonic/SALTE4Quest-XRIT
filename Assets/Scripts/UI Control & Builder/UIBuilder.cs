@@ -49,22 +49,25 @@ public class UIBuilder : MonoBehaviour
     {
         if (OSCInput.Instance.screenMessages.Count == 3)
         {
-            trialIndexMessage.text = OSCInput.Instance.screenMessages[0]; // OSCInput.Instance.screenMessages[0];
+            trialIndexMessage.text = OSCInput.Instance.screenMessages[0];
             trialNameMessage.text = OSCInput.Instance.screenMessages[1];
             instructionMessage.text = OSCInput.Instance.screenMessages[2];
         }
         else
         {
             trialIndexMessage.text = localIp;
-            trialNameMessage.text = "";
-            instructionMessage.text = "";
+            trialNameMessage.text = "Spatial Audio Listening Test Environment";
+            instructionMessage.text = "Enter the displayed IP address in the audio renderer OSC config window";
         }
 
-            updateLabels();
+        createLabels();
+        createSliders();
+
+        updateLabels();
         updateSliders();
     }
 
-    private void updateLabels()
+    private void createLabels()
     {
         foreach (GameObject label in activeLabels) Destroy(label);
         activeLabels.Clear();
@@ -81,15 +84,17 @@ public class UIBuilder : MonoBehaviour
             activeLabels.Add(tmpLabel);
         }
         labelPrefab.SetActive(false);
+    }
 
-        // update label text
+    private void updateLabels()
+    {
         for (int i = 0; i < this.activeLabels.Count; i++)
         {
             activeLabels[i].GetComponent<TextMeshProUGUI>().text = OSCInput.Instance.ratingLabels[i];
         }
     }
 
-    private void updateSliders()
+    private void createSliders()
     {
         foreach (GameObject slider in activeSliders) Destroy(slider);
         activeSliders.Clear();
@@ -102,20 +107,30 @@ public class UIBuilder : MonoBehaviour
         {
             GameObject tmpSlider = Instantiate(sliderPrefab, sliderCanvasTransform.transform) as GameObject;
             RectTransform tmpRectTransform = tmpSlider.GetComponent<RectTransform>();
-            tmpRectTransform.localPosition = new Vector2(sliderCanvasTransform.rect.width / 2.0f - (float)i * sliderWidth - sliderWidth / 2.0f, 0);
+            tmpRectTransform.localPosition = new Vector2(-sliderCanvasTransform.rect.width / 2.0f + (float)i * sliderWidth + sliderWidth / 2.0f, 0);
 
             activeSliders.Add(tmpSlider);
         }
         sliderPrefab.SetActive(false);
+    }
 
-        // update slider settings
+    private void updateSliders()
+    {
         for (int i = 0; i < activeSliders.Count; i++)
         {
+            activeSliders[i].GetComponent<Slider>().minValue = OSCInput.Instance.slidersMinVal;
+            activeSliders[i].GetComponent<Slider>().maxValue = OSCInput.Instance.slidersMaxVal;
+            activeSliders[i].GetComponent<Slider>().value = OSCInput.Instance.sliderValues[i];
+
+
+
             //SliderSettings sliderSettings = activeSliders[i].GetComponent<SliderSettings>();
+            //sliderSettings.SetUpIndex(i);
+            //
             //sliderSettings.isMushra = false;
             //sliderSettings.SetUpIndex(i);
-            activeSliders[i].GetComponent<Slider>().value = OSCInput.Instance.sliderValues[i];
-            activeSliders[i].GetComponent<SliderSettings>().SetAttribute(OSCInput.Instance.attributeLabels[i]);
+            //activeSliders[i].GetComponent<Slider>().value = OSCInput.Instance.sliderValues[i];
+            //activeSliders[i].GetComponent<SliderSettings>().SetAttribute(OSCInput.Instance.attributeLabels[i]);
         }
 
     }
@@ -135,20 +150,6 @@ public class UIBuilder : MonoBehaviour
         }
         return localIP;
     }
-
-    //public string GetLocalIPv4()
-    //{
-    //    var host = Dns.GetHostEntry(Dns.GetHostName());
-    //    foreach (var ip in host.AddressList)
-    //    {
-    //        if (ip.AddressFamily == AddressFamily.InterNetwork)
-    //        {
-    //            //hintText.text = ip.ToString();
-    //            return ip.ToString();
-    //        }
-    //    }
-    //    throw new System.Exception("No network adapters with an IPv4 address in the system!");
-    //}
 }
 
 //    private void UpdateButtons()
