@@ -46,14 +46,14 @@ public class UIBuilder : MonoBehaviour
         Canvas sliderCanvas = GameObject.Find("SliderCanvas").GetComponent<Canvas>();
         sliderCanvasTransform = sliderCanvas.GetComponent<RectTransform>();
 
-        buttonList.Add(transform.Find("Button Canvas/ReferenceButton").gameObject);
-        buttonList.Add(transform.Find("Button Canvas/AButton").gameObject);
-        buttonList.Add(transform.Find("Button Canvas/BButton").gameObject);
-        buttonList.Add(transform.Find("Button Canvas/PlayButton").gameObject);
-        buttonList.Add(transform.Find("Button Canvas/StopButton").gameObject);
-        buttonList.Add(transform.Find("Button Canvas/LoopButton").gameObject);
-        buttonList.Add(transform.Find("Button Canvas/PreviousButton").gameObject);
-        buttonList.Add(transform.Find("Button Canvas/NextButton").gameObject);
+        buttonList.Add(transform.Find("ButtonCanvas/ReferenceButton").gameObject);
+        buttonList.Add(transform.Find("ButtonCanvas/AButton").gameObject);
+        buttonList.Add(transform.Find("ButtonCanvas/BButton").gameObject);
+        buttonList.Add(transform.Find("ButtonCanvas/PlayButton").gameObject);
+        buttonList.Add(transform.Find("ButtonCanvas/StopButton").gameObject);
+        buttonList.Add(transform.Find("ButtonCanvas/LoopButton").gameObject);
+        buttonList.Add(transform.Find("ButtonCanvas/PreviousButton").gameObject);
+        buttonList.Add(transform.Find("ButtonCanvas/NextButton").gameObject);
 
         trialIndexMessage.text = localIp;
         trialNameMessage.text = "Spatial Audio Listening Test Environment";
