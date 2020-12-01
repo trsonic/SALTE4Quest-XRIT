@@ -33,17 +33,34 @@ public class SliderSettings : MonoBehaviour
         valueUI.text = slider.value.ToString("F1");
     }
 
-    public void sendOscData()
+    public void sendSliderMovedOscData()
     {
-        Slider slider = GetComponent<Slider>();
-        OSCOutput.Instance.sendSliderMovedOscMessage(sliderIndex, slider.value);
+        // if (OSCInput.Instance.visibleUI && !OSCInput.Instance.UIUpdateNeeded) ;
+        if (!OSCInput.Instance.UIUpdateNeeded);
+        {
+            Slider slider = GetComponent<Slider>();
+            OSCOutput.Instance.sendSliderMovedOscMessage(sliderIndex, slider.value);
+        }
+    }
+
+    public void sendCondBtnPressedOscData()
+    {
+        OSCOutput.Instance.sendCondBtnPressedOscMessage(sliderIndex);
     }
 
     public void setButtonActiveState(bool state)
     {
         var colors = buttonObject.GetComponent<Button>().colors;
-        if(state) colors.normalColor = Color.red;
-        else colors.normalColor = Color.white;
+        if(state)
+        {
+            colors.normalColor = Color.red;
+            colors.selectedColor = Color.red;
+        }
+        else
+        {
+            colors.normalColor = Color.white;
+            colors.selectedColor = Color.white;
+        }
         buttonObject.GetComponent<Button>().colors = colors;
     }
 }

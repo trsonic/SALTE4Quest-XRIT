@@ -96,7 +96,7 @@ public class UIBuilder : MonoBehaviour
         int numberOfLabels = OSCInput.Instance.ratingLabels.Count;
         float ratingLabelHeight = labelCanvasTransform.rect.height / numberOfLabels;
 
-        for (int i = 0; i < numberOfLabels; i++)
+        for (int i = 0; i < numberOfLabels; ++i)
         {
             GameObject tmpLabel = Instantiate(labelPrefab, labelCanvasTransform.transform) as GameObject;
             RectTransform tmpRectTransform = tmpLabel.GetComponent<RectTransform>();
@@ -108,7 +108,7 @@ public class UIBuilder : MonoBehaviour
 
     private void updateLabels()
     {
-        for (int i = 0; i < this.activeLabels.Count; i++)
+        for (int i = 0; i < this.activeLabels.Count; ++i)
         {
             activeLabels[i].GetComponent<TextMeshProUGUI>().text = OSCInput.Instance.ratingLabels[i];
         }
@@ -123,12 +123,12 @@ public class UIBuilder : MonoBehaviour
         int numberOfSliders = OSCInput.Instance.sliderValues.Count;
         float sliderWidth = sliderCanvasTransform.rect.width / numberOfSliders;
 
-        for (int i = 0; i < numberOfSliders; i++)
+        for (int i = 0; i < numberOfSliders; ++i)
         {
             GameObject tmpSlider = Instantiate(sliderPrefab, sliderCanvasTransform.transform) as GameObject;
             RectTransform tmpRectTransform = tmpSlider.GetComponent<RectTransform>();
             tmpRectTransform.localPosition = new Vector2(-sliderCanvasTransform.rect.width / 2.0f + (float)i * sliderWidth + sliderWidth / 2.0f, 0);
-
+            tmpSlider.GetComponent<SliderSettings>().setSliderIndex(i);
             activeSliders.Add(tmpSlider);
         }
         sliderPrefab.SetActive(false);
@@ -136,12 +136,11 @@ public class UIBuilder : MonoBehaviour
 
     private void updateSliders()
     {
-        for (int i = 0; i < activeSliders.Count; i++)
+        for (int i = 0; i < activeSliders.Count; ++i)
         {
             activeSliders[i].GetComponent<Slider>().minValue = OSCInput.Instance.slidersMinVal;
             activeSliders[i].GetComponent<Slider>().maxValue = OSCInput.Instance.slidersMaxVal;
             activeSliders[i].GetComponent<Slider>().value = OSCInput.Instance.sliderValues[i];
-            activeSliders[i].GetComponent<SliderSettings>().setSliderIndex(i);
             activeSliders[i].GetComponent<SliderSettings>().updateSliderValue();
             if (OSCInput.Instance.ABbuttonsPresent)
             {
@@ -149,7 +148,6 @@ public class UIBuilder : MonoBehaviour
                 activeSliders[i].GetComponent<SliderSettings>().setAttributeLabel(label);
             }
         }
-
     }
 
     private void updateButtons()
@@ -160,6 +158,22 @@ public class UIBuilder : MonoBehaviour
         buttonList[0].SetActive(referenceButtonPresent);
         buttonList[1].SetActive(ABbuttonsPresent);
         buttonList[2].SetActive(ABbuttonsPresent);
+
+        if (OSCInput.Instance.trialIndex == 1)
+        {
+            buttonList[6].SetActive(false);
+            buttonList[7].SetActive(true);
+        }
+        else if (OSCInput.Instance.trialIndex == OSCInput.Instance.numOfTrials)
+        {
+            buttonList[6].SetActive(true);
+            buttonList[7].SetActive(false);
+        }
+        else
+        {
+            buttonList[6].SetActive(true);
+            buttonList[7].SetActive(true);
+        }
     }
 
     private void updateButtonStates()
@@ -169,8 +183,16 @@ public class UIBuilder : MonoBehaviour
             for (int i = 0; i < 6; ++i)
             {
                 var colors = buttonList[i].GetComponent<Button>().colors;
-                if (OSCInput.Instance.buttonStates[i] == 1) colors.normalColor = Color.red;
-                else colors.normalColor = Color.white;
+                if (OSCInput.Instance.buttonStates[i] == 1)
+                {
+                    colors.normalColor = Color.red;
+                    colors.selectedColor = Color.red;
+                }
+                else
+                {
+                    colors.normalColor = Color.white;
+                    colors.selectedColor = Color.white;
+                }
                 buttonList[i].GetComponent<Button>().colors = colors;
             }
 
