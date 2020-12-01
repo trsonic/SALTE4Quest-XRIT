@@ -1,31 +1,27 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using OscJack;
 
 public class ButtonOutOSC : MonoBehaviour
 {
-    /// <summary>
-    /// Send out OSC data to the audio rendering engine to trigger audio stimuli or move to next trial.  This is determined by the 
-    /// msg string.
-    /// </summary>
+    string buttonId;
 
-    // OSC Variables
-    string IPAddress = OSCInput.Instance.IPAddress;
-    int oscPortOut = OSCInput.Instance.oscPortOut;
-    OscClient client;
-
-    string buttonAddress = "/button";
-
-    public string msg;  // Change message in inspector
-
-    private void Start()
+    void Start()
     {
-        client = new OscClient(IPAddress, oscPortOut);
+        string objectName = gameObject.name;
+
+        if(objectName == "ReferenceButton") buttonId = "reference";
+        else if (objectName == "AButton") buttonId = "A";
+        else if (objectName == "BButton") buttonId = "B";
+        else if (objectName == "PlayButton") buttonId = "play";
+        else if (objectName == "StopButton") buttonId = "stop";
+        else if (objectName == "LoopButton") buttonId = "loop";
+        else if (objectName == "PreviousButton") buttonId = "prev_trial";
+        else if (objectName == "NextButton") buttonId = "next_trial";
     }
 
-    public void sendData()
+    public void sendOscData()
     {
-        client.Send(buttonAddress, msg);
+        OSCOutput.Instance.sendBtnPressedOscMessage(buttonId);
     }
 }

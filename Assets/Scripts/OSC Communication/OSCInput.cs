@@ -31,9 +31,9 @@ public class OSCInput : MonoBehaviour
     #endregion
 
     // OSC variables
-    public string IPAddress = "127.0.0.1"; // IP address for OSC 
-    public int oscPortIN = 6000; // Port for OSC
-    public int oscPortOut = 9000;
+
+    public int oscPortIn = 6000; // Port for OSC
+
     OscServer server;
 
     public bool visibleUI, UIUpdateNeeded;
@@ -60,7 +60,7 @@ public class OSCInput : MonoBehaviour
 
     private void initOscServer()
     {
-        server = new OscServer(oscPortIN); // Create OSC server with port number
+        server = new OscServer(oscPortIn); // Create OSC server with port number
         Debug.Log("OSC server created");
 
         // Receives OSC data to show / hide UI

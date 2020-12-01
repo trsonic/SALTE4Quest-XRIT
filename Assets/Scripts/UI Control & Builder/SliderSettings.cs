@@ -30,7 +30,13 @@ public class SliderSettings : MonoBehaviour
     public void updateSliderValue()
     {
         Slider slider = GetComponent<Slider>();
-        valueUI.text = slider.value.ToString();
+        valueUI.text = slider.value.ToString("F1");
+    }
+
+    public void sendOscData()
+    {
+        Slider slider = GetComponent<Slider>();
+        OSCOutput.Instance.sendSliderMovedOscMessage(sliderIndex, slider.value);
     }
 
     public void setButtonActiveState(bool state)

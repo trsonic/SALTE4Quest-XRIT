@@ -11,8 +11,8 @@ public class headTracker_Export : MonoBehaviour
     /// </summary>
 
 
-    string IPAddress = OSCInput.Instance.IPAddress;
-    int MainOutPort = OSCInput.Instance.oscPortOut;
+    string IPAddress = OSCOutput.Instance.IPAddress;
+    int MainOutPort = OSCOutput.Instance.oscPortOut;
     float sendFrequency = 0.01f;
 
    bool quat; // Quaternion
