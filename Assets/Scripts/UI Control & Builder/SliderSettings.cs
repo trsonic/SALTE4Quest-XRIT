@@ -8,6 +8,7 @@ public class SliderSettings : MonoBehaviour
 
     [SerializeField] TextMeshProUGUI valueUI;
     [SerializeField] GameObject buttonObject;
+    [SerializeField] GameObject sliderAttributeObject;
     [SerializeField] TextMeshProUGUI buttonLabel;
     [SerializeField] TextMeshProUGUI sliderAttribute;
 
@@ -18,12 +19,14 @@ public class SliderSettings : MonoBehaviour
         sliderIndex = index;
         buttonLabel.text = _buttonText[index];
         buttonObject.SetActive(true);
+        sliderAttributeObject.SetActive(false);
         sliderAttribute.text = "";
     }
 
     public void setAttributeLabel(string label)
     {
         buttonObject.SetActive(false);
+        sliderAttributeObject.SetActive(true);
         sliderAttribute.text = label;
     }
 
