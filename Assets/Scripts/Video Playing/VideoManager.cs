@@ -2,43 +2,75 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Video;
-using System.IO;
 
 public class VideoManager : MonoBehaviour
 {
-    // Class variables 
-       
-     VideoPlayer videoPlayer;
+    public Material skyboxMatNoVideo;
+    public Material skyboxMat4Video;
+
+    VideoPlayer videoPlayer = null;
+    string currentVideoFile;
+    bool currentVideoStatus;
+
+    int startFrame = 8; // ok for Quest
 
     void Start()
     {
-        string testDebug = "D:/Downloads/test.mp4";
-        VideoSetup();
-        ChangeVideo360(testDebug);
-    }
-
-
-    void VideoSetup()
-    {
         videoPlayer = GetComponent<VideoPlayer>();
-        videoPlayer.playOnAwake = true;
-        videoPlayer.isLooping = true;
+        videoPlayer.playOnAwake = false;
+        videoPlayer.isLooping = false;
+
+        RenderSettings.skybox = skyboxMatNoVideo;
+
+        StartCoroutine("control360VideoPlayback");
     }
 
-
-    public void ChangeVideo360(string filepath)
-    {
-        if (System.IO.File.Exists(filepath))
-        {
-            videoPlayer.url = filepath;
-        } else
-            return;
-        
-    }
-    
-    // Update is called once per frame
     void Update()
     {
-        
+        if (videoPlayer.isPrepared)
+        {
+            RenderSettings.skybox = skyboxMat4Video;
+        }
+    }
+
+    IEnumerator control360VideoPlayback()
+    {
+        for (; ; )
+        {
+            string filename = OSCInput.Instance.video360filename;
+            if (filename != "" && currentVideoFile != filename)
+            {
+                load360Video(filename);
+                currentVideoFile = filename;
+            }
+
+            bool status = OSCInput.Instance.video360playbackStatus;
+
+            if (status != currentVideoStatus)
+            {
+                if (status)
+                { 
+                    videoPlayer.Play();
+                }
+                else
+                {
+                    videoPlayer.Pause();
+                    videoPlayer.frame = startFrame;
+                }
+
+                currentVideoStatus = status;
+            }
+
+            yield return new WaitForSeconds(.01f);
+        }
+    }
+
+    private void load360Video(string filename)
+    {
+        videoPlayer.Stop();
+        videoPlayer.url = Application.streamingAssetsPath + "/" + filename;
+        videoPlayer.Play();
+        videoPlayer.Pause();
+        videoPlayer.frame = startFrame;
     }
 }

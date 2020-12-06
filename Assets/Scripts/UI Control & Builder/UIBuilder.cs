@@ -58,6 +58,9 @@ public class UIBuilder : MonoBehaviour
         trialIndexMessage.text = localIp;
         trialNameMessage.text = "Spatial Audio Listening Test Environment";
         instructionMessage.text = "Enter the displayed IP address in the audio renderer OSC config window";
+
+        labelPrefab.SetActive(false);
+        sliderPrefab.SetActive(false);
     }
 
     public void Update()

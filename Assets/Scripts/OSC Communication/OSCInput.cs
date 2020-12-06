@@ -48,6 +48,11 @@ public class OSCInput : MonoBehaviour
     public bool referenceButtonPresent;   
     public bool ABbuttonsPresent;
 
+    // 360 video playback
+    public string video360filename;
+    public float video360playbackPosition;
+    public bool video360playbackStatus;
+
     private void Start()
     {
         initOscServer();
@@ -223,6 +228,34 @@ public class OSCInput : MonoBehaviour
                    else
                    {
                        ABbuttonsPresent = false;
+                   }
+               }
+           );
+
+        // 360 video file name
+        server.MessageDispatcher.AddCallback(
+               "/360videoFile",
+               (string address, OscDataHandle data) =>
+               {
+                   if (data.GetElementAsString(0) != null)
+                   {
+                       video360filename = data.GetElementAsString(0);
+                   }
+               }
+           );
+
+        // 360 video file name
+        server.MessageDispatcher.AddCallback(
+               "/360videoStatus",
+               (string address, OscDataHandle data) =>
+               {
+                   if (data.GetElementAsFloat(0) != null && data.GetElementAsInt(1) != null)
+                   {
+                       video360playbackPosition = data.GetElementAsFloat(0);
+                       if (data.GetElementAsInt(1) == 1)
+                           video360playbackStatus = true;
+                       else
+                           video360playbackStatus = false;
                    }
                }
            );
