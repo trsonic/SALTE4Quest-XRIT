@@ -12,7 +12,7 @@ PlayerSettings:
   targetDevice: 2
   useOnDemandResources: 0
   accelerometerFrequency: 60
-  companyName: DefaultCompany
+  companyName: AudioLab
   productName: SALTE4Quest-XRIT
   defaultCursor: {fileID: 0}
   cursorHotspot: {x: 0, y: 0}
@@ -130,8 +130,6 @@ PlayerSettings:
   - {fileID: 0}
   - {fileID: 0}
   - {fileID: 0}
-  - {fileID: 7511137510443721545, guid: 50d3d1df77d2f254fb3e31ddc7df3135, type: 2}
-  - {fileID: 11400000, guid: 5dc949d2283b81244bbc160edd644e18, type: 2}
   metroInputSource: 0
   wsaTransparentSwapchain: 0
   m_HolographicPauseOnTrackingLoss: 1
@@ -173,7 +171,8 @@ PlayerSettings:
   resolutionScalingMode: 0
   androidSupportedAspectRatio: 1
   androidMaxAspectRatio: 2.1
-  applicationIdentifier: {}
+  applicationIdentifier:
+    Android: com.AudioLab.SALTE4QuestXRIT
   buildNumber: {}
   AndroidBundleVersionCode: 1
   AndroidMinSdkVersion: 23

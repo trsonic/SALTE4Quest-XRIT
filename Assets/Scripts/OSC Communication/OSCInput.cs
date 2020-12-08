@@ -36,6 +36,7 @@ public class OSCInput : MonoBehaviour
 
     OscServer server;
 
+    public string rendererIpAddress;
     public bool visibleUI, UIUpdateNeeded;
     public int numOfTrials, trialIndex;
     public List<string> screenMessages = new List<string>();
@@ -60,13 +61,13 @@ public class OSCInput : MonoBehaviour
 
     void OnDestroy()
     {
-        server.Dispose();
+        if (server != null) server.Dispose();
     }
 
     private void initOscServer()
     {
         server = new OscServer(oscPortIn); // Create OSC server with port number
-        Debug.Log("OSC server created");
+        Debug.Log("OSC receiver created");
 
         // Receives OSC data to show / hide UI
         server.MessageDispatcher.AddCallback(
@@ -84,6 +85,18 @@ public class OSCInput : MonoBehaviour
                        {
                            visibleUI = false;
                        }
+                   }
+               }
+           );
+
+        // SALTE renderer ip address
+        server.MessageDispatcher.AddCallback(
+               "/rendererIp",
+               (string address, OscDataHandle data) =>
+               {
+                   if (data.GetElementAsString(0) != null)
+                   {
+                       rendererIpAddress = data.GetElementAsString(0);
                    }
                }
            );
