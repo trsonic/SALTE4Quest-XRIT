@@ -55,9 +55,16 @@ public class UIBuilder : MonoBehaviour
         buttonList.Add(transform.Find("ButtonCanvas/PreviousButton").gameObject);
         buttonList.Add(transform.Find("ButtonCanvas/NextButton").gameObject);
 
-        trialIndexMessage.text = localIp;
+        foreach (var button in buttonList) button.SetActive(false); // hide all buttons at the start
+
+        trialIndexMessage.text = "";
         trialNameMessage.text = "Spatial Audio Listening Test Environment";
-        instructionMessage.text = "Enter the displayed IP address in the audio renderer OSC config window";
+        instructionMessage.text = "\n\n\n" +
+            "- take the VR headset off and lauch the SALTE audio renderer,\n" +
+            "- enter the following IP address: " + localIp + " in the renderer OSC configuration window,\n" +
+            "- load the test configuration JSON file,\n" +
+            "- select the result CSV file,\n" +
+            "- click Begin to start the test.";
 
         labelPrefab.SetActive(false);
         sliderPrefab.SetActive(false);
@@ -161,6 +168,10 @@ public class UIBuilder : MonoBehaviour
         buttonList[0].SetActive(referenceButtonPresent);
         buttonList[1].SetActive(ABbuttonsPresent);
         buttonList[2].SetActive(ABbuttonsPresent);
+
+        buttonList[3].SetActive(true); // play
+        buttonList[4].SetActive(true); // stop
+        buttonList[5].SetActive(true); // loop
 
         if (OSCInput.Instance.trialIndex == 1)
         {

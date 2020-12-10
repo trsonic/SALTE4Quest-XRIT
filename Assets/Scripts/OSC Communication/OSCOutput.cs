@@ -25,7 +25,7 @@ public class OSCOutput : MonoBehaviour
     }
     #endregion
 
-    string rendererIp; // IP address for OSC
+    string rendererIp = ""; // IP address for OSC
     public int oscPortOut = 9000;
     OscClient client;
 
