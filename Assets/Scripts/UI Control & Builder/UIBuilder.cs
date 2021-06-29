@@ -54,7 +54,13 @@ public class UIBuilder : MonoBehaviour
         buttonList.Add(transform.Find("ButtonCanvas/LoopButton").gameObject);
         buttonList.Add(transform.Find("ButtonCanvas/PreviousButton").gameObject);
         buttonList.Add(transform.Find("ButtonCanvas/NextButton").gameObject);
+        buttonList.Add(transform.Find("ButtonCanvas/FinishButton").gameObject);
+        
+        SetStartScreen();
+    }
 
+    void SetStartScreen()
+    {
         foreach (var button in buttonList) button.SetActive(false); // hide all buttons at the start
 
         trialIndexMessage.text = "";
@@ -64,34 +70,51 @@ public class UIBuilder : MonoBehaviour
             "- enter the following IP address: " + localIp + " in the renderer OSC configuration window,\n" +
             "- load the test configuration JSON file,\n" +
             "- select the result CSV file,\n" +
-            "- click Begin to start the test.";
+            "- click Begin to start the test.\n\n" +
+            "Use the trigger button to select conditions and change trials.\n" +
+            "By holding down grip button and operating joystick you can reposition and resize the test interface.\n";
 
         labelPrefab.SetActive(false);
         sliderPrefab.SetActive(false);
-    }
 
-    public void Update()
+        foreach (GameObject label in activeLabels) Destroy(label);
+        activeLabels.Clear();
+
+        foreach (GameObject slider in activeSliders) Destroy(slider);
+        activeSliders.Clear();
+    }
+    
+    void Update()
     {
         if(OSCInput.Instance.UIUpdateNeeded)
         {
-            if(lastTrialIndex != OSCInput.Instance.trialIndex)
+            if(OSCInput.Instance.testIsOn)
             {
-                if (OSCInput.Instance.screenMessages.Count == 3)
+                if (lastTrialIndex != OSCInput.Instance.trialIndex)
                 {
-                    trialIndexMessage.text = OSCInput.Instance.screenMessages[0];
-                    trialNameMessage.text = OSCInput.Instance.screenMessages[1];
-                    instructionMessage.text = OSCInput.Instance.screenMessages[2];
+                    if (OSCInput.Instance.screenMessages.Count == 3)
+                    {
+                        trialIndexMessage.text = OSCInput.Instance.screenMessages[0];
+                        trialNameMessage.text = OSCInput.Instance.screenMessages[1];
+                        instructionMessage.text = OSCInput.Instance.screenMessages[2];
+                    }
+
+                    createLabels();
+                    updateLabels();
+                    createSliders();
+                    updateButtons();
+                    lastTrialIndex = OSCInput.Instance.trialIndex;
                 }
 
-                createLabels();
-                updateLabels();
-                createSliders();
-                updateButtons();
-                lastTrialIndex = OSCInput.Instance.trialIndex;
+                updateSliders();
+                updateButtonStates();
+                GameObject.Find("OculusTouchControls").GetComponent<Image>().enabled = false;
             }
-
-            updateSliders();
-            updateButtonStates();
+            else
+            {
+                SetStartScreen();
+                GameObject.Find("OculusTouchControls").GetComponent<Image>().enabled = true;
+            }
 
             OSCInput.Instance.UIUpdateNeeded = false;
         }
@@ -171,22 +194,25 @@ public class UIBuilder : MonoBehaviour
 
         buttonList[3].SetActive(true); // play
         buttonList[4].SetActive(true); // stop
-        buttonList[5].SetActive(true); // loop
+        buttonList[5].SetActive(false); // loop
 
         if (OSCInput.Instance.trialIndex == 1)
         {
             buttonList[6].SetActive(false);
             buttonList[7].SetActive(true);
+            buttonList[8].SetActive(false);
         }
         else if (OSCInput.Instance.trialIndex == OSCInput.Instance.numOfTrials)
         {
             buttonList[6].SetActive(true);
             buttonList[7].SetActive(false);
+            buttonList[8].SetActive(true);
         }
         else
         {
             buttonList[6].SetActive(true);
             buttonList[7].SetActive(true);
+            buttonList[8].SetActive(false);
         }
     }
 

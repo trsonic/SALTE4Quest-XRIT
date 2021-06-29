@@ -18,6 +18,7 @@ public class ButtonOutOSC : MonoBehaviour
         else if (objectName == "LoopButton") buttonId = "loop";
         else if (objectName == "PreviousButton") buttonId = "prev_trial";
         else if (objectName == "NextButton") buttonId = "next_trial";
+        else if (objectName == "FinishButton") buttonId = "finish";
     }
 
     public void sendOscData()

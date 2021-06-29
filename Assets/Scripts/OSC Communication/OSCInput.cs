@@ -37,7 +37,8 @@ public class OSCInput : MonoBehaviour
     OscServer server;
 
     public string rendererIpAddress;
-    public bool visibleUI, UIUpdateNeeded;
+    public bool UIUpdateNeeded;
+    public bool testIsOn;
     public int numOfTrials, trialIndex;
     public List<string> screenMessages = new List<string>();
     public List<string> ratingLabels = new List<string>();
@@ -78,12 +79,14 @@ public class OSCInput : MonoBehaviour
                    {
                        if (data.GetElementAsInt(0) == 1)
                        {
-                           visibleUI = true;
+                           testIsOn = true;
                            UIUpdateNeeded = true;
                        }
                        else
                        {
-                           visibleUI = false;
+                           testIsOn = false;
+                           UIUpdateNeeded = true;
+                           //visibleUI = false;
                        }
                    }
                }

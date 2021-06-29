@@ -22,7 +22,7 @@ public class InterfacePlacer : MonoBehaviour
         //debug = GameObject.Find("DebugCanvas").GetComponent<TextMeshProUGUI>();
 
         // place interface on the right bottom
-        testInterfaceTransform.position = new Vector3(1.0f, -0.75f, 1.0f);
+        testInterfaceTransform.position = new Vector3(1.0f, -0.25f, 1.0f);
         testInterfaceTransform.rotation = Quaternion.LookRotation(testInterfaceTransform.position - mainCameraTransform.position);
 
         findControllers();
