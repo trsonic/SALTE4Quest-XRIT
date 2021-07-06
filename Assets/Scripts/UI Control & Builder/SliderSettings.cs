@@ -38,8 +38,7 @@ public class SliderSettings : MonoBehaviour
 
     public void sendSliderMovedOscData()
     {
-        // if (OSCInput.Instance.visibleUI && !OSCInput.Instance.UIUpdateNeeded) ;
-        if (!OSCInput.Instance.UIUpdateNeeded);
+        if (!OSCInput.Instance.UIUpdateNeeded)
         {
             Slider slider = GetComponent<Slider>();
             OSCOutput.Instance.sendSliderMovedOscMessage(sliderIndex, slider.value);
@@ -48,7 +47,10 @@ public class SliderSettings : MonoBehaviour
 
     public void sendCondBtnPressedOscData()
     {
-        OSCOutput.Instance.sendCondBtnPressedOscMessage(sliderIndex);
+        if (!OSCInput.Instance.UIUpdateNeeded)
+        {
+            OSCOutput.Instance.sendCondBtnPressedOscMessage(sliderIndex);
+        }
     }
 
     public void setButtonActiveState(bool state)

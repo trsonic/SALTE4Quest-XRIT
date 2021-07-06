@@ -161,7 +161,7 @@ public class UIBuilder : MonoBehaviour
             GameObject tmpSlider = Instantiate(sliderPrefab, sliderCanvasTransform.transform) as GameObject;
             RectTransform tmpRectTransform = tmpSlider.GetComponent<RectTransform>();
             tmpRectTransform.localPosition = new Vector2(-sliderCanvasTransform.rect.width / 2.0f + (float)i * sliderWidth + sliderWidth / 2.0f, 0);
-            tmpSlider.GetComponent<SliderSettings>().setSliderIndex(i);
+            tmpSlider.GetComponentInChildren<SliderSettings>().setSliderIndex(i);
             activeSliders.Add(tmpSlider);
         }
         sliderPrefab.SetActive(false);
@@ -171,14 +171,14 @@ public class UIBuilder : MonoBehaviour
     {
         for (int i = 0; i < activeSliders.Count; ++i)
         {
-            activeSliders[i].GetComponent<Slider>().minValue = OSCInput.Instance.slidersMinVal;
-            activeSliders[i].GetComponent<Slider>().maxValue = OSCInput.Instance.slidersMaxVal;
-            activeSliders[i].GetComponent<Slider>().value = OSCInput.Instance.sliderValues[i];
-            activeSliders[i].GetComponent<SliderSettings>().updateSliderValue();
+            activeSliders[i].GetComponentInChildren<Slider>().minValue = OSCInput.Instance.slidersMinVal;
+            activeSliders[i].GetComponentInChildren<Slider>().maxValue = OSCInput.Instance.slidersMaxVal;
+            activeSliders[i].GetComponentInChildren<Slider>().value = OSCInput.Instance.sliderValues[i];
+            activeSliders[i].GetComponentInChildren<SliderSettings>().updateSliderValue();
             if (OSCInput.Instance.ABbuttonsPresent)
             {
                 string label = OSCInput.Instance.attributeLabels[i];
-                activeSliders[i].GetComponent<SliderSettings>().setAttributeLabel(label);
+                activeSliders[i].GetComponentInChildren<SliderSettings>().setAttributeLabel(label);
             }
         }
     }
@@ -245,9 +245,9 @@ public class UIBuilder : MonoBehaviour
             for (int i = 0; i < numOfCondTrigBtns; ++i)
             {
                 if (OSCInput.Instance.condTrigStates[i] == 1)
-                    activeSliders[i].GetComponent<SliderSettings>().setButtonActiveState(true);
+                    activeSliders[i].GetComponentInChildren<SliderSettings>().setButtonActiveState(true);
                 else
-                    activeSliders[i].GetComponent<SliderSettings>().setButtonActiveState(false);
+                    activeSliders[i].GetComponentInChildren<SliderSettings>().setButtonActiveState(false);
             }
 
             lastTrigStates = new List<int>(OSCInput.Instance.condTrigStates);
