@@ -67,6 +67,9 @@ public class VideoManager : MonoBehaviour
 
     private void load360Video(string filename)
     {
+        if (filename == "xxx.mp4")
+            return;
+
         videoPlayer.Stop();
         videoPlayer.url = Application.streamingAssetsPath + "/" + filename;
         videoPlayer.Play();
