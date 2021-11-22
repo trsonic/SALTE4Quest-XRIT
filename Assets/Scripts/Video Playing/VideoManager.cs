@@ -2,11 +2,13 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Video;
+using UnityEngine.Networking;
 
 public class VideoManager : MonoBehaviour
 {
     public Material skyboxMatNoVideo;
     public Material skyboxMat4Video;
+    Material skyboxMat4Photo;
 
     VideoPlayer videoPlayer = null;
     string currentVideoFile;
@@ -22,15 +24,17 @@ public class VideoManager : MonoBehaviour
 
         RenderSettings.skybox = skyboxMatNoVideo;
 
-        StartCoroutine("control360VideoPlayback");
+
+        //StartCoroutine(load360photo("audiolab1.jpg"));
+        StartCoroutine(control360VideoPlayback());
     }
 
     void Update()
     {
         if (videoPlayer.isPrepared)
-        {
             RenderSettings.skybox = skyboxMat4Video;
-        }
+        else if (skyboxMat4Photo != null)
+            RenderSettings.skybox = skyboxMat4Photo;
     }
 
     IEnumerator control360VideoPlayback()
@@ -75,5 +79,19 @@ public class VideoManager : MonoBehaviour
         videoPlayer.Play();
         videoPlayer.Pause();
         videoPlayer.frame = startFrame;
+    }
+
+    IEnumerator load360photo(string filename)
+    {
+        string MediaUrl = Application.streamingAssetsPath + "/" + filename;
+        UnityWebRequest request = UnityWebRequestTexture.GetTexture(MediaUrl);
+        yield return request.SendWebRequest();
+        if (request.isNetworkError || request.isHttpError)
+            Debug.Log(request.error);
+        else
+        {
+            skyboxMat4Photo = new Material(Shader.Find("Skybox/Panoramic"));
+            skyboxMat4Photo.mainTexture = ((DownloadHandlerTexture)request.downloadHandler).texture;
+        }
     }
 }

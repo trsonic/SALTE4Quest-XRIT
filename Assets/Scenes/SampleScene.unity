@@ -879,6 +879,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   skyboxMatNoVideo: {fileID: 2100000, guid: b08bdb9f2b19d8046b0ece751d9c47d4, type: 2}
   skyboxMat4Video: {fileID: 2100000, guid: 118554b7b36f7c64e99438be381101de, type: 2}
+  skyboxMat4Photo: {fileID: 2100000, guid: 442408326d7742c49a4791f4e93fe126, type: 2}
 --- !u!1 &187238234
 GameObject:
   m_ObjectHideFlags: 0
