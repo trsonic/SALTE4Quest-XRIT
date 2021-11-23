@@ -7,7 +7,6 @@ using TMPro;
 public class InterfacePlacer : MonoBehaviour
 {
     Transform testInterfaceTransform, mainCameraTransform, leftControllerTransform, rightControllerTransform;
-    //TextMeshProUGUI debug;
     InputDevice leftController, rightController;
 
     float interfaceDistance = 1.0f;
@@ -19,7 +18,6 @@ public class InterfacePlacer : MonoBehaviour
         mainCameraTransform = GameObject.Find("Main Camera").transform;
         leftControllerTransform = GameObject.Find("LeftHand Controller").transform;
         rightControllerTransform = GameObject.Find("RightHand Controller").transform;
-        //debug = GameObject.Find("DebugCanvas").GetComponent<TextMeshProUGUI>();
 
         // place interface on the right bottom
         //testInterfaceTransform.position = new Vector3(1.0f, -0.25f, 1.0f);
@@ -30,8 +28,6 @@ public class InterfacePlacer : MonoBehaviour
 
     void Update()
     {
-        //debug.text = "controlers: " + leftController.isValid.ToString() + " " + rightController.isValid.ToString();
-
         if(!leftController.isValid | !rightController.isValid)
         {
             findControllers();
@@ -79,7 +75,6 @@ public class InterfacePlacer : MonoBehaviour
         }
 
     }
-
     void findControllers()
     {
         List<InputDevice> devices = new List<InputDevice>();

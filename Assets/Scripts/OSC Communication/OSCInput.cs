@@ -31,14 +31,12 @@ public class OSCInput : MonoBehaviour
     #endregion
 
     // OSC variables
-
     public int oscPortIn = 6000; // Port for OSC
-
     OscServer server;
 
     public string rendererIpAddress;
     public bool UIUpdateNeeded;
-    public bool testIsOn;
+    public string testSceneType;
     public int numOfTrials, trialIndex;
     public List<string> screenMessages = new List<string>();
     public List<string> ratingLabels = new List<string>();
@@ -58,6 +56,10 @@ public class OSCInput : MonoBehaviour
     private void Start()
     {
         initOscServer();
+
+        //testSceneType = "start_scene";
+        testSceneType = "test_scene_localization";
+        UIUpdateNeeded = true;
     }
 
     void OnDestroy()
@@ -70,24 +72,15 @@ public class OSCInput : MonoBehaviour
         server = new OscServer(oscPortIn); // Create OSC server with port number
         Debug.Log("OSC receiver created");
 
-        // Receives OSC data to show / hide UI
+        // Receives OSC data to show proper test screen/scene
         server.MessageDispatcher.AddCallback(
-               "/showUI", // OSC address
+               "/testSceneType", // OSC address
                (string address, OscDataHandle data) =>
                {
-                   if (data.GetElementAsInt(0) != null)
+                   if (data.GetElementAsString(0) != null)
                    {
-                       if (data.GetElementAsInt(0) == 1)
-                       {
-                           testIsOn = true;
-                           UIUpdateNeeded = true;
-                       }
-                       else
-                       {
-                           testIsOn = false;
-                           UIUpdateNeeded = true;
-                           //visibleUI = false;
-                       }
+                       testSceneType = data.GetElementAsString(0);
+                       UIUpdateNeeded = true;
                    }
                }
            );
@@ -131,6 +124,7 @@ public class OSCInput : MonoBehaviour
                }
            );
 
+        ////// MIXED METHODS STUFF
         // receives messages to set rating labels
         server.MessageDispatcher.AddCallback(
                 "/ratingLabel", // OSC address
@@ -275,5 +269,7 @@ public class OSCInput : MonoBehaviour
                    }
                }
            );
+
+        ////// LOCALIZATION TEST STUFF
     }
 }

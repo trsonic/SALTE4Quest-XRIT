@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.XR.Interaction.Toolkit;
 using TMPro;
 
 using System.Net;
@@ -56,23 +57,36 @@ public class UIBuilder : MonoBehaviour
         buttonList.Add(transform.Find("ButtonCanvas/NextButton").gameObject);
         buttonList.Add(transform.Find("ButtonCanvas/FinishButton").gameObject);
         
-        SetStartScreen();
+        //SetStartScene("start");
     }
 
-    void SetStartScreen()
+    void SetStartScene(string type)
     {
         foreach (var button in buttonList) button.SetActive(false); // hide all buttons at the start
 
         trialIndexMessage.text = "";
         trialNameMessage.text = "Spatial Audio Listening Test Environment";
-        instructionMessage.text = "\n\n\n" +
+        if(type == "start")
+        {
+            instructionMessage.text = "\n\n\n" +
             "- take the VR headset off and lauch the SALTE audio renderer,\n" +
             "- enter the following IP address: " + localIp + " in the renderer OSC configuration window,\n" +
+            "- click Connect OSC\n";
+        }
+        else if (type == "mixed")
+        {
+            instructionMessage.text = "\n\n\n" +
             "- load the test configuration JSON file,\n" +
             "- select the result CSV file,\n" +
             "- click Begin to start the test.\n\n" +
             "Use the trigger button to select conditions and change trials.\n" +
             "By holding down grip button and operating joystick you can reposition and resize the test interface.\n";
+        }
+        else if (type == "localization")
+        {
+            instructionMessage.text = "\n\n\n" +
+            "BLA BLA BLAAAAA\n";
+        }
 
         labelPrefab.SetActive(false);
         sliderPrefab.SetActive(false);
@@ -88,8 +102,21 @@ public class UIBuilder : MonoBehaviour
     {
         if(OSCInput.Instance.UIUpdateNeeded)
         {
-            if(OSCInput.Instance.testIsOn)
+            if (OSCInput.Instance.testSceneType == "start_scene")
             {
+                showUI(true);
+                SetStartScene("start");
+                GameObject.Find("OculusTouchControls").GetComponent<Image>().enabled = false;
+            }
+            else if (OSCInput.Instance.testSceneType == "start_scene_mixed_methods")
+            {
+                showUI(true);
+                SetStartScene("mixed");
+                GameObject.Find("OculusTouchControls").GetComponent<Image>().enabled = true;
+            }
+            else if (OSCInput.Instance.testSceneType == "test_scene_mixed_methods")
+            {
+                showUI(true);
                 if (lastTrialIndex != OSCInput.Instance.trialIndex)
                 {
                     if (OSCInput.Instance.screenMessages.Count == 3)
@@ -110,14 +137,30 @@ public class UIBuilder : MonoBehaviour
                 updateButtonStates();
                 GameObject.Find("OculusTouchControls").GetComponent<Image>().enabled = false;
             }
-            else
+            else if (OSCInput.Instance.testSceneType == "start_scene_localization")
             {
-                SetStartScreen();
+                showUI(true);
+                SetStartScene("localization");
                 GameObject.Find("OculusTouchControls").GetComponent<Image>().enabled = true;
+            }
+            else if (OSCInput.Instance.testSceneType == "test_scene_localization")
+            {
+                showUI(false);
             }
 
             OSCInput.Instance.UIUpdateNeeded = false;
         }
+    }
+    private void showUI(bool show)
+    {
+        GameObject.Find("User Interface").GetComponent<Canvas>().enabled = show;
+        GameObject.Find("LeftHand Controller").GetComponent<XRInteractorLineVisual>().enabled = show;
+        GameObject.Find("RightHand Controller").GetComponent<XRInteractorLineVisual>().enabled = show;
+
+        if (show)
+            LocalizationInterface.Instance.deinit();
+        else
+            LocalizationInterface.Instance.init();
     }
 
     private void createLabels()
