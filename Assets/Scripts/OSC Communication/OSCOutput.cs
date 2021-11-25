@@ -48,9 +48,9 @@ public class OSCOutput : MonoBehaviour
         if (client != null)
         {
             // send ht data
-            float roll = convertDegree(_headTrackedCamera.transform.localEulerAngles.z) * -1;
-            float pitch = convertDegree(_headTrackedCamera.transform.localEulerAngles.x) * -1;
-            float yaw = convertDegree(_headTrackedCamera.transform.localEulerAngles.y);
+            float roll = wrapAngle(_headTrackedCamera.transform.localEulerAngles.z) * -1;
+            float pitch = wrapAngle(_headTrackedCamera.transform.localEulerAngles.x) * -1;
+            float yaw = wrapAngle(_headTrackedCamera.transform.localEulerAngles.y - LocalizationInterface.Instance.horizontalMeshRotation);
             client.Send("/rendering/htrpy", roll, pitch, yaw);
         }
     }
@@ -70,13 +70,20 @@ public class OSCOutput : MonoBehaviour
         if (client != null) client.Send("/slider", (int)sliderIndex, (float)sliderValue);
     }
 
-    private float convertDegree(float deg)
+    // general OSC sender methods
+    public void sendOSCMessage(string address, float value)
     {
-        float angle = deg;
+        if (client != null) client.Send(address, (float)value);
+    }
+    public void sendOSCMessage(string address, string msg)
+    {
+        if (client != null) client.Send(address, (string)msg);
+    }
 
-        if (deg > 180)
-            angle -= 360;
-
-        return angle;
+    private float wrapAngle(float deg)
+    {
+        while (deg <= -180.0f) deg += 360.0f;
+        while (deg > 180.0f) deg -= 360.0f;
+        return deg;
     }
 }

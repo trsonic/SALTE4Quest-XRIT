@@ -56,8 +56,6 @@ public class UIBuilder : MonoBehaviour
         buttonList.Add(transform.Find("ButtonCanvas/PreviousButton").gameObject);
         buttonList.Add(transform.Find("ButtonCanvas/NextButton").gameObject);
         buttonList.Add(transform.Find("ButtonCanvas/FinishButton").gameObject);
-        
-        //SetStartScene("start");
     }
 
     void SetStartScene(string type)
@@ -85,7 +83,7 @@ public class UIBuilder : MonoBehaviour
         else if (type == "localization")
         {
             instructionMessage.text = "\n\n\n" +
-            "BLA BLA BLAAAAA\n";
+            "- wait for the test to begin\n";
         }
 
         labelPrefab.SetActive(false);

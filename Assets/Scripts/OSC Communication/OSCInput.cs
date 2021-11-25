@@ -57,8 +57,8 @@ public class OSCInput : MonoBehaviour
     {
         initOscServer();
 
-        //testSceneType = "start_scene";
-        testSceneType = "test_scene_localization";
+        testSceneType = "start_scene";
+        //testSceneType = "test_scene_localization";
         UIUpdateNeeded = true;
     }
 
@@ -72,6 +72,18 @@ public class OSCInput : MonoBehaviour
         server = new OscServer(oscPortIn); // Create OSC server with port number
         Debug.Log("OSC receiver created");
 
+        // SALTE renderer ip address
+        server.MessageDispatcher.AddCallback(
+               "/rendererIp",
+               (string address, OscDataHandle data) =>
+               {
+                   if (data.GetElementAsString(0) != null)
+                   {
+                       rendererIpAddress = data.GetElementAsString(0);
+                   }
+               }
+           );
+
         // Receives OSC data to show proper test screen/scene
         server.MessageDispatcher.AddCallback(
                "/testSceneType", // OSC address
@@ -81,18 +93,6 @@ public class OSCInput : MonoBehaviour
                    {
                        testSceneType = data.GetElementAsString(0);
                        UIUpdateNeeded = true;
-                   }
-               }
-           );
-
-        // SALTE renderer ip address
-        server.MessageDispatcher.AddCallback(
-               "/rendererIp",
-               (string address, OscDataHandle data) =>
-               {
-                   if (data.GetElementAsString(0) != null)
-                   {
-                       rendererIpAddress = data.GetElementAsString(0);
                    }
                }
            );

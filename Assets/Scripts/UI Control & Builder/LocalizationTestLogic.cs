@@ -70,10 +70,10 @@ public class LocalizationTestLogic : MonoBehaviour
         headTargetCircle.GetComponent<Renderer>().material.color = Color.green;
         headTargetCircle.GetComponent<LineRenderer>().enabled = false;
 
-        // add guiding arrow
-        headTargetArrow.DrawArrow(new Vector3(0.0f, 1.3f, 1.0f), new Vector3(0.0f, 1.5f, 1.0f), 0.1f);
-        headTargetArrow.GetComponent<Renderer>().material.color = Color.red;
-        headTargetArrow.GetComponent<LineRenderer>().enabled = false;
+        //// add guiding arrow
+        //headTargetArrow.DrawArrow(new Vector3(0.0f, 1.3f, 1.0f), new Vector3(0.0f, 1.5f, 1.0f), 0.1f);
+        //headTargetArrow.GetComponent<Renderer>().material.color = Color.red;
+        //headTargetArrow.GetComponent<LineRenderer>().enabled = false;
     }
 
     public void InitializeTest()
