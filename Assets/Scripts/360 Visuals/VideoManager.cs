@@ -6,6 +6,11 @@ using UnityEngine.Networking;
 
 public class VideoManager : MonoBehaviour
 {
+    // 360 video playback
+    public string video360filename;
+    public float video360playbackPosition;
+    public bool video360playbackStatus;
+
     public Material skyboxMatNoVideo;
     public Material skyboxMat4Video;
     Material skyboxMat4Photo;
@@ -41,14 +46,14 @@ public class VideoManager : MonoBehaviour
     {
         for (; ; )
         {
-            string filename = OSCInput.Instance.video360filename;
+            string filename = video360filename;
             if (filename != "" && currentVideoFile != filename)
             {
                 load360Video(filename);
                 currentVideoFile = filename;
             }
 
-            bool status = OSCInput.Instance.video360playbackStatus;
+            bool status = video360playbackStatus;
 
             if (status != currentVideoStatus)
             {

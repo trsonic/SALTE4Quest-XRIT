@@ -31,15 +31,10 @@ public class OSCInput : MonoBehaviour
     #endregion
 
     // OSC variables
-    public int oscPortIn = 6000; // Port for OSC
+    int oscPortIn = 6000; // Port for receiving OSC
     OscServer server;
 
-    public string rendererIpAddress;
-
-    // 360 video playback
-    public string video360filename;
-    public float video360playbackPosition;
-    public bool video360playbackStatus;
+    public string rendererIpAddress = "127.0.0.1";
 
     private void Start()
     {

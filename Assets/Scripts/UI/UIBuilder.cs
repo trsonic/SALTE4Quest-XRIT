@@ -97,9 +97,9 @@ public class UIBuilder : MonoBehaviour
     {
         if (UIUpdateNeeded)
         {
-            if (tp==TestPhase.Start) SetStartScene();
-            else if (tp==TestPhase.InProgress) SetTestScene();
-            else if (tp==TestPhase.Final) SetFinalScene();
+            if (tp == TestPhase.Start) SetStartScene();
+            else if (tp == TestPhase.InProgress) SetTestScene();
+            else if (tp == TestPhase.Final) SetFinalScene();
             UIUpdateNeeded = false;
         }
     }

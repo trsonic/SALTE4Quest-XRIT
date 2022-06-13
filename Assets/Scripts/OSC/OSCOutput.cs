@@ -29,18 +29,15 @@ public class OSCOutput : MonoBehaviour
     }
     #endregion
 
-    string rendererIp = ""; // IP address for OSC
+    string rendererIp; // IP address for OSC
     int oscPortOut = 9000;
-
-    public string localIp;
-
     OscClient client;
 
     [SerializeField] GameObject _headTrackedCamera;
 
     private void Start()
     {
-        localIp = LocalIPAddress();
+
     }
 
     void OnDestroy()
@@ -66,22 +63,6 @@ public class OSCOutput : MonoBehaviour
             client.Send("/rendering/htrpy", roll, pitch, yaw);
         }
     }
-
-    public void sendBtnPressedOscMessage(string buttonId)
-    {
-        if (client != null) client.Send("/button", buttonId);
-    }
-
-    public void sendCondBtnPressedOscMessage(int sliderIndex)
-    {
-        if (client != null) client.Send("/condButton", (int)sliderIndex);
-    }
-
-    public void sendSliderMovedOscMessage(int sliderIndex, float sliderValue)
-    {
-        if (client != null) client.Send("/slider", (int)sliderIndex, (float)sliderValue);
-    }
-
     // general OSC sender methods
     public void sendOSCMessage(string address, float value)
     {
@@ -114,7 +95,6 @@ public class OSCOutput : MonoBehaviour
         }
         return localIP;
     }
-
     public string getRendererIP()
     {
         string ipstr = rendererIp + ":" + oscPortOut.ToString();
