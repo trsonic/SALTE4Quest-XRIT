@@ -38,25 +38,22 @@ public class SliderSettings : MonoBehaviour
 
     public void sendSliderMovedOscData()
     {
-        if (!OSCInput.Instance.UIUpdateNeeded)
+        if (!UIBuilder.Instance.getUpdateFlag())
         {
             Slider slider = GetComponent<Slider>();
-            OSCOutput.Instance.sendSliderMovedOscMessage(sliderIndex, slider.value);
+            DirectTestLogic.Instance.sliderChangedCallback(sliderIndex, slider.value);
         }
     }
 
     public void sendCondBtnPressedOscData()
     {
-        if (!OSCInput.Instance.UIUpdateNeeded)
-        {
-            OSCOutput.Instance.sendCondBtnPressedOscMessage(sliderIndex);
-        }
+        DirectTestLogic.Instance.condBtnPressedCallback(sliderIndex);
     }
 
     public void setButtonActiveState(bool state)
     {
         var colors = buttonObject.GetComponent<Button>().colors;
-        if(state)
+        if (state)
         {
             colors.normalColor = Color.red;
             colors.selectedColor = Color.red;

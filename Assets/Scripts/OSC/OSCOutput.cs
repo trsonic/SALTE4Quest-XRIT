@@ -2,6 +2,10 @@
 using UnityEngine;
 using OscJack;
 
+using System.Net;
+using System.Net.NetworkInformation;
+using System.Net.Sockets;
+
 public class OSCOutput : MonoBehaviour
 {
     #region Singleton
@@ -26,10 +30,18 @@ public class OSCOutput : MonoBehaviour
     #endregion
 
     string rendererIp = ""; // IP address for OSC
-    public int oscPortOut = 9000;
+    int oscPortOut = 9000;
+
+    public string localIp;
+
     OscClient client;
 
     [SerializeField] GameObject _headTrackedCamera;
+
+    private void Start()
+    {
+        localIp = LocalIPAddress();
+    }
 
     void OnDestroy()
     {
@@ -85,5 +97,27 @@ public class OSCOutput : MonoBehaviour
         while (deg <= -180.0f) deg += 360.0f;
         while (deg > 180.0f) deg -= 360.0f;
         return deg;
+    }
+
+    private static string LocalIPAddress()
+    {
+        IPHostEntry host;
+        string localIP = "0.0.0.0";
+        host = Dns.GetHostEntry(Dns.GetHostName());
+        foreach (IPAddress ip in host.AddressList)
+        {
+            if (ip.AddressFamily == AddressFamily.InterNetwork)
+            {
+                localIP = ip.ToString();
+                break;
+            }
+        }
+        return localIP;
+    }
+
+    public string getRendererIP()
+    {
+        string ipstr = rendererIp + ":" + oscPortOut.ToString();
+        return ipstr;
     }
 }
