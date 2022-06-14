@@ -29,10 +29,11 @@ public class DirectTestLogic : MonoBehaviour
     }
     #endregion
 
-    public string testPhase;
+    public enum TestPhase { Start, InProgress, Final }
+    public TestPhase testPhase;
+
     public int trialIndex;
     public string subjId;
-
 
     public List<DirectTestTrial> trialList = new List<DirectTestTrial>();
 
@@ -43,15 +44,23 @@ public class DirectTestLogic : MonoBehaviour
 
     void Update()
     {
-        if (testPhase == "test")
+        switch (testPhase)
         {
-            // use primary and secondary buttons to toggle A/B
+            case TestPhase.Start:
+                break;
+
+            case TestPhase.InProgress:
+                // use primary and secondary buttons to toggle A/B
+                break;
+
+            case TestPhase.Final:
+                break;
         }
     }
 
     public void InitializeTest()
     {
-        testPhase = "intro";
+        testPhase = TestPhase.Start;
         trialIndex = 0;
 
         createTrialList();
@@ -128,7 +137,7 @@ public class DirectTestLogic : MonoBehaviour
 
         if (buttonName == "BeginButton")
         {
-            testPhase = "test";
+            testPhase = TestPhase.InProgress;
             changeTrial(0);
         }
         else if (buttonName == "ReferenceButton")
@@ -168,7 +177,7 @@ public class DirectTestLogic : MonoBehaviour
         {
             AudioManager.Instance.StopPlayback();
             exportResults();
-            testPhase = "finish";
+            testPhase = TestPhase.Final;
         }
 
         UIBuilder.Instance.setUpdateFlag();

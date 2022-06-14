@@ -30,7 +30,7 @@ public class VideoManager : MonoBehaviour
         RenderSettings.skybox = skyboxMatNoVideo;
 
 
-        //StartCoroutine(load360photo("audiolab1.jpg"));
+        // StartCoroutine(load360photo("audiolab1.jpg")); // test picture
         StartCoroutine(control360VideoPlayback());
     }
 

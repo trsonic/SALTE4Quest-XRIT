@@ -30,10 +30,7 @@ public class UIBuilder : MonoBehaviour
     #endregion
 
     public enum TestType { MixedMethods, Localization }
-    public TestType tt;
-    public enum TestPhase { Start, InProgress, Final }
-    public TestPhase tp;
-
+    public TestType testType;
 
     private bool UIUpdateNeeded;
 
@@ -89,17 +86,23 @@ public class UIBuilder : MonoBehaviour
 
         initUI();
 
-        tt = TestType.Localization;
-        tp = TestPhase.Start;
+        testType = TestType.Localization;
         setUpdateFlag();
     }
     void Update()
     {
         if (UIUpdateNeeded)
         {
-            if (tp == TestPhase.Start) SetStartScene();
-            else if (tp == TestPhase.InProgress) SetTestScene();
-            else if (tp == TestPhase.Final) SetFinalScene();
+            switch (testType)
+            {
+                case TestType.MixedMethods:
+                    SetMixedMethodsScenes();
+                    break;
+                case TestType.Localization:
+                    SetLocalizationScenes();
+                    break;
+            }
+
             UIUpdateNeeded = false;
         }
     }
@@ -144,103 +147,108 @@ public class UIBuilder : MonoBehaviour
         //else
         //    LocalizationInterface.Instance.init();
     }
-    void SetStartScene()
+
+    void SetMixedMethodsScenes()
     {
-        // set text instructions
-        trialIndexMessage.text = "";
-        trialNameMessage.text = "Spatial Audio Listening Test Environment";
-        if (tt == TestType.MixedMethods)
+        switch (DirectTestLogic.Instance.testPhase)
         {
-            instructionMessage.text = "\n" +
-                "Thank you for agreeing to participate in this listening test.\n" +
-                "You will be presented with a number of screens containing sliders and buttons.\n" +
-                "Use buttons (A, B, C, ...) to trigger different experimental conditions.\n" +
-                "Use sliders to rate these conditions according to the specified perceptual attribute. Please rate all conditions.\n" +
-                "The results of this test will be saved on your device and uploaded automatically once you finish the test.\n" +
-                "Click Begin Test to confirm your consent and start the test.";
+            case DirectTestLogic.TestPhase.Start:
+                instructionMessage.text = "\n" +
+                    "Thank you for agreeing to participate in this listening test.\n" +
+                    "You will be presented with a number of screens containing sliders and buttons.\n" +
+                    "Use buttons (A, B, C, ...) to trigger different experimental conditions.\n" +
+                    "Use sliders to rate these conditions according to the specified perceptual attribute. Please rate all conditions.\n" +
+                    "The results of this test will be saved on your device and uploaded automatically once you finish the test.\n" +
+                    "Click Begin Test to confirm your consent and start the test.";
 
-            //instructionMessage.text = "\n\n\n" +
-            //"- take the VR headset off and lauch the SALTE audio renderer,\n" +
-            //"- enter the following IP address: " + OSCOutput.Instance.localIp + " in the renderer OSC configuration window,\n" +
-            //"- click Connect OSC\n";
+                //instructionMessage.text = "\n\n\n" +
+                //"- take the VR headset off and lauch the SALTE audio renderer,\n" +
+                //"- enter the following IP address: " + OSCOutput.Instance.localIp + " in the renderer OSC configuration window,\n" +
+                //"- click Connect OSC\n";
 
-            //instructionMessage.text = "\n\n\n" +
-            //"- load the test configuration JSON file,\n" +
-            //"- select the result CSV file,\n" +
-            //"- click Begin to start the test.\n\n" +
-            //"Use the trigger button to select conditions and change trials.\n" +
-            //"By holding down grip button and operating joystick you can reposition and resize the test interface.\n";
-        }
-        else if (tt == TestType.Localization)
-        {
-            instructionMessage.text = "\n\n"
-                + "localization test" + "\n"
-                + "current renderer ip is set to: " + OSCOutput.Instance.getRendererIP() + "\n"
-                + "click Begin for the test to begin" + "\n";
-        }
+                //instructionMessage.text = "\n\n\n" +
+                //"- load the test configuration JSON file,\n" +
+                //"- select the result CSV file,\n" +
+                //"- click Begin to start the test.\n\n" +
+                //"Use the trigger button to select conditions and change trials.\n" +
+                //"By holding down grip button and operating joystick you can reposition and resize the test interface.\n";
 
-        // show begin and quit buttons
-        beginTestButton.SetActive(true);
-        quitAppButton.SetActive(true);
-    }
-    void SetTestScene()
-    {
-        if (tt == TestType.MixedMethods)
-        {
-            localDTT = DirectTestLogic.Instance.trialList[DirectTestLogic.Instance.trialIndex];
+                // show begin and quit buttons
+                beginTestButton.SetActive(true);
+                quitAppButton.SetActive(true);
+                break;
 
-            showUI(true);
-            if (lastTrialIndex != DirectTestLogic.Instance.trialIndex)
-            {
-                if (localDTT.screenMessages.Count == 2)
+            case DirectTestLogic.TestPhase.InProgress:
+                localDTT = DirectTestLogic.Instance.trialList[DirectTestLogic.Instance.trialIndex];
+
+                showUI(true);
+                if (lastTrialIndex != DirectTestLogic.Instance.trialIndex)
                 {
-                    int displayedTrialIndex = DirectTestLogic.Instance.trialIndex + 1;
-                    trialIndexMessage.text = "Trial " + displayedTrialIndex.ToString() + " of " + DirectTestLogic.Instance.trialList.Count.ToString();
-                    trialNameMessage.text = localDTT.screenMessages[0];
-                    instructionMessage.text = localDTT.screenMessages[1];
+                    if (localDTT.screenMessages.Count == 2)
+                    {
+                        int displayedTrialIndex = DirectTestLogic.Instance.trialIndex + 1;
+                        trialIndexMessage.text = "Trial " + displayedTrialIndex.ToString() + " of " + DirectTestLogic.Instance.trialList.Count.ToString();
+                        trialNameMessage.text = localDTT.screenMessages[0];
+                        instructionMessage.text = localDTT.screenMessages[1];
+                    }
+
+                    createLabels();
+                    updateLabels();
+                    createSliders();
+                    updateButtons();
+                    lastTrialIndex = DirectTestLogic.Instance.trialIndex;
                 }
 
-                createLabels();
-                updateLabels();
-                createSliders();
-                updateButtons();
-                lastTrialIndex = DirectTestLogic.Instance.trialIndex;
-            }
+                updateSliders();
+                updateButtonStates();
+                GameObject.Find("OculusTouchControls").GetComponent<Image>().enabled = false;
+                break;
 
-            updateSliders();
-            updateButtonStates();
-            GameObject.Find("OculusTouchControls").GetComponent<Image>().enabled = false;
-        }
-        else if(tt == TestType.Localization)
-        {
-            initUI();
-            showUI(false);
+            case DirectTestLogic.TestPhase.Final:
+                initUI();
+
+                instructionMessage.text = "\n\n" +
+                    "Well done!\n" +
+                    "Your test results have been saved under this ID:\n" +
+                    DirectTestLogic.Instance.subjId;
+
+                quitAppButton.SetActive(true);
+                showUI(true);
+
+                break;
         }
     }
 
-    void SetFinalScene()
+    void SetLocalizationScenes()
     {
-        initUI();
-
-        if (tt == TestType.MixedMethods)
+        switch (LocalizationTestLogic.Instance.testPhase)
         {
-            instructionMessage.text = "\n\n" +
-                "Well done!\n" +
-                "Your test results have been saved under this ID:\n" +
-                DirectTestLogic.Instance.subjId;
-        }
-        else if (tt == TestType.Localization)
-        {
-            instructionMessage.text = "\n\n" +
-                "Well done!\n" +
-                "Your test results have been saved under this ID:\n" +
-                LocalizationTestLogic.Instance.subjId;
-        }
+            case LocalizationTestLogic.TestPhase.Start:
+                instructionMessage.text = "\n\n"
+                    + "localization test" + "\n"
+                    + "current renderer ip is set to: " + OSCOutput.Instance.getRendererIP() + "\n"
+                    + "click Begin for the test to begin" + "\n";
 
-        quitAppButton.SetActive(true);
-        showUI(true);
+                // show begin and quit buttons
+                beginTestButton.SetActive(true);
+                quitAppButton.SetActive(true);
+                break;
+            case LocalizationTestLogic.TestPhase.InProgress:
+                initUI();
+                showUI(false);
+                break;
+
+            case LocalizationTestLogic.TestPhase.Final:
+                initUI();
+                instructionMessage.text = "\n\n" +
+                    "Well done!\n" +
+                    "Your test results have been saved under this ID:\n" +
+                    LocalizationTestLogic.Instance.subjId;
+                quitAppButton.SetActive(true);
+                showUI(true);
+                break;
+        }
     }
-
     public void btnPressedCallback(string buttonName)
     {
         if (buttonName == "QuitAppButton")
