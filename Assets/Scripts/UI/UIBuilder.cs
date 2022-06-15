@@ -141,11 +141,6 @@ public class UIBuilder : MonoBehaviour
         GameObject.Find("User Interface").GetComponent<Canvas>().enabled = show;
         GameObject.Find("LeftHand Controller").GetComponent<XRInteractorLineVisual>().enabled = show;
         GameObject.Find("RightHand Controller").GetComponent<XRInteractorLineVisual>().enabled = show;
-
-        //if (show)
-        //    LocalizationInterface.Instance.deinit();
-        //else
-        //    LocalizationInterface.Instance.init();
     }
 
     void SetMixedMethodsScenes()
@@ -224,14 +219,17 @@ public class UIBuilder : MonoBehaviour
         switch (LocalizationTestLogic.Instance.testPhase)
         {
             case LocalizationTestLogic.TestPhase.Start:
+                initUI();
                 instructionMessage.text = "\n\n"
                     + "localization test" + "\n"
                     + "current renderer ip is set to: " + OSCOutput.Instance.getRendererIP() + "\n"
-                    + "click Begin for the test to begin" + "\n";
+                    + "click Start for the test to begin" + "\n";
 
                 // show begin and quit buttons
+                beginTestButton.GetComponentInChildren<TextMeshProUGUI>().text = "Start";
                 beginTestButton.SetActive(true);
                 quitAppButton.SetActive(true);
+                showUI(true);
                 break;
             case LocalizationTestLogic.TestPhase.InProgress:
                 initUI();
@@ -244,6 +242,8 @@ public class UIBuilder : MonoBehaviour
                     "Well done!\n" +
                     "Your test results have been saved under this ID:\n" +
                     LocalizationTestLogic.Instance.subjId;
+                beginTestButton.GetComponentInChildren<TextMeshProUGUI>().text = "Restart";
+                beginTestButton.SetActive(true);
                 quitAppButton.SetActive(true);
                 showUI(true);
                 break;

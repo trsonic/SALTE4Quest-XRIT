@@ -175,7 +175,7 @@ public class LocalizationInterface : MonoBehaviour
                 float headElevationAngle = Vector3.SignedAngle(meshContainer.transform.up, meshHeadVec, Vector3.Cross(meshContainer.transform.up, meshHeadVec));
                 headElevationAngle = (headElevationAngle - 90.0f) * -1.0f;
                 string msg = "measured head azi: " + headAzimuthAngle.ToString("F1") + ", ele: " + headElevationAngle.ToString("F1");
-                TextDisplays.Instance.PrintMessage(msg);
+                TextDisplays.Instance.PrintDebugMessage(msg);
 
                 // obtain current azimuth, elevation and distance of the pointer
                 Vector3 meshPointerVec = Vector3.Normalize(visualPointer.transform.position - meshContainer.transform.position);
@@ -185,7 +185,7 @@ public class LocalizationInterface : MonoBehaviour
                 pointerElevationAngle = (pointerElevationAngle - 90.0f) * -1.0f;
                 float pointerDistance = Vector3.Distance(meshContainer.transform.position, visualPointer.transform.position);
                 msg = "measured pointer azi: " + pointerAzimuthAngle.ToString("F1") + ", ele: " + pointerElevationAngle.ToString("F1") + ", dist: " + pointerDistance.ToString("F2");
-                TextDisplays.Instance.PrintMessage(msg);
+                TextDisplays.Instance.PrintDebugMessage(msg);
 
                 //// obtain current azimuth, elevation and distance of the pointer ---- for static binaural
                 //Vector3 hsVec = Vector3.Normalize(visualPointer.transform.position - cameraObject.transform.position);

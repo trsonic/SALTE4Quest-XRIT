@@ -35,21 +35,24 @@ public class TextDisplays : MonoBehaviour
         debugDisplay = GameObject.Find("Debug Canvas");
         hmdFixedDisplay = GameObject.Find("HMD-fixed Canvas");
 
-        ShowDebugConsole(false);
+        ShowDebugConsole(true);
     }
     private void Update()
     {
+        debugDisplay.transform.position = mainCamera.transform.position + Vector3.forward * 2.5f;
+        //debugDisplay.transform.rotation = Quaternion.LookRotation(hmdFixedDisplay.transform.position - mainCamera.transform.position);
+
         hmdFixedDisplay.transform.position = mainCamera.transform.position + mainCamera.transform.forward * 1.0f;
         hmdFixedDisplay.transform.rotation = Quaternion.LookRotation(hmdFixedDisplay.transform.position - mainCamera.transform.position);
     }
 
     #region Debug Console
-    public void PrintMessage(string message)
+    public void PrintDebugMessage(string message)
     {
         debugDisplay.GetComponent<TextMeshProUGUI>().text += message + "\n";
     }
 
-    public void ClearAndPrintMessage(string message)
+    public void ClearAndPrintDebugMessage(string message)
     {
         debugDisplay.GetComponent<TextMeshProUGUI>().text = message;
     }

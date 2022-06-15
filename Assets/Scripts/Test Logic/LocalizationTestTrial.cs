@@ -22,7 +22,7 @@ public class LocalizationTestTrial
         targetAz = azimuth;
         targetEl = elevation;
     }
-    public void setTargetDist(float distance) { targetDist = distance; }
+    public void setTargetDistance(float distance) { targetDist = distance; }
     public float getTargetAzimuth() { return targetAz; }
     public float getTargetElevation() { return targetEl; }
     public float getTargetDistance() { return targetDist; }

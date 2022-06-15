@@ -9,9 +9,7 @@ public class InterfacePlacer : MonoBehaviour
     Transform testInterfaceTransform, mainCameraTransform, leftControllerTransform, rightControllerTransform;
     InputDevice leftController, rightController;
 
-    float interfaceDistance = 1.0f;
-    float interfaceScale = 0.002f;
-
+    float interfaceDistance, interfaceScale;
     void Start()
     {
         testInterfaceTransform = GameObject.Find("User Interface").transform;
@@ -19,9 +17,18 @@ public class InterfacePlacer : MonoBehaviour
         leftControllerTransform = GameObject.Find("LeftHand Controller").transform;
         rightControllerTransform = GameObject.Find("RightHand Controller").transform;
 
-        // place interface on the right bottom
-        //testInterfaceTransform.position = new Vector3(1.0f, -0.25f, 1.0f);
+        // place interface in front
+        interfaceDistance = 2.0f;
+        interfaceScale = 0.003f;
+        testInterfaceTransform.position = mainCameraTransform.position + mainCameraTransform.forward * interfaceDistance;
         testInterfaceTransform.rotation = Quaternion.LookRotation(testInterfaceTransform.position - mainCameraTransform.position);
+
+
+        //// place interface on the right bottom
+        //interfaceDistance = 1.0f;
+        //interfaceScale = 0.002f;
+        //testInterfaceTransform.position = new Vector3(1.0f, -0.25f, 1.0f);
+        //testInterfaceTransform.rotation = Quaternion.LookRotation(testInterfaceTransform.position - mainCameraTransform.position);
 
         findControllers();
     }

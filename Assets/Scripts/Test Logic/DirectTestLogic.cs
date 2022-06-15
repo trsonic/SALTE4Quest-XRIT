@@ -187,7 +187,7 @@ public class DirectTestLogic : MonoBehaviour
     {
         trialIndex = newTrialIndex;
 
-        TextDisplays.Instance.PrintMessage("loading scene: " + trialList[trialIndex].getTrialId() + ", AB conditions reversed: " + trialList[trialIndex].ABconditionsReversed.ToString());
+        TextDisplays.Instance.PrintDebugMessage("loading scene: " + trialList[trialIndex].getTrialId() + ", AB conditions reversed: " + trialList[trialIndex].ABconditionsReversed.ToString());
 
         // set audio source
         if (trialList[trialIndex].getTrialId() == "scene1") AudioManager.Instance.LoadScene(0);
@@ -232,8 +232,8 @@ public void exportResults()
         // open and write csv file
         string csvpath = Application.persistentDataPath + "/results_" + subjId + ".csv";
 
-        TextDisplays.Instance.PrintMessage("exporting results...");
-        TextDisplays.Instance.PrintMessage(csvpath);
+        TextDisplays.Instance.PrintDebugMessage("exporting results...");
+        TextDisplays.Instance.PrintDebugMessage(csvpath);
 
         StreamWriter writer = new StreamWriter(csvpath, true);
         //writer.WriteLine("subjId,date,trialId,condId,rating");
@@ -256,7 +256,7 @@ public void exportResults()
                                     trial.attributeLabels[i] + "," +
                                     trial.sliderValues[i];
                 writer.WriteLine(txtLine);
-                TextDisplays.Instance.PrintMessage(txtLine);
+                TextDisplays.Instance.PrintDebugMessage(txtLine);
             }
         }
         writer.Close();
