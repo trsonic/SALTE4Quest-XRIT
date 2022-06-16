@@ -44,10 +44,12 @@ public class UIBuilder : MonoBehaviour
     RectTransform sliderCanvasTransform;
 
     //GameObject selectLeftControllerButton, selectRightControllerButton;
-    GameObject beginTestButton, quitAppButton;
+    GameObject startTestButton, quitAppButton, restartTestButton;
     [SerializeField] List<GameObject> activeLabels = new List<GameObject>();
     [SerializeField] List<GameObject> activeSliders = new List<GameObject>();
     [SerializeField] List<GameObject> buttonList = new List<GameObject>();
+
+    GameObject controllersHelp;
 
     int lastTrialIndex;
     int[] lastButtonStates = new int[6];
@@ -71,8 +73,10 @@ public class UIBuilder : MonoBehaviour
 
         //selectLeftControllerButton = transform.Find("ButtonCanvas/SelectLeftControllerButton").gameObject;
         //selectRightControllerButton = transform.Find("ButtonCanvas/SelectRightControllerButton").gameObject;
-        beginTestButton = transform.Find("ButtonCanvas/BeginButton").gameObject;
+        startTestButton = transform.Find("ButtonCanvas/StartButton").gameObject;
         quitAppButton = transform.Find("ButtonCanvas/QuitAppButton").gameObject;
+        restartTestButton = transform.Find("ButtonCanvas/RestartButton").gameObject;
+
 
         buttonList.Add(transform.Find("ButtonCanvas/ReferenceButton").gameObject);
         buttonList.Add(transform.Find("ButtonCanvas/AButton").gameObject);
@@ -83,6 +87,8 @@ public class UIBuilder : MonoBehaviour
         buttonList.Add(transform.Find("ButtonCanvas/PreviousButton").gameObject);
         buttonList.Add(transform.Find("ButtonCanvas/NextButton").gameObject);
         buttonList.Add(transform.Find("ButtonCanvas/FinishButton").gameObject);
+
+        controllersHelp = transform.Find("OculusTouchControllers").gameObject;
 
         initUI();
 
@@ -119,8 +125,9 @@ public class UIBuilder : MonoBehaviour
     void initUI()
     {
         // hide buttons
-        beginTestButton.SetActive(false);
+        startTestButton.SetActive(false);
         quitAppButton.SetActive(false);
+        restartTestButton.SetActive(false);
 
         // hide all mixed methods stuff
         foreach (var button in buttonList) button.SetActive(false);
@@ -135,6 +142,9 @@ public class UIBuilder : MonoBehaviour
         trialIndexMessage.text = "";
         trialNameMessage.text = "";
         instructionMessage.text = "";
+
+        // hide controllers help canvas
+        controllersHelp.SetActive(false);
     }
     public void showUI(bool show)
     {
@@ -169,8 +179,9 @@ public class UIBuilder : MonoBehaviour
                 //"By holding down grip button and operating joystick you can reposition and resize the test interface.\n";
 
                 // show begin and quit buttons
-                beginTestButton.SetActive(true);
+                startTestButton.SetActive(true);
                 quitAppButton.SetActive(true);
+                controllersHelp.SetActive(true);
                 break;
 
             case DirectTestLogic.TestPhase.InProgress:
@@ -196,7 +207,7 @@ public class UIBuilder : MonoBehaviour
 
                 updateSliders();
                 updateButtonStates();
-                GameObject.Find("OculusTouchControls").GetComponent<Image>().enabled = false;
+                controllersHelp.SetActive(false);
                 break;
 
             case DirectTestLogic.TestPhase.Final:
@@ -225,10 +236,10 @@ public class UIBuilder : MonoBehaviour
                     + "current renderer ip is set to: " + OSCOutput.Instance.getRendererIP() + "\n"
                     + "click Start for the test to begin" + "\n";
 
-                // show begin and quit buttons
-                beginTestButton.GetComponentInChildren<TextMeshProUGUI>().text = "Start";
-                beginTestButton.SetActive(true);
+                // show start and quit buttons
+                startTestButton.SetActive(true);
                 quitAppButton.SetActive(true);
+                controllersHelp.SetActive(true);
                 showUI(true);
                 break;
             case LocalizationTestLogic.TestPhase.InProgress:
@@ -242,8 +253,8 @@ public class UIBuilder : MonoBehaviour
                     "Well done!\n" +
                     "Your test results have been saved under this ID:\n" +
                     LocalizationTestLogic.Instance.subjId;
-                beginTestButton.GetComponentInChildren<TextMeshProUGUI>().text = "Restart";
-                beginTestButton.SetActive(true);
+                // show restart and quit buttons
+                restartTestButton.SetActive(true);
                 quitAppButton.SetActive(true);
                 showUI(true);
                 break;
@@ -251,10 +262,26 @@ public class UIBuilder : MonoBehaviour
     }
     public void btnPressedCallback(string buttonName)
     {
-        if (buttonName == "QuitAppButton")
+        switch (buttonName)
         {
-            Application.Quit();
+            //case "SelectLeftControllerButton":
+            //    LocalizationTestLogic.Instance.useLeftController4Pointing = true;
+            //    break;
+
+            case "StartButton":
+                LocalizationTestLogic.Instance.startTest();
+                break;
+
+            case "RestartButton":
+                LocalizationTestLogic.Instance.testPhase = LocalizationTestLogic.TestPhase.Start;
+                break;
+
+            case "QuitAppButton":
+                Application.Quit();
+                break;
         }
+
+        UIBuilder.Instance.setUpdateFlag();
     }
     private void createLabels()
     {

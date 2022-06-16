@@ -59,18 +59,18 @@ public class OSCOutput : MonoBehaviour
             // send ht data
             float roll = wrapAngle(_headTrackedCamera.transform.localEulerAngles.z) * -1;
             float pitch = wrapAngle(_headTrackedCamera.transform.localEulerAngles.x) * -1;
-            float yaw = wrapAngle(_headTrackedCamera.transform.localEulerAngles.y - LocalizationInterface.Instance.horizontalMeshRotation);
-            client.Send("/rendering/htrpy", roll, pitch, yaw);
+            float yaw = wrapAngle(_headTrackedCamera.transform.localEulerAngles.y - LocalizationTestLogic.Instance.horizontalMeshRotation);
+            //client.Send("/rendering/htrpy", roll, pitch, yaw);
         }
     }
     // general OSC sender methods
     public void sendOSCMessage(string address, float value)
     {
-        if (client != null) client.Send(address, (float)value);
+        //if (client != null) client.Send(address, (float)value);
     }
     public void sendOSCMessage(string address, string msg)
     {
-        if (client != null) client.Send(address, (string)msg);
+        //if (client != null) client.Send(address, (string)msg);
     }
 
     private float wrapAngle(float deg)

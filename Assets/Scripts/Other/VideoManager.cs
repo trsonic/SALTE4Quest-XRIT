@@ -99,4 +99,23 @@ public class VideoManager : MonoBehaviour
             skyboxMat4Photo.mainTexture = ((DownloadHandlerTexture)request.downloadHandler).texture;
         }
     }
+
+    //public void ChangePhoto360(string filepath)
+    //{
+    //    string filePath = filepath;
+
+    //    if (System.IO.File.Exists(filePath))
+    //    {
+    //        Debug.Log("Exists!!");
+    //        var bytes = System.IO.File.ReadAllBytes(filePath);
+    //        var tex = new Texture2D(4096, 2048, TextureFormat.RGBA32, false);
+
+    //        tex.LoadImage(bytes);
+    //        photoMaterial.mainTexture = tex;
+    //    }
+    //    else
+    //    {
+    //        Debug.Log("No File Exists");
+    //    }
+    //}
 }

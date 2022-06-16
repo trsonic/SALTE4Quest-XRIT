@@ -29,8 +29,9 @@ public class LocalizationTestLogic : MonoBehaviour
     }
     #endregion
 
+    public bool enableEditorTriggerSlider = false;
     [Range(0.0f, 1.0f)]
-    public float trigger = 0.0f;
+    public float manualTrigger = 0.0f;
 
     public enum TestPhase { Start, InProgress, Final }
     public TestPhase testPhase;
@@ -88,17 +89,32 @@ public class LocalizationTestLogic : MonoBehaviour
 
         testPhase = TestPhase.Start;
     }
-    public void btnPressedCallback(string buttonName)
-    {
-        if (buttonName == "SelectLeftControllerButton") useLeftController4Pointing = true;
-        else if (buttonName == "SelectRightControllerButton") useLeftController4Pointing = false;
-        else if (buttonName == "BeginButton")
-        {
-            if (testPhase == TestPhase.Start) loadTrial(0);
-            else if (testPhase == TestPhase.Final) testPhase = TestPhase.Start;
-        }
 
-        UIBuilder.Instance.setUpdateFlag();
+    public void startTest()
+    {
+        // setup visuals
+        horizontalMeshRotation = 0.0f;
+        createHorizonMesh(meshDistance, .0025f * meshDistance);
+        headTargetCircle.GetComponent<LineRenderer>().enabled = true;
+        visualPointer.GetComponent<Renderer>().enabled = true;
+
+        // create subject id
+        subjId = "";
+        string[] alphabet = new string[26] { "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z" };
+        for (int i = 0; i < 8; ++i) subjId += alphabet[Random.Range(0, alphabet.Length)];
+
+        // create trial list
+        createTrialList();
+
+        // setup pointing controller
+        findPointingController();
+
+        // initialize remote audio renderer
+        //OSCOutput.Instance.sendOSCMessage("/attenuation", 0.0f);
+
+        _timeAtTestStart = Time.realtimeSinceStartup;
+        loadTrial(0);
+        testPhase = TestPhase.InProgress;
     }
     void createTrialList()
     {
@@ -177,6 +193,48 @@ public class LocalizationTestLogic : MonoBehaviour
         TextDisplays.Instance.PrintDebugMessage("trial liste size: " + trialList.Count.ToString());
 
         for (int i = 0; i < trialList.Count; ++i) TextDisplays.Instance.PrintDebugMessage("trial index: " + i.ToString() + ", condition: " + trialList[i].getConditionId());
+    }
+    void loadTrial(int index)
+    {
+        if (index >= 0 && index < trialList.Count)
+        {
+            trialIndex = index;
+
+            // debug console
+            TextDisplays.Instance.PrintDebugMessage("Trial index: " + trialIndex.ToString() +
+            ", condition ID: " + trialList[trialIndex].getConditionId() +
+            ", target az: " + trialList[trialIndex].getTargetAzimuth().ToString() +
+            ", target el: " + trialList[trialIndex].getTargetElevation().ToString());
+
+            StartCoroutine(DelayedLoad(0.5f));
+
+            // display trial info
+            string text = (trialIndex + 1).ToString() + " / " + trialList.Count.ToString();
+            StartCoroutine(DisplayTrialInfo(text, 0.25f, 0.0f, 0.25f));
+        }
+        else if (index == trialList.Count && trialList.Count > 0) // deinit
+        {
+            TextDisplays.Instance.PrintDebugMessage("Test finished.");
+            TextDisplays.Instance.PrintHMDMessage("");
+
+            yawPitchArrow.DisableArrow();
+            rollArrow.DisableArrow();
+            deleteHorizonMesh();
+            horizontalMeshRotation = 0.0f;
+            headTargetCircle.GetComponent<LineRenderer>().enabled = false;
+            visualPointer.GetComponent<Renderer>().enabled = false;
+            soundSource.GetComponent<Renderer>().enabled = false;
+
+            // de-initialize remote audio renderer
+            //OSCOutput.Instance.sendOSCMessage("/attenuation", 0.0f); ;
+
+            // dump results
+            ExportResults();
+
+            testPhase = TestPhase.Final;
+        }
+
+        UIBuilder.Instance.setUpdateFlag();
     }
     void Update()
     {
@@ -267,11 +325,13 @@ public class LocalizationTestLogic : MonoBehaviour
                 if (att != stimulusAttenuation)
                 {
                     stimulusAttenuation = att;
-                    OSCOutput.Instance.sendOSCMessage("/attenuation", stimulusAttenuation);
+                    //OSCOutput.Instance.sendOSCMessage("/attenuation", stimulusAttenuation);
                 }
 
                 // using trigger to confirm response
-                //pointingController.TryGetFeatureValue(CommonUsages.trigger, out float trigger);
+                pointingController.TryGetFeatureValue(CommonUsages.trigger, out float trigger);
+
+                if (enableEditorTriggerSlider) trigger = manualTrigger;
 
                 if (trigger > 0.5f && !triggerPressed && !delayedLoad)
                 {
@@ -344,68 +404,6 @@ public class LocalizationTestLogic : MonoBehaviour
                 break;
 
         }
-    }
-    void loadTrial(int index)
-    {
-        // init
-        if (index == 0)
-        {
-            // setup visuals
-            horizontalMeshRotation = 0.0f;
-            createHorizonMesh(meshDistance, .0025f * meshDistance);
-            headTargetCircle.GetComponent<LineRenderer>().enabled = true;
-            visualPointer.GetComponent<Renderer>().enabled = true;
-
-            // create trial list
-            createTrialList();
-
-            // setup pointing controller
-            findPointingController();
-
-            // initialize remote audio renderer
-            OSCOutput.Instance.sendOSCMessage("/attenuation", 0.0f);
-
-            _timeAtTestStart = Time.realtimeSinceStartup;
-            testPhase = TestPhase.InProgress;
-        }
-
-        if (index >= 0 && index < trialList.Count)
-        {
-            trialIndex = index;
-
-            // debug console
-            TextDisplays.Instance.PrintDebugMessage("Trial index: " + trialIndex.ToString() +
-            ", condition ID: " + trialList[trialIndex].getConditionId() +
-            ", target az: " + trialList[trialIndex].getTargetAzimuth().ToString() +
-            ", target el: " + trialList[trialIndex].getTargetElevation().ToString());
-
-            StartCoroutine(DelayedLoad(0.5f));
-
-            // display trial info
-            string text = (trialIndex + 1).ToString() + " / " + trialList.Count.ToString();
-            StartCoroutine(DisplayTrialInfo(text, 0.25f, 0.0f, 0.25f));
-        }
-        else if (index == trialList.Count && trialList.Count > 0) // deinit
-        {
-            testPhase = TestPhase.Final;
-            TextDisplays.Instance.PrintDebugMessage("Test finished.");
-            TextDisplays.Instance.PrintHMDMessage("");
-
-            yawPitchArrow.DisableArrow();
-            rollArrow.DisableArrow();
-            deleteHorizonMesh();
-            horizontalMeshRotation = 0.0f;
-            headTargetCircle.GetComponent<LineRenderer>().enabled = false;
-            visualPointer.GetComponent<Renderer>().enabled = false;
-
-            // de-initialize remote audio renderer
-            OSCOutput.Instance.sendOSCMessage("/attenuation", 0.0f); ;
-
-            // dump results
-            ExportResults();
-        }
-
-        UIBuilder.Instance.setUpdateFlag();
     }
     private void findPointingController()
     {
@@ -484,19 +482,13 @@ public class LocalizationTestLogic : MonoBehaviour
     {
         string testId = "test123";
 
-        // create subject id
-        subjId = "";
-        string[] alphabet = new string[26] { "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z" };
-        for (int i = 0; i < 8; ++i) subjId += alphabet[Random.Range(0, alphabet.Length)];
-
         // get date as string
         string date = System.DateTime.Now.ToString("yyyyMMddHHmmss");
 
         // open and write csv file
         string csvpath = Application.persistentDataPath + "/loc_" + date + "_" + subjId + ".csv";
 
-        TextDisplays.Instance.PrintDebugMessage("exporting results...");
-        TextDisplays.Instance.PrintDebugMessage(csvpath);
+        TextDisplays.Instance.PrintDebugMessage("Exporting results...");
 
         StreamWriter writer = new StreamWriter(csvpath, true);
         writer.WriteLine("testId,subjId,date,condId,targetAz,targetEl,actualAz,actualEl,responseAz,responseEl,srcDist,ptrDist,onTargetTime,offTargetTime,playbackLevel");
@@ -517,6 +509,8 @@ public class LocalizationTestLogic : MonoBehaviour
             TextDisplays.Instance.PrintDebugMessage(txtLine);
         }
         writer.Close();
+
+        TextDisplays.Instance.PrintDebugMessage("Results saved to: " + csvpath);
 
         // upload to Dropbx
         // DropboxUploader.Instance.uploadResults(csvpath, "LocalizationTest");

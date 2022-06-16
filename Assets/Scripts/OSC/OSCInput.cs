@@ -49,7 +49,7 @@ public class OSCInput : MonoBehaviour
     private void initOscServer()
     {
         server = new OscServer(oscPortIn); // Create OSC server with port number
-        Debug.Log("OSC receiver created");
+        TextDisplays.Instance.PrintDebugMessage("OSC receiver created");
 
         // SALTE renderer ip address
         server.MessageDispatcher.AddCallback(
