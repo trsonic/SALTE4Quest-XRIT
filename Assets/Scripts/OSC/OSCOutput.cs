@@ -29,15 +29,16 @@ public class OSCOutput : MonoBehaviour
     }
     #endregion
 
-    string rendererIp; // IP address for OSC
+    string rendererIp; // IP address for OSC, set in OSCInput
     int oscPortOut = 9000;
     OscClient client;
 
-    [SerializeField] GameObject _headTrackedCamera;
+    private GameObject mainCamera;
+    public GameObject soundSource1;
 
     private void Start()
     {
-
+        mainCamera = GameObject.Find("Main Camera");
     }
 
     void OnDestroy()
@@ -49,30 +50,46 @@ public class OSCOutput : MonoBehaviour
     {
         if(OSCInput.Instance.rendererIpAddress != rendererIp)
         {
+            TextDisplays.Instance.PrintDebugMessage("Creating / Reconnecting OSC sender...");
             rendererIp = OSCInput.Instance.rendererIpAddress;
             if (client != null) client.Dispose();
             if (rendererIp != "") client = new OscClient(rendererIp, oscPortOut);
         }
 
+        //if (client != null)
+        //{
+        //    // send ht data
+        //    float roll = wrapAngle(_headTrackedCamera.transform.localEulerAngles.z) * -1;
+        //    float pitch = wrapAngle(_headTrackedCamera.transform.localEulerAngles.x) * -1;
+        //    float yaw = wrapAngle(_headTrackedCamera.transform.localEulerAngles.y - LocalizationTestLogic.Instance.horizontalMeshRotation);
+        //    //client.Send("/rendering/htrpy", roll, pitch, yaw);
+        //}
+
+        // send sound source coordinates
         if (client != null)
         {
-            // send ht data
-            float roll = wrapAngle(_headTrackedCamera.transform.localEulerAngles.z) * -1;
-            float pitch = wrapAngle(_headTrackedCamera.transform.localEulerAngles.x) * -1;
-            float yaw = wrapAngle(_headTrackedCamera.transform.localEulerAngles.y - LocalizationTestLogic.Instance.horizontalMeshRotation);
-            //client.Send("/rendering/htrpy", roll, pitch, yaw);
+            // obtain current azimuth and elevation angles and distance
+            Vector3 hsVec = Vector3.Normalize(soundSource1.transform.position - mainCamera.transform.position);
+            Vector3 projectedVec = Vector3.ProjectOnPlane(hsVec, mainCamera.transform.up);
+            float azimuthAngle = Vector3.SignedAngle(mainCamera.transform.forward, projectedVec, mainCamera.transform.up);
+            float elevationAngle = Vector3.SignedAngle(mainCamera.transform.up, hsVec, Vector3.Cross(mainCamera.transform.up, hsVec));
+            elevationAngle = (elevationAngle - 90.0f) * -1.0f;
+            float currDist = Vector3.Distance(mainCamera.transform.position, soundSource1.transform.position);
+            //text += "current speaker azi: " + azimuthAngle.ToString("F1") + ", ele: " + elevationAngle.ToString("F1") + ", dist: " + currDist.ToString("F2") + "\n";
+            
+            client.Send("/source/1/aed", azimuthAngle, elevationAngle, currDist);
         }
+
     }
     // general OSC sender methods
     public void sendOSCMessage(string address, float value)
     {
-        //if (client != null) client.Send(address, (float)value);
+        if (client != null) client.Send(address, (float)value);
     }
     public void sendOSCMessage(string address, string msg)
     {
-        //if (client != null) client.Send(address, (string)msg);
+        if (client != null) client.Send(address, (string)msg);
     }
-
     private float wrapAngle(float deg)
     {
         while (deg <= -180.0f) deg += 360.0f;

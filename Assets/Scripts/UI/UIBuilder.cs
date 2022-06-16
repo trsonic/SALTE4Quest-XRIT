@@ -44,7 +44,7 @@ public class UIBuilder : MonoBehaviour
     RectTransform sliderCanvasTransform;
 
     //GameObject selectLeftControllerButton, selectRightControllerButton;
-    GameObject startTestButton, quitAppButton, restartTestButton;
+    GameObject startTestButton, quitAppButton, restartTestButton, switchHandButton;
     [SerializeField] List<GameObject> activeLabels = new List<GameObject>();
     [SerializeField] List<GameObject> activeSliders = new List<GameObject>();
     [SerializeField] List<GameObject> buttonList = new List<GameObject>();
@@ -76,7 +76,7 @@ public class UIBuilder : MonoBehaviour
         startTestButton = transform.Find("ButtonCanvas/StartButton").gameObject;
         quitAppButton = transform.Find("ButtonCanvas/QuitAppButton").gameObject;
         restartTestButton = transform.Find("ButtonCanvas/RestartButton").gameObject;
-
+        switchHandButton = transform.Find("ButtonCanvas/SwitchHandButton").gameObject;
 
         buttonList.Add(transform.Find("ButtonCanvas/ReferenceButton").gameObject);
         buttonList.Add(transform.Find("ButtonCanvas/AButton").gameObject);
@@ -128,6 +128,7 @@ public class UIBuilder : MonoBehaviour
         startTestButton.SetActive(false);
         quitAppButton.SetActive(false);
         restartTestButton.SetActive(false);
+        switchHandButton.SetActive(false);
 
         // hide all mixed methods stuff
         foreach (var button in buttonList) button.SetActive(false);
@@ -240,6 +241,13 @@ public class UIBuilder : MonoBehaviour
                 startTestButton.SetActive(true);
                 quitAppButton.SetActive(true);
                 controllersHelp.SetActive(true);
+                switchHandButton.SetActive(true);
+
+                if (LocalizationTestLogic.Instance.useLeftController4Pointing)
+                    switchHandButton.GetComponentInChildren<TextMeshProUGUI>().text = "Switch to right hand controller";
+                else
+                    switchHandButton.GetComponentInChildren<TextMeshProUGUI>().text = "Switch to left hand controller";
+
                 showUI(true);
                 break;
             case LocalizationTestLogic.TestPhase.InProgress:
@@ -264,16 +272,16 @@ public class UIBuilder : MonoBehaviour
     {
         switch (buttonName)
         {
-            //case "SelectLeftControllerButton":
-            //    LocalizationTestLogic.Instance.useLeftController4Pointing = true;
-            //    break;
+            case "RestartButton":
+                LocalizationTestLogic.Instance.testPhase = LocalizationTestLogic.TestPhase.Start;
+                break;
 
             case "StartButton":
                 LocalizationTestLogic.Instance.startTest();
                 break;
 
-            case "RestartButton":
-                LocalizationTestLogic.Instance.testPhase = LocalizationTestLogic.TestPhase.Start;
+            case "SwitchHandButton":
+                LocalizationTestLogic.Instance.useLeftController4Pointing = !LocalizationTestLogic.Instance.useLeftController4Pointing;
                 break;
 
             case "QuitAppButton":
