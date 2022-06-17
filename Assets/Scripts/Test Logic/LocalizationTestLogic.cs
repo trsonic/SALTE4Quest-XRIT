@@ -39,27 +39,28 @@ public class LocalizationTestLogic : MonoBehaviour
     public int trialIndex;
     public string subjId;
 
-
     public GameObject soundSource;
     public GameObject visualPointer;
-
     private GameObject headTargetCircle, yawPitchArrow, rollArrow;
     private GameObject mainCamera;
     private GameObject meshContainer;
 
     public List<LocalizationTestTrial> trialList = new List<LocalizationTestTrial>();
 
+    // test configuration variables
+    bool showSource = false;
+    bool showPointer = false;
     private float meshDistance = 1.5f;
     private float pointerDistance = 1.5f;
     private float unsignedLimit = 10.0f; // allowed yaw pitch roll deviation for listening to stimulus
     private float stimulusAttenuation = 0.0f;
-    private double _timeAtTestStart;
-    public float horizontalMeshRotation = 0.0f;
+    private float horizontalMeshRotation = 0.0f;
 
-    private InputDevice pointingController;
+    public InputDevice pointingController;
     private bool triggerPressed;
     private float elapsedTimeOnTarget, elapsedTimeOffTarget;
     private bool delayedLoad = false;
+    private double _timeAtTestStart;
 
     void Start()
     {
@@ -80,12 +81,12 @@ public class LocalizationTestLogic : MonoBehaviour
         headTargetCircle.GetComponent<Renderer>().material.color = Color.green;
         headTargetCircle.GetComponent<LineRenderer>().enabled = false;
 
-        // setup arrows
-        yawPitchArrow = new GameObject { name = "yawPitchArrow" };
-        yawPitchArrow.transform.parent = transform;
+        //// setup arrows
+        //yawPitchArrow = new GameObject { name = "yawPitchArrow" };
+        //yawPitchArrow.transform.parent = transform;
 
-        rollArrow = new GameObject { name = "rollArrow" };
-        rollArrow.transform.parent = transform;
+        //rollArrow = new GameObject { name = "rollArrow" };
+        //rollArrow.transform.parent = transform;
 
         testPhase = TestPhase.Start;
     }
@@ -96,7 +97,7 @@ public class LocalizationTestLogic : MonoBehaviour
         horizontalMeshRotation = 0.0f;
         createHorizonMesh(meshDistance, .0025f * meshDistance);
         headTargetCircle.GetComponent<LineRenderer>().enabled = true;
-        visualPointer.GetComponent<Renderer>().enabled = true;
+        visualPointer.GetComponent<Renderer>().enabled = showPointer;
 
         // create subject id
         subjId = "";
@@ -110,11 +111,11 @@ public class LocalizationTestLogic : MonoBehaviour
         findPointingController();
 
         // initialize remote audio renderer
-        //OSCOutput.Instance.sendOSCMessage("/attenuation", 0.0f);
+        OSCOutput.Instance.sendOSCMessage("/attenuation", 0.0f);
+        OSCOutput.Instance.sendOSCMessage("/mute", 1);
 
         _timeAtTestStart = Time.realtimeSinceStartup;
         loadTrial(0);
-        testPhase = TestPhase.InProgress;
     }
     void createTrialList()
     {
@@ -122,29 +123,37 @@ public class LocalizationTestLogic : MonoBehaviour
         trialList.Clear();
 
         // setup test directions
-        float[] azis = new float[] { -15, 0, 15 };
-        float[] eles = new float[] { -15, 0, 15 };
-
-        for (int i = 0; i < azis.Length; i++)
+        // option 1: random directions
+        int numOfDirections = 3;
+        for (int i = 0; i < numOfDirections; ++i)
         {
-            for (int j = 0; j < eles.Length; j++)
-            {
-                LocalizationTestTrial newTrial = new LocalizationTestTrial();
-                newTrial.setTargetAzEl(azis[i], eles[j]);
-                newTrial.setTargetDistance(meshDistance);
-                //float azimuth = Mathf.Round(Random.value * 60.0f - 30.0f);
-                //float elevation = Mathf.Round(Random.value * 60.0f - 30.0f);
-                //newTrial.setTargetAzEl(azimuth, elevation);
-
-                //float range = 2.0f;
-                //float level = -range + Random.Range(0, range);
-                //newTrial.setPlaybackLevel(level);
-                trialList.Add(newTrial);
-            }
+            LocalizationTestTrial newTrial = new LocalizationTestTrial();
+            float azimuth = Mathf.Round(Random.value * 60.0f - 30.0f);
+            float elevation = Mathf.Round(Random.value * 60.0f - 30.0f);
+            newTrial.setTargetAzEl(azimuth, elevation);
+            newTrial.setTargetDistance(meshDistance);
+            trialList.Add(newTrial);
         }
 
+        //// option 2: matrix based on vectors
+        //float[] azis = new float[] { -15, 0, 15 };
+        //float[] eles = new float[] { -15, 0, 15 };
+        //for (int i = 0; i < azis.Length; i++)
+        //{
+        //    for (int j = 0; j < eles.Length; j++)
+        //    {
+        //        LocalizationTestTrial newTrial = new LocalizationTestTrial();
+        //        newTrial.setTargetAzEl(azis[i], eles[j]);
+        //        newTrial.setTargetDistance(meshDistance);
+        //        //float range = 2.0f;
+        //        //float level = -range + Random.Range(0, range);
+        //        //newTrial.setPlaybackLevel(level);
+        //        trialList.Add(newTrial);
+        //    }
+        //}
+
         // setup conditions
-        string[] conditions = new string[] { "cond1", "cond2" };
+        string[] conditions = new string[] { "cond1", "cond2", "cond3", "cond4" };
 
         var trialListCopy = new List<LocalizationTestTrial>(trialList);
         trialList.Clear();
@@ -162,7 +171,7 @@ public class LocalizationTestLogic : MonoBehaviour
         }
 
         // repeat trial list
-        int numOfAddedRepetitions = 0;
+        int numOfAddedRepetitions = 1;
         trialListCopy = new List<LocalizationTestTrial>(trialList);
         for (int i = 0; i < numOfAddedRepetitions; i++)
         {
@@ -172,31 +181,20 @@ public class LocalizationTestLogic : MonoBehaviour
             }
         }
 
-        //int numOfFiles = 21;
-        //int numOfRepetitions = 5;
-
-        //for (int i = 0; i < numOfFiles * numOfRepetitions; i++)
-        //{
-        //    LocalizationTestTrial newTrial = new LocalizationTestTrial();
-        //    newTrial.setTargetAzEl(0.0f, 0.0f);
-        //    int index = (i % numOfFiles) + 1;
-        //    //int index = Random.Range(0, numOfFiles) + 1;
-        //    newTrial.setConditionId(index.ToString("0000"));
-        //    trialList.Add(newTrial);
-        //}
-
         // permute trial list
         trialList.Shuffle();
 
         for (int i = 0; i < conditions.Length; ++i) TextDisplays.Instance.PrintDebugMessage("condition: " + conditions[i]);
-
         TextDisplays.Instance.PrintDebugMessage("trial liste size: " + trialList.Count.ToString());
-
         for (int i = 0; i < trialList.Count; ++i) TextDisplays.Instance.PrintDebugMessage("trial index: " + i.ToString() + ", condition: " + trialList[i].getConditionId());
     }
     void loadTrial(int index)
     {
-        if (index >= 0 && index < trialList.Count)
+        if (trialList.Count == 0) { TextDisplays.Instance.PrintDebugMessage("No trials defined"); return; }
+
+        if (index < 0 || index > trialList.Count) { TextDisplays.Instance.PrintDebugMessage("Wrong trial index"); return; }
+
+        if (index < trialList.Count)
         {
             trialIndex = index;
 
@@ -209,10 +207,13 @@ public class LocalizationTestLogic : MonoBehaviour
             StartCoroutine(DelayedLoad(0.5f));
 
             // display trial info
+            TextDisplays.Instance.ShowDebugConsole(false);
             string text = (trialIndex + 1).ToString() + " / " + trialList.Count.ToString();
             StartCoroutine(DisplayTrialInfo(text, 0.25f, 0.0f, 0.25f));
+
+            testPhase = TestPhase.InProgress;
         }
-        else if (index == trialList.Count && trialList.Count > 0) // deinit
+        else if (index == trialList.Count) // deinit
         {
             TextDisplays.Instance.PrintDebugMessage("Test finished.");
             TextDisplays.Instance.PrintHMDMessage("");
@@ -226,10 +227,12 @@ public class LocalizationTestLogic : MonoBehaviour
             soundSource.GetComponent<Renderer>().enabled = false;
 
             // de-initialize remote audio renderer
-            //OSCOutput.Instance.sendOSCMessage("/attenuation", 0.0f); ;
+            OSCOutput.Instance.sendOSCMessage("/attenuation", 0.0f); ;
+            OSCOutput.Instance.sendOSCMessage("/mute", 1);
 
             // dump results
             ExportResults();
+            TextDisplays.Instance.ShowDebugConsole(true);
 
             testPhase = TestPhase.Final;
         }
@@ -259,7 +262,7 @@ public class LocalizationTestLogic : MonoBehaviour
                 if (joystickUpDown.y > 0.5f) { pointerDistance *= 1.01f; pointerDistance = Mathf.Clamp(pointerDistance, 0.5f, 5.0f); }
                 else if (joystickUpDown.y < -0.5f) { pointerDistance /= 1.01f;pointerDistance = Mathf.Clamp(pointerDistance, 0.5f, 5.0f); }
 
-                // source position
+                // target position
                 Vector3 targetPosition;
                 targetPosition.x = Mathf.Sin(trialList[trialIdx].getTargetAzimuth() * (Mathf.PI / 180)) * trialList[trialIdx].getTargetDistance();
                 targetPosition.y = Mathf.Sin(trialList[trialIdx].getTargetElevation() * (Mathf.PI / 180)) * trialList[trialIdx].getTargetDistance();
@@ -274,58 +277,30 @@ public class LocalizationTestLogic : MonoBehaviour
                     pointingController.TryGetFeatureValue(CommonUsages.deviceRotation, out Quaternion controllerRotation);
                     visualPointer.transform.rotation = controllerRotation;
                     visualPointer.transform.position = mainCamera.transform.position + visualPointer.transform.forward * pointerDistance;
-                    visualPointer.GetComponent<Renderer>().enabled = true;
-                }
-                else
-                {
-                    visualPointer.GetComponent<Renderer>().enabled = false;
                 }
 
                 // check head orientation
                 float rotation = Quaternion.Angle(meshContainer.transform.rotation, mainCamera.transform.rotation);
 
-                //float headYaw = wrapAngle(mainCamera.transform.localEulerAngles.y);
-                //float headPitch = wrapAngle(mainCamera.transform.localEulerAngles.x) * -1;
-                //float headRoll = wrapAngle(mainCamera.transform.localEulerAngles.z) * -1;
-
-                //TextDisplays.Instance.PrintHMDMessage(
-                //    "angle: " + rotation.ToString("F2") + "\n" +
-                //    "yaw: " + headYaw.ToString("F2") + "\n" +
-                //    "pitch: " + headPitch.ToString("F2") + "\n" +
-                //    "roll: " + headRoll.ToString("F2") + "\n");
-
-                //if (Vector3.Angle(meshContainer.transform.forward, mainCamera.transform.forward) < 2 * unsignedLimit)
-                //{
-                //    if (Mathf.Abs(headYaw) > unsignedLimit || Mathf.Abs(headPitch) > unsignedLimit)
-                //        yawPitchArrow.DrawArrow(
-                //            mainCamera.transform.position + mainCamera.transform.forward * meshDistance,
-                //            meshContainer.transform.position + meshContainer.transform.forward * meshDistance);
-                //    else
-                //        yawPitchArrow.DisableArrow();
-
-                //    if (Mathf.Abs(headRoll) > unsignedLimit)
-                //        rollArrow.DrawCicularArrow(
-                //            mainCamera.transform.position + mainCamera.transform.forward * meshDistance,
-                //            0.15f,
-                //            headRoll * 5.0f);
-                //    else
-                //        rollArrow.DisableArrow();
-                //}
-                //else
-                //{
-                //    yawPitchArrow.DisableArrow();
-                //    rollArrow.DisableArrow();
-                //}
-
                 // calculate and send osc with stimulus attenuation in dB
-                float att = 0.0f;
+                float att;
                 if (rotation > unsignedLimit)
+                {
+                    // increase timer value
+                    if (!delayedLoad) elapsedTimeOffTarget += Time.deltaTime;
                     att = (rotation - unsignedLimit) * 6.0f;
+                }
+                else
+                {
+                    if (!delayedLoad) elapsedTimeOnTarget += Time.deltaTime;
+                    att = 0.0f;
+                }
+
 
                 if (att != stimulusAttenuation)
                 {
                     stimulusAttenuation = att;
-                    //OSCOutput.Instance.sendOSCMessage("/attenuation", stimulusAttenuation);
+                    OSCOutput.Instance.sendOSCMessage("/attenuation", stimulusAttenuation);
                 }
 
                 // using trigger to confirm response
@@ -336,6 +311,14 @@ public class LocalizationTestLogic : MonoBehaviour
                 if (trigger > 0.5f && !triggerPressed && !delayedLoad)
                 {
                     triggerPressed = true;
+
+                    // obtain current position of the presented sound source in reference to the listener
+                    Vector3 hsVec = Vector3.Normalize(soundSource.transform.position - mainCamera.transform.position);
+                    Vector3 projectedVec = Vector3.ProjectOnPlane(hsVec, mainCamera.transform.up);
+                    float presentedAzimuthAngle = Vector3.SignedAngle(mainCamera.transform.forward, projectedVec, mainCamera.transform.up);
+                    float presentedElevationAngle = Vector3.SignedAngle(mainCamera.transform.up, hsVec, Vector3.Cross(mainCamera.transform.up, hsVec));
+                    presentedElevationAngle = (presentedElevationAngle - 90.0f) * -1.0f;
+                    float presentedDistance = Vector3.Distance(mainCamera.transform.position, soundSource.transform.position);
 
                     // obtain current azimuth and elevation of the head in the mesh space
                     Vector3 meshHeadVec = Vector3.Normalize((mainCamera.transform.position + mainCamera.transform.forward) - meshContainer.transform.position);
@@ -366,26 +349,21 @@ public class LocalizationTestLogic : MonoBehaviour
                     //msg = "current pointer azi: " + azimuthAngle.ToString("F1") + ", ele: " + elevationAngle.ToString("F1") + ", dist: " + pointerDistance.ToString("F2");
                     //DebugConsole.Instance.PrintMessage(msg);
 
-                    // send OSC message with all measurements
+                    // save all measurements to the trial object
                     double currentTime = (Time.realtimeSinceStartup - _timeAtTestStart) * 1000.0;
-                    string osc_msg = currentTime.ToString("F0") + "," +
-                                        headAzimuthAngle.ToString("F3") + "," +
-                                        headElevationAngle.ToString("F3") + "," +
-                                        pointerAzimuthAngle.ToString("F3") + "," +
-                                        pointerElevationAngle.ToString("F3") + "," +
-                                        pointerDistance.ToString("F3");
-
+                    trialList[trialIdx].setResponseTime(currentTime);
+                    trialList[trialIdx].setPresentedAzEl(presentedAzimuthAngle, presentedElevationAngle);
+                    trialList[trialIdx].setPresentedtDistance(presentedDistance);
                     trialList[trialIdx].setHeadResponseAzEl(headAzimuthAngle, headElevationAngle);
                     trialList[trialIdx].setPointerResponseAzEl(pointerAzimuthAngle, pointerElevationAngle);
                     trialList[trialIdx].setPointerDistance(pointerDistance);
-                    trialList[trialIdx].setResponseTime(currentTime);
-                    trialList[trialIdx].setOnTargetTime(elapsedTimeOnTarget);
-                    trialList[trialIdx].setOffTargetTime(elapsedTimeOffTarget);
+                    trialList[trialIdx].setOnAlignTargetTime(elapsedTimeOnTarget);
+                    trialList[trialIdx].setOffAlignTargetTime(elapsedTimeOffTarget);
 
-                    pointingController.SendHapticImpulse(0, 0.666f, 0.25f);
+                    pointingController.SendHapticImpulse(0, 0.3f, 0.1f);
+
                     // stop renderer plaback
-
-
+                    OSCOutput.Instance.sendOSCMessage("/mute", 1);
                 }
                 else if (trigger == 0.0f && triggerPressed)
                 {
@@ -429,28 +407,22 @@ public class LocalizationTestLogic : MonoBehaviour
         soundSource.GetComponent<Renderer>().enabled = false;
 
         // mute renderer
+        OSCOutput.Instance.sendOSCMessage("/mute", 1);
 
         // renderer load hrtfs
-        if (trialList[trialIndex].getConditionId() == "cond1")
-        {
-            //AudioManager.Instance.SetLinearGain(1.0f);
-            TextDisplays.Instance.PrintDebugMessage("1 enabled");
-        }
-        else if (trialList[trialIndex].getConditionId() == "cond22")
-        {
-            //AudioManager.Instance.SetLinearGain(1.0f);
-            TextDisplays.Instance.PrintDebugMessage("2 enabled");
+        OSCOutput.Instance.sendOSCMessage("/condition", trialList[trialIndex].getConditionId());
+        TextDisplays.Instance.PrintDebugMessage(trialList[trialIndex].getConditionId());
 
-        }
+        // set source position (done in update)
 
-        // renderer set source position
-
+        // wait
         float timer = 0.0f;
         while (timer < delayTime) { timer += Time.deltaTime; yield return null; }
 
         // unmute renderer
+        OSCOutput.Instance.sendOSCMessage("/mute", 0);
 
-        soundSource.GetComponent<Renderer>().enabled = true;
+        soundSource.GetComponent<Renderer>().enabled = showSource;
         elapsedTimeOnTarget = 0.0f;
         elapsedTimeOffTarget = 0.0f;
         delayedLoad = false;
@@ -480,7 +452,7 @@ public class LocalizationTestLogic : MonoBehaviour
     }
     public void ExportResults()
     {
-        string testId = "test123";
+        string testId = "xr-hrtf-evaluation";
 
         // get date as string
         string date = System.DateTime.Now.ToString("yyyyMMddHHmmss");
@@ -491,19 +463,21 @@ public class LocalizationTestLogic : MonoBehaviour
         TextDisplays.Instance.PrintDebugMessage("Exporting results...");
 
         StreamWriter writer = new StreamWriter(csvpath, true);
-        writer.WriteLine("testId,subjId,date,condId,targetAz,targetEl,actualAz,actualEl,responseAz,responseEl,srcDist,ptrDist,onTargetTime,offTargetTime,playbackLevel");
+        writer.WriteLine("testId,subjId,date,time,condId,targetAz,targetEl,targetDist,headRespAz,headRespEl,ptrRespAz,ptrRespEl,ptrDist,onAlignTargetTime,offAlignTargetTime,playbackLevel");
 
         foreach (var trial in trialList)
         {
             string txtLine =        testId + "," +
                                     subjId + "," +
                                     date + "," +
+                                    trial.getResponseTime() + "," +
                                     trial.getConditionId() + "," +
                                     trial.getTargetAzimuth() + "," + trial.getTargetElevation() + "," +
-                                    //trial.getActualAzimuth() + "," + trial.getActualElevation() + "," +
-                                    //trial.getResponseAzimuth() + "," + trial.getResponseElevation() + "," +
-                                    trial.getSourceDistance() + "," + trial.getPointerDistance() + "," +
-                                    trial.getOnTargetTime() + "," + trial.getOffTargetTime() + "," +
+                                    trial.getTargetDistance() + "," +
+                                    trial.getHeadResponseAzimuth() + "," + trial.getHeadResponseElevation() + "," +
+                                    trial.getPointerResponseAzimuth() + "," + trial.getPointerResponseElevation() + "," +
+                                    trial.getPointerDistance() + "," +
+                                    trial.getOnAlignTargetTime() + "," + trial.getOffAlignTargetTime() + "," +
                                     trial.getPlaybackLevel();
             writer.WriteLine(txtLine);
             TextDisplays.Instance.PrintDebugMessage(txtLine);

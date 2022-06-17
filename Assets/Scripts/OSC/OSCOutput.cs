@@ -6,6 +6,8 @@ using System.Net;
 using System.Net.NetworkInformation;
 using System.Net.Sockets;
 
+using UnityEngine.XR;
+
 public class OSCOutput : MonoBehaviour
 {
     #region Singleton
@@ -35,6 +37,10 @@ public class OSCOutput : MonoBehaviour
 
     private GameObject mainCamera;
     public GameObject soundSource1;
+
+    //bool primaryButtonPressed = false;
+    //float primaryButtonPressedTime;
+    //int hrtfSetId = 3;
 
     private void Start()
     {
@@ -80,16 +86,50 @@ public class OSCOutput : MonoBehaviour
             client.Send("/source/1/aed", azimuthAngle, elevationAngle, currDist);
         }
 
+
+        //// if primary button pressed switch hrtf set
+        //LocalizationTestLogic.Instance.pointingController.TryGetFeatureValue(CommonUsages.primaryButton, out bool primaryButton);
+        //if (primaryButton && !primaryButtonPressed)
+        //{
+        //    primaryButtonPressed = true;
+        //    primaryButtonPressedTime = Time.realtimeSinceStartup;
+        //    hrtfSetId = (hrtfSetId + 1) % 4;
+        //    hrtfSwitcher(hrtfSetId);
+        //}
+        //else if (primaryButtonPressed && (Time.realtimeSinceStartup - primaryButtonPressedTime) > 0.5f)
+        //{
+        //    primaryButtonPressed = false;
+        //}
     }
+    void hrtfSwitcher(int id)
+    {
+        string[] conditions = new string[] { "cond1", "cond2", "cond3", "cond4" };
+
+        switch (id)
+        {
+            case 0:
+                soundSource1.GetComponent<Renderer>().material.color = Color.red;
+                break;
+            case 1:
+                soundSource1.GetComponent<Renderer>().material.color = Color.green;
+                break;
+            case 2:
+                soundSource1.GetComponent<Renderer>().material.color = Color.blue;
+                break;
+            case 3:
+                soundSource1.GetComponent<Renderer>().material.color = Color.yellow;
+                break;
+        }
+
+        TextDisplays.Instance.PrintDebugMessage("Condition ID: " + id.ToString() + " / " + conditions[id]);
+        if (client != null) client.Send("/condition", conditions[id]);
+    }
+
     // general OSC sender methods
-    public void sendOSCMessage(string address, float value)
-    {
-        if (client != null) client.Send(address, (float)value);
-    }
-    public void sendOSCMessage(string address, string msg)
-    {
-        if (client != null) client.Send(address, (string)msg);
-    }
+    public void sendOSCMessage(string address, int value) { if (client != null) client.Send(address, (float)value); }
+    public void sendOSCMessage(string address, float value) { if (client != null) client.Send(address, (float)value); }
+    public void sendOSCMessage(string address, string msg) { if (client != null) client.Send(address, (string)msg); }
+
     private float wrapAngle(float deg)
     {
         while (deg <= -180.0f) deg += 360.0f;

@@ -5,10 +5,10 @@ public class LocalizationTestTrial
 {
     private string condId; // no trialId, as there is a single condition per trial in localization tests
     private float targetAz, targetEl, targetDist;
-    //private float actualAz, actualEl;
+    private float presentedAz, presntedEl, presentedDist;
     private float headResponseAz, headResponseEl;
     private float pointerResponseAz, pointerResponseEl;
-    private float sourceDistance, pointerDistance;
+    private float pointerDistance;
     private double expTime;
     private float onTargetTime, offTargetTime;
     private float playbackLevel;
@@ -26,13 +26,15 @@ public class LocalizationTestTrial
     public float getTargetAzimuth() { return targetAz; }
     public float getTargetElevation() { return targetEl; }
     public float getTargetDistance() { return targetDist; }
-    //public void setActualAzEl(float azimuth, float elevation)
-    //{
-    //    actualAz = azimuth;
-    //    actualEl = elevation;
-    //}
-    //public float getActualAzimuth() { return actualAz; }
-    //public float getActualElevation() { return actualEl; }
+    public void setPresentedAzEl(float azimuth, float elevation)
+    {
+        presentedAz = azimuth;
+        presntedEl = elevation;
+    }
+    public void setPresentedtDistance(float distance) { presentedDist = distance; }
+    public float getPresentedAzimuth() { return presentedAz; }
+    public float getPresentedElevation() { return presntedEl; }
+    public float getPresentedDistance() { return presentedDist; }
     public void setHeadResponseAzEl(float azimuth, float elevation)
     {
         headResponseAz = azimuth;
@@ -48,12 +50,11 @@ public class LocalizationTestTrial
     public void setPointerDistance(float distance) { pointerDistance = distance; }
     public float getPointerResponseAzimuth() { return pointerResponseAz; }
     public float getPointerResponseElevation() { return pointerResponseEl; }
-    public float getSourceDistance() { return sourceDistance; }
     public float getPointerDistance() { return pointerDistance; }
     public void setResponseTime(double time) { expTime = time; }
     public double getResponseTime() { return expTime; }
-    public void setOnTargetTime(float time) { onTargetTime = time; }
-    public void setOffTargetTime(float time) { offTargetTime = time; }
-    public float getOnTargetTime() { return onTargetTime; }
-    public float getOffTargetTime() { return offTargetTime; }
+    public void setOnAlignTargetTime(float time) { onTargetTime = time; }
+    public void setOffAlignTargetTime(float time) { offTargetTime = time; }
+    public float getOnAlignTargetTime() { return onTargetTime; }
+    public float getOffAlignTargetTime() { return offTargetTime; }
 }

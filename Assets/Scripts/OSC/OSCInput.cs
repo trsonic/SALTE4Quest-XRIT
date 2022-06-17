@@ -34,7 +34,7 @@ public class OSCInput : MonoBehaviour
     int oscPortIn = 6000; // Port for receiving OSC
     OscServer server;
 
-    public string rendererIpAddress = "192.168.1.107"; // "127.0.0.1";
+    public string rendererIpAddress = "192.168.1.236"; //"192.168.1.107"; // "127.0.0.1";
 
     private void Start()
     {
