@@ -23,7 +23,6 @@ public class InterfacePlacer : MonoBehaviour
         testInterfaceTransform.position = mainCameraTransform.position + mainCameraTransform.forward * interfaceDistance;
         testInterfaceTransform.rotation = Quaternion.LookRotation(testInterfaceTransform.position - mainCameraTransform.position);
 
-
         //// place interface on the right bottom
         //interfaceDistance = 1.0f;
         //interfaceScale = 0.002f;

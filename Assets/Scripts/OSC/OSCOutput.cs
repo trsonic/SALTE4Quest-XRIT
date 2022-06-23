@@ -59,7 +59,11 @@ public class OSCOutput : MonoBehaviour
             TextDisplays.Instance.PrintDebugMessage("Creating / Reconnecting OSC sender...");
             rendererIp = OSCInput.Instance.rendererIpAddress;
             if (client != null) client.Dispose();
-            if (rendererIp != "") client = new OscClient(rendererIp, oscPortOut);
+            if (rendererIp != "")
+            {
+                client = new OscClient(rendererIp, oscPortOut);
+                if (client != null) client.Send("/mute", 1);
+            }
         }
 
         //if (client != null)

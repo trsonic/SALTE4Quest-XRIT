@@ -62,6 +62,10 @@ public class TextDisplays : MonoBehaviour
         debugDisplay.GetComponent<TextMeshProUGUI>().enabled = show;
         //GetComponentInParent<Image>().enabled = show;
     }
+    public void ToggleDebugConsole()
+    {
+        debugDisplay.GetComponent<TextMeshProUGUI>().enabled = !debugDisplay.GetComponent<TextMeshProUGUI>().enabled;
+    }
     #endregion
 
     #region HMD-fixed Display

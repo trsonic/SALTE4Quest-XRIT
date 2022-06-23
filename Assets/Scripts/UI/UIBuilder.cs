@@ -233,9 +233,14 @@ public class UIBuilder : MonoBehaviour
             case LocalizationTestLogic.TestPhase.Start:
                 initUI();
                 instructionMessage.text = "\n\n"
-                    + "localization test" + "\n"
-                    + "current renderer ip is set to: " + OSCOutput.Instance.getRendererIP() + "\n"
-                    + "click Start for the test to begin" + "\n";
+                    + "HRTF Evaluation Localization Test" + "\n"
+                    + "Renderer IP: " + OSCOutput.Instance.getRendererIP() + "\n"
+                    + "\n"
+                    + "1. Listen to the presented sound." + "\n"
+                    + "2. Point your face at the perceived direction of the sound source." + "\n"
+                    + "3. Confirm your response by pressing a trigger button on the controller." + "\n"
+                    + "\n"
+                    + "Click Start to begin the test." + "\n";
 
                 // show start and quit buttons
                 startTestButton.SetActive(true);
