@@ -6,8 +6,6 @@ using System.Net;
 using System.Net.NetworkInformation;
 using System.Net.Sockets;
 
-using UnityEngine.XR;
-
 public class OSCOutput : MonoBehaviour
 {
     #region Singleton
@@ -35,16 +33,12 @@ public class OSCOutput : MonoBehaviour
     int oscPortOut = 9000;
     OscClient client;
 
-    private GameObject mainCamera;
-    public GameObject soundSource1;
-
-    //bool primaryButtonPressed = false;
-    //float primaryButtonPressedTime;
-    //int hrtfSetId = 3;
+    GameObject mainCamera, soundSource;
 
     private void Start()
     {
         mainCamera = GameObject.Find("Main Camera");
+        soundSource = GameObject.Find("Sound Source");
     }
 
     void OnDestroy()
@@ -79,54 +73,16 @@ public class OSCOutput : MonoBehaviour
         if (client != null)
         {
             // obtain current azimuth and elevation angles and distance
-            Vector3 hsVec = Vector3.Normalize(soundSource1.transform.position - mainCamera.transform.position);
+            Vector3 hsVec = Vector3.Normalize(soundSource.transform.position - mainCamera.transform.position);
             Vector3 projectedVec = Vector3.ProjectOnPlane(hsVec, mainCamera.transform.up);
             float azimuthAngle = Vector3.SignedAngle(mainCamera.transform.forward, projectedVec, mainCamera.transform.up);
             float elevationAngle = Vector3.SignedAngle(mainCamera.transform.up, hsVec, Vector3.Cross(mainCamera.transform.up, hsVec));
             elevationAngle = (elevationAngle - 90.0f) * -1.0f;
-            float currDist = Vector3.Distance(mainCamera.transform.position, soundSource1.transform.position);
+            float currDist = Vector3.Distance(mainCamera.transform.position, soundSource.transform.position);
             //text += "current speaker azi: " + azimuthAngle.ToString("F1") + ", ele: " + elevationAngle.ToString("F1") + ", dist: " + currDist.ToString("F2") + "\n";
             
             client.Send("/source/1/aed", azimuthAngle, elevationAngle, currDist);
         }
-
-
-        //// if primary button pressed switch hrtf set
-        //LocalizationTestLogic.Instance.pointingController.TryGetFeatureValue(CommonUsages.primaryButton, out bool primaryButton);
-        //if (primaryButton && !primaryButtonPressed)
-        //{
-        //    primaryButtonPressed = true;
-        //    primaryButtonPressedTime = Time.realtimeSinceStartup;
-        //    hrtfSetId = (hrtfSetId + 1) % 4;
-        //    hrtfSwitcher(hrtfSetId);
-        //}
-        //else if (primaryButtonPressed && (Time.realtimeSinceStartup - primaryButtonPressedTime) > 0.5f)
-        //{
-        //    primaryButtonPressed = false;
-        //}
-    }
-    void hrtfSwitcher(int id)
-    {
-        string[] conditions = new string[] { "cond1", "cond2", "cond3", "cond4" };
-
-        switch (id)
-        {
-            case 0:
-                soundSource1.GetComponent<Renderer>().material.color = Color.red;
-                break;
-            case 1:
-                soundSource1.GetComponent<Renderer>().material.color = Color.green;
-                break;
-            case 2:
-                soundSource1.GetComponent<Renderer>().material.color = Color.blue;
-                break;
-            case 3:
-                soundSource1.GetComponent<Renderer>().material.color = Color.yellow;
-                break;
-        }
-
-        TextDisplays.Instance.PrintDebugMessage("Condition ID: " + id.ToString() + " / " + conditions[id]);
-        if (client != null) client.Send("/condition", conditions[id]);
     }
 
     // general OSC sender methods

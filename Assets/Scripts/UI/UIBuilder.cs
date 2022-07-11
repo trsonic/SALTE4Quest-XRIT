@@ -29,7 +29,7 @@ public class UIBuilder : MonoBehaviour
     }
     #endregion
 
-    public enum TestType { MixedMethods, Localization }
+    public enum TestType { MixedMethods, Localization, Demo }
     public TestType testType;
 
     private bool UIUpdateNeeded;
@@ -93,6 +93,7 @@ public class UIBuilder : MonoBehaviour
         initUI();
 
         testType = TestType.Localization;
+        //testType = TestType.Demo;
         setUpdateFlag();
     }
     void Update()
@@ -106,6 +107,9 @@ public class UIBuilder : MonoBehaviour
                     break;
                 case TestType.Localization:
                     SetLocalizationScenes();
+                    break;
+                case TestType.Demo:
+                    SetDemoScenes();
                     break;
             }
 
@@ -273,6 +277,33 @@ public class UIBuilder : MonoBehaviour
                 break;
         }
     }
+
+    void SetDemoScenes()
+    {
+        switch (DemoLogic.Instance.testPhase)
+        {
+            case DemoLogic.TestPhase.Start:
+                initUI();
+
+                instructionMessage.text = "\n" +
+                    "This is an HRTF demo scene." + "\n" +
+                    "Use primary button to switch hrtf set" + "\n";
+
+
+                // show begin and quit buttons
+                startTestButton.SetActive(true);
+                quitAppButton.SetActive(true);
+                controllersHelp.SetActive(true);
+                showUI(true);
+
+                break;
+            case DemoLogic.TestPhase.InProgress:
+                initUI();
+                showUI(false);
+
+                break;
+        }
+    }
     public void btnPressedCallback(string buttonName)
     {
         switch (buttonName)
@@ -282,7 +313,20 @@ public class UIBuilder : MonoBehaviour
                 break;
 
             case "StartButton":
-                LocalizationTestLogic.Instance.startTest();
+                switch (testType)
+                {
+                    case TestType.Localization:
+                        LocalizationTestLogic.Instance.startTest();
+                        break;
+
+                    case TestType.Demo:
+                        {
+                            DemoLogic.Instance.testPhase = DemoLogic.TestPhase.InProgress;
+                            setUpdateFlag();
+                        }
+                        
+                        break;
+                }
                 break;
 
             case "SwitchHandButton":

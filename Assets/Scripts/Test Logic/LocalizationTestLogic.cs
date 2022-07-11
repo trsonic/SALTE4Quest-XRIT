@@ -134,7 +134,7 @@ public class LocalizationTestLogic : MonoBehaviour
         List<Vector2> dirs = new List<Vector2>();
         for (int i = 0; i < numOfDirections; ++i)
         {
-            float azimuth = Mathf.Round(Random.Range(-80.0f, 80.0f));
+            float azimuth = Mathf.Round(Random.Range(-90.0f, 90.0f));
             float elevation = Mathf.Round(Random.Range(-60.0f, 60.0f));
             dirs.Add(new Vector2(azimuth, elevation));
         }
@@ -271,9 +271,6 @@ public class LocalizationTestLogic : MonoBehaviour
                     visualPointer.transform.rotation = controllerRotation;
                     visualPointer.transform.position = mainCamera.transform.position + visualPointer.transform.forward * pointerDistance;
                 }
-
-                // for debugging!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-                //soundSource.transform.position = visualPointer.transform.position;
 
                 // check head orientation
                 float rotation = Quaternion.Angle(meshContainer.transform.rotation, mainCamera.transform.rotation);
