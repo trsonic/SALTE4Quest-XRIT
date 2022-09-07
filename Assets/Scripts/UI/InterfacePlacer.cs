@@ -29,7 +29,7 @@ public class InterfacePlacer : MonoBehaviour
         //testInterfaceTransform.position = new Vector3(1.0f, -0.25f, 1.0f);
         //testInterfaceTransform.rotation = Quaternion.LookRotation(testInterfaceTransform.position - mainCameraTransform.position);
 
-        findControllers();
+        //findControllers();
     }
 
     void Update()

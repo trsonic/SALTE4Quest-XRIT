@@ -3,11 +3,11 @@ using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
+using UnityEngine.XR;
+
 
 public class TextDisplays : MonoBehaviour
 {
-    private GameObject mainCamera, debugDisplay, hmdFixedDisplay;
-
     #region Singleton
     private static TextDisplays _instance;
 
@@ -29,34 +29,58 @@ public class TextDisplays : MonoBehaviour
     }
     #endregion
 
+    private GameObject mainCamera, debugDisplay, hmdFixedDisplay;
+
+    InputDevice leftController, rightController;
+
+    float _timeAtPress;
+
+ 
+
     private void Start()
     {
         mainCamera = GameObject.Find("Main Camera");
         debugDisplay = GameObject.Find("Debug Canvas");
         hmdFixedDisplay = GameObject.Find("HMD-fixed Canvas");
 
-        ShowDebugConsole(true);
+        ShowDebugConsole(false);
     }
     private void Update()
     {
+        if (!leftController.isValid | !rightController.isValid)
+        {
+            findControllers();
+        }
+
         debugDisplay.transform.position = mainCamera.transform.position + Vector3.forward * 2.5f;
         //debugDisplay.transform.rotation = Quaternion.LookRotation(hmdFixedDisplay.transform.position - mainCamera.transform.position);
 
         hmdFixedDisplay.transform.position = mainCamera.transform.position + mainCamera.transform.forward * 1.0f;
         hmdFixedDisplay.transform.rotation = Quaternion.LookRotation(hmdFixedDisplay.transform.position - mainCamera.transform.position);
-    }
 
-    #region Debug Console
+        if (leftController.isValid | rightController.isValid)
+        {
+            leftController.TryGetFeatureValue(CommonUsages.primary2DAxisClick, out bool leftJoystickpPressed);
+            rightController.TryGetFeatureValue(CommonUsages.primary2DAxisClick, out bool rightJoystickPressed);
+
+            if (_timeAtPress == 0.0f & (leftJoystickpPressed | rightJoystickPressed))
+            {
+                _timeAtPress = Time.realtimeSinceStartup;
+                ToggleDebugConsole();
+            }
+
+            if (Time.realtimeSinceStartup - _timeAtPress > 0.1f & !(leftJoystickpPressed | rightJoystickPressed)) _timeAtPress = 0.0f;
+        }
+
+    }
     public void PrintDebugMessage(string message)
     {
         debugDisplay.GetComponent<TextMeshProUGUI>().text += message + "\n";
     }
-
     public void ClearAndPrintDebugMessage(string message)
     {
         debugDisplay.GetComponent<TextMeshProUGUI>().text = message;
     }
-
     public void ShowDebugConsole(bool show)
     {
         debugDisplay.GetComponent<TextMeshProUGUI>().enabled = show;
@@ -66,9 +90,6 @@ public class TextDisplays : MonoBehaviour
     {
         debugDisplay.GetComponent<TextMeshProUGUI>().enabled = !debugDisplay.GetComponent<TextMeshProUGUI>().enabled;
     }
-    #endregion
-
-    #region HMD-fixed Display
     public void PrintHMDMessage(string message)
     {
         hmdFixedDisplay.GetComponent<TextMeshProUGUI>().text = message;
@@ -88,5 +109,15 @@ public class TextDisplays : MonoBehaviour
         Color current = hmdFixedDisplay.GetComponent<TextMeshProUGUI>().color;
         hmdFixedDisplay.GetComponent<TextMeshProUGUI>().color = new Color(current.r, current.g, current.b, current.a + alpha);
     }
-    #endregion
+    void findControllers()
+    {
+        List<InputDevice> devices = new List<InputDevice>();
+        InputDevices.GetDevices(devices);
+
+        foreach (var device in devices)
+        {
+            if (device.name.Contains("Left")) leftController = device;
+            if (device.name.Contains("Right")) rightController = device;
+        }
+    }
 }

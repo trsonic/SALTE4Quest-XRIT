@@ -29,7 +29,7 @@ public class UIBuilder : MonoBehaviour
     }
     #endregion
 
-    public enum TestType { MixedMethods, Localization, Demo }
+    public enum TestType { Intro, MixedMethods, Localization, Demo }
     public TestType testType;
 
     private bool UIUpdateNeeded;
@@ -43,6 +43,7 @@ public class UIBuilder : MonoBehaviour
     RectTransform labelCanvasTransform;
     RectTransform sliderCanvasTransform;
 
+    GameObject chooseMixedButton, chooseLocalizationButton, chooseDemoButton;
     //GameObject selectLeftControllerButton, selectRightControllerButton;
     GameObject startTestButton, quitAppButton, restartTestButton, switchHandButton;
     [SerializeField] List<GameObject> activeLabels = new List<GameObject>();
@@ -71,6 +72,10 @@ public class UIBuilder : MonoBehaviour
         Canvas sliderCanvas = GameObject.Find("SliderCanvas").GetComponent<Canvas>();
         sliderCanvasTransform = sliderCanvas.GetComponent<RectTransform>();
 
+
+        chooseMixedButton = transform.Find("ButtonCanvas/ChooseMixedButton").gameObject;
+        chooseLocalizationButton = transform.Find("ButtonCanvas/ChooseLocalizationButton").gameObject;
+        chooseDemoButton = transform.Find("ButtonCanvas/ChooseDemoButton").gameObject;
         //selectLeftControllerButton = transform.Find("ButtonCanvas/SelectLeftControllerButton").gameObject;
         //selectRightControllerButton = transform.Find("ButtonCanvas/SelectRightControllerButton").gameObject;
         startTestButton = transform.Find("ButtonCanvas/StartButton").gameObject;
@@ -90,11 +95,7 @@ public class UIBuilder : MonoBehaviour
 
         controllersHelp = transform.Find("OculusTouchControllers").gameObject;
 
-        initUI();
-
-        testType = TestType.Localization;
-        //testType = TestType.Demo;
-        setUpdateFlag();
+        SetScene(TestType.Intro);
     }
     void Update()
     {
@@ -102,6 +103,9 @@ public class UIBuilder : MonoBehaviour
         {
             switch (testType)
             {
+                case TestType.Intro:
+                    SetIntroScreen();
+                    break;
                 case TestType.MixedMethods:
                     SetMixedMethodsScenes();
                     break;
@@ -126,9 +130,18 @@ public class UIBuilder : MonoBehaviour
         return UIUpdateNeeded;
     }
 
+    void SetScene(TestType scene)
+    {
+        testType = scene;
+        setUpdateFlag();
+    }
+
     void initUI()
     {
         // hide buttons
+        chooseMixedButton.SetActive(false);
+        chooseLocalizationButton.SetActive(false);
+        chooseDemoButton.SetActive(false);
         startTestButton.SetActive(false);
         quitAppButton.SetActive(false);
         restartTestButton.SetActive(false);
@@ -158,11 +171,32 @@ public class UIBuilder : MonoBehaviour
         GameObject.Find("RightHand Controller").GetComponent<XRInteractorLineVisual>().enabled = show;
     }
 
+    void SetIntroScreen()
+    {
+        initUI(); // clear UI
+
+        instructionMessage.text = "\n" +
+            "Choose one of the following options:\n" +
+            "- MUSHRA test\n" +
+            "- Localization test\n" +
+            "- Binaural rendering demonstration";
+
+        // show three buttons
+        chooseMixedButton.SetActive(true);
+        chooseLocalizationButton.SetActive(true);
+        chooseDemoButton.SetActive(true);
+
+        quitAppButton.SetActive(true);
+        quitAppButton.GetComponentInChildren<TextMeshProUGUI>().text = "Quit App";
+    }
+
     void SetMixedMethodsScenes()
     {
         switch (DirectTestLogic.Instance.testPhase)
         {
             case DirectTestLogic.TestPhase.Start:
+                initUI(); // clear UI
+
                 instructionMessage.text = "\n" +
                     "Thank you for agreeing to participate in this listening test.\n" +
                     "You will be presented with a number of screens containing sliders and buttons.\n" +
@@ -186,6 +220,7 @@ public class UIBuilder : MonoBehaviour
                 // show begin and quit buttons
                 startTestButton.SetActive(true);
                 quitAppButton.SetActive(true);
+                quitAppButton.GetComponentInChildren<TextMeshProUGUI>().text = "Main Menu";
                 controllersHelp.SetActive(true);
                 break;
 
@@ -224,6 +259,7 @@ public class UIBuilder : MonoBehaviour
                     DirectTestLogic.Instance.subjId;
 
                 quitAppButton.SetActive(true);
+                quitAppButton.GetComponentInChildren<TextMeshProUGUI>().text = "Main Menu";
                 showUI(true);
 
                 break;
@@ -249,13 +285,14 @@ public class UIBuilder : MonoBehaviour
                 // show start and quit buttons
                 startTestButton.SetActive(true);
                 quitAppButton.SetActive(true);
+                quitAppButton.GetComponentInChildren<TextMeshProUGUI>().text = "Main Menu";
                 controllersHelp.SetActive(true);
                 switchHandButton.SetActive(true);
 
                 if (LocalizationTestLogic.Instance.useLeftController4Pointing)
-                    switchHandButton.GetComponentInChildren<TextMeshProUGUI>().text = "Switch to right hand controller";
+                    switchHandButton.GetComponentInChildren<TextMeshProUGUI>().text = "Use right controller";
                 else
-                    switchHandButton.GetComponentInChildren<TextMeshProUGUI>().text = "Switch to left hand controller";
+                    switchHandButton.GetComponentInChildren<TextMeshProUGUI>().text = "Use left controller";
 
                 showUI(true);
                 break;
@@ -273,6 +310,7 @@ public class UIBuilder : MonoBehaviour
                 // show restart and quit buttons
                 restartTestButton.SetActive(true);
                 quitAppButton.SetActive(true);
+                quitAppButton.GetComponentInChildren<TextMeshProUGUI>().text = "Main Menu";
                 showUI(true);
                 break;
         }
@@ -287,12 +325,12 @@ public class UIBuilder : MonoBehaviour
 
                 instructionMessage.text = "\n" +
                     "This is an HRTF demo scene." + "\n" +
-                    "Use primary button to switch hrtf set" + "\n";
-
+                    "Use the secondary button (B) to switch HRTF set" + "\n";
 
                 // show begin and quit buttons
                 startTestButton.SetActive(true);
                 quitAppButton.SetActive(true);
+                quitAppButton.GetComponentInChildren<TextMeshProUGUI>().text = "Main Menu";
                 controllersHelp.SetActive(true);
                 showUI(true);
 
@@ -308,6 +346,18 @@ public class UIBuilder : MonoBehaviour
     {
         switch (buttonName)
         {
+            case "ChooseMixedButton":
+                SetScene(TestType.MixedMethods);
+                break;
+
+            case "ChooseLocalizationButton":
+                SetScene(TestType.Localization);
+                break;
+
+            case "ChooseDemoButton":
+                SetScene(TestType.Demo);
+                break;
+
             case "RestartButton":
                 LocalizationTestLogic.Instance.testPhase = LocalizationTestLogic.TestPhase.Start;
                 break;
@@ -331,14 +381,17 @@ public class UIBuilder : MonoBehaviour
 
             case "SwitchHandButton":
                 LocalizationTestLogic.Instance.useLeftController4Pointing = !LocalizationTestLogic.Instance.useLeftController4Pointing;
+                setUpdateFlag();
                 break;
 
             case "QuitAppButton":
-                Application.Quit();
+                if (testType == TestType.Intro)
+                    Application.Quit();
+                else
+                    SetScene(TestType.Intro);
+
                 break;
         }
-
-        UIBuilder.Instance.setUpdateFlag();
     }
     private void createLabels()
     {

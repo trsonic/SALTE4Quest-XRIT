@@ -33,10 +33,9 @@ public class DemoLogic : MonoBehaviour
 
     InputDevice leftController, rightController, pointingController;
 
+    float primaryButtonPressedTime, secondaryButtonPressedTime;
 
-    bool primaryButtonPressed = false;
-    float primaryButtonPressedTime;
-    int hrtfSetId = 3;
+    int audioSceneId, hrtfSetId;
 
     float soundSourceDistance = 1.5f;
 
@@ -65,20 +64,18 @@ public class DemoLogic : MonoBehaviour
                 // check pointing controller
                 if (rightController.isValid) pointingController = rightController;
 
+                //if (leftController.isValid | rightController.isValid)
+                //{
+                //    leftController.TryGetFeatureValue(CommonUsages.gripButton, out bool leftGripPressed);
+                //    rightController.TryGetFeatureValue(CommonUsages.gripButton, out bool rightGripPressed);
 
-                if (leftController.isValid | rightController.isValid)
-                {
-                    leftController.TryGetFeatureValue(CommonUsages.gripButton, out bool leftGripPressed);
-                    rightController.TryGetFeatureValue(CommonUsages.gripButton, out bool rightGripPressed);
-
-                    if (rightGripPressed) pointingController = rightController;
-                    else if (leftGripPressed) pointingController = leftController;
-                }
+                //    if (rightGripPressed) pointingController = rightController;
+                //    else if (leftGripPressed) pointingController = leftController;
+                //}
 
                 if (pointingController.isValid)
                 {
                     soundSource.GetComponent<Renderer>().enabled = true;
-
 
                     // using joystick to change pointer distance
                     pointingController.TryGetFeatureValue(CommonUsages.primary2DAxis, out Vector2 joystickUpDown);
@@ -89,18 +86,30 @@ public class DemoLogic : MonoBehaviour
                     soundSource.transform.rotation = controllerRotation;
                     soundSource.transform.position = mainCamera.transform.position + soundSource.transform.forward * soundSourceDistance;
 
-                    // if primary button pressed switch hrtf set
-                    LocalizationTestLogic.Instance.pointingController.TryGetFeatureValue(CommonUsages.primaryButton, out bool primaryButton);
-                    if (primaryButton && !primaryButtonPressed)
+                    // if primary button pressed switch audio scene
+                    pointingController.TryGetFeatureValue(CommonUsages.primaryButton, out bool primaryButton);
+                    if (primaryButtonPressedTime == 0.0f & primaryButton)
                     {
-                        primaryButtonPressed = true;
+                        TextDisplays.Instance.PrintDebugMessage("Primary Button Pressed");
                         primaryButtonPressedTime = Time.realtimeSinceStartup;
-                        hrtfSetId = (hrtfSetId + 1) % 4;
-                        hrtfSwitcher(hrtfSetId);
+                        SceneSwitcher();
                     }
-                    else if (primaryButtonPressed && (Time.realtimeSinceStartup - primaryButtonPressedTime) > 0.5f)
+                    else if ((Time.realtimeSinceStartup - primaryButtonPressedTime) > 0.5f & !primaryButton)
                     {
-                        primaryButtonPressed = false;
+                        primaryButtonPressedTime = 0.0f;
+                    }
+
+                    // if secondary button pressed switch hrtf set
+                    pointingController.TryGetFeatureValue(CommonUsages.secondaryButton, out bool secondaryButton);
+                    if (secondaryButtonPressedTime == 0.0f & secondaryButton)
+                    {
+                        TextDisplays.Instance.PrintDebugMessage("Secondary Button Pressed");
+                        secondaryButtonPressedTime = Time.realtimeSinceStartup;
+                        HrtfSwitcher();
+                    }
+                    else if ((Time.realtimeSinceStartup - secondaryButtonPressedTime) > 0.5f & !secondaryButton)
+                    {
+                        secondaryButtonPressedTime = 0.0f;
                     }
                 }
 
@@ -108,12 +117,19 @@ public class DemoLogic : MonoBehaviour
         }
 
     }
-
-    void hrtfSwitcher(int id)
+    void SceneSwitcher()
+    {
+        string[] stimuli = new string[] { "stim1", "stim2", "stim3", "stim4" };
+        audioSceneId = (audioSceneId + 1) % 4;
+        TextDisplays.Instance.PrintDebugMessage("Stimulus ID: " + audioSceneId.ToString() + " / " + stimuli[audioSceneId]);
+        OSCOutput.Instance.sendOSCMessage("/stimulus", stimuli[audioSceneId]);
+    }
+    void HrtfSwitcher()
     {
         string[] conditions = new string[] { "cond1", "cond2", "cond3", "cond4" };
+        hrtfSetId = (hrtfSetId + 1) % conditions.Length;
 
-        switch (id)
+        switch (hrtfSetId)
         {
             case 0:
                 soundSource.GetComponent<Renderer>().material.color = Color.red;
@@ -129,10 +145,9 @@ public class DemoLogic : MonoBehaviour
                 break;
         }
 
-        TextDisplays.Instance.PrintDebugMessage("Condition ID: " + id.ToString() + " / " + conditions[id]);
-        OSCOutput.Instance.sendOSCMessage("/condition", conditions[id]);
+        TextDisplays.Instance.PrintDebugMessage("Condition ID: " + hrtfSetId.ToString() + " / " + conditions[hrtfSetId]);
+        OSCOutput.Instance.sendOSCMessage("/condition", conditions[hrtfSetId]);
     }
-
     void findControllers()
     {
         List<InputDevice> devices = new List<InputDevice>();
