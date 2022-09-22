@@ -4,8 +4,6 @@ using UnityEngine;
 using System.Text;
 using System.IO;
 
-
-
 public class DirectTestLogic : MonoBehaviour
 {
     #region Singleton
@@ -35,7 +33,7 @@ public class DirectTestLogic : MonoBehaviour
     public int trialIndex;
     public string subjId;
 
-    public List<DirectTestTrial> trialList = new List<DirectTestTrial>();
+    public List<DirectTestTrial> trialList; // = new List<DirectTestTrial>();
 
     void Start()
     {
@@ -105,7 +103,6 @@ public class DirectTestLogic : MonoBehaviour
             trialList[i].ABbuttonsPresent = true;
             trialList[i].ABconditionsReversed = randomBoolean();
         }
-
 
         // permute trial list
         trialList.Shuffle();

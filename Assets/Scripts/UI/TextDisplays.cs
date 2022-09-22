@@ -30,13 +30,8 @@ public class TextDisplays : MonoBehaviour
     #endregion
 
     private GameObject mainCamera, debugDisplay, hmdFixedDisplay;
-
     InputDevice leftController, rightController;
-
     float _timeAtPress;
-
- 
-
     private void Start()
     {
         mainCamera = GameObject.Find("Main Camera");

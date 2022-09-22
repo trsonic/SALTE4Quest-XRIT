@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
 using UnityEngine.XR;
-using TMPro;
 
 public class LocalizationTestLogic : MonoBehaviour
 {
@@ -118,8 +117,8 @@ public class LocalizationTestLogic : MonoBehaviour
         findPointingController();
 
         // initialize remote audio renderer
-        OSCOutput.Instance.sendOSCMessage("/attenuation", 0.0f);
-        OSCOutput.Instance.sendOSCMessage("/mute", 1);
+        OSCIO.Instance.SendOSCMessage("/attenuation", 0.0f);
+        OSCIO.Instance.SendOSCMessage("/mute", 1);
 
         _timeAtTestStart = Time.realtimeSinceStartup;
         loadTrial(0);
@@ -140,7 +139,7 @@ public class LocalizationTestLogic : MonoBehaviour
         }
 
         // conditions
-        string[] conditions = new string[] { "cond1", "cond2", "cond3", "cond4" };
+        string[] conditions = new string[] { "hrtf1", "hrtf2", "hrtf3", "hrtf4" };
         
         // repetitions
         int numOfRepetitions = 3;
@@ -215,8 +214,8 @@ public class LocalizationTestLogic : MonoBehaviour
             //reticle.GetComponent<Renderer>().enabled = false;
 
             // de-initialize remote audio renderer
-            OSCOutput.Instance.sendOSCMessage("/attenuation", 0.0f); ;
-            OSCOutput.Instance.sendOSCMessage("/mute", 1);
+            OSCIO.Instance.SendOSCMessage("/attenuation", 0.0f); ;
+            OSCIO.Instance.SendOSCMessage("/mute", 1);
         }
 
         UIBuilder.Instance.setUpdateFlag();
@@ -275,6 +274,17 @@ public class LocalizationTestLogic : MonoBehaviour
                 // check head orientation
                 float rotation = Quaternion.Angle(meshContainer.transform.rotation, mainCamera.transform.rotation);
 
+                // obtain current position of the presented sound source in reference to the listener
+                Vector3 hsVec = Vector3.Normalize(soundSource.transform.position - mainCamera.transform.position);
+                Vector3 projectedVec = Vector3.ProjectOnPlane(hsVec, mainCamera.transform.up);
+                float presentedAzimuthAngle = Vector3.SignedAngle(mainCamera.transform.forward, projectedVec, mainCamera.transform.up);
+                float presentedElevationAngle = Vector3.SignedAngle(mainCamera.transform.up, hsVec, Vector3.Cross(mainCamera.transform.up, hsVec));
+                presentedElevationAngle = (presentedElevationAngle - 90.0f) * -1.0f;
+                float presentedDistance = Vector3.Distance(mainCamera.transform.position, soundSource.transform.position);
+
+                // send sound source coordinates to the renderer
+                OSCIO.Instance.SendOSCMessage("/source/1/aed", presentedAzimuthAngle, presentedElevationAngle, presentedDistance);
+
                 // calculate and send osc with stimulus attenuation in dB
                 float att;
                 if (unsignedLimit > 0 && rotation > unsignedLimit)
@@ -293,7 +303,7 @@ public class LocalizationTestLogic : MonoBehaviour
                 if (att != stimulusAttenuation)
                 {
                     stimulusAttenuation = att;
-                    OSCOutput.Instance.sendOSCMessage("/attenuation", stimulusAttenuation);
+                    OSCIO.Instance.SendOSCMessage("/attenuation", stimulusAttenuation);
                 }
 
                 // click joystick to show debug console
@@ -308,14 +318,6 @@ public class LocalizationTestLogic : MonoBehaviour
                 if (trigger > 0.5f && !triggerPressed && !delayedLoad)
                 {
                     triggerPressed = true;
-
-                    // obtain current position of the presented sound source in reference to the listener
-                    Vector3 hsVec = Vector3.Normalize(soundSource.transform.position - mainCamera.transform.position);
-                    Vector3 projectedVec = Vector3.ProjectOnPlane(hsVec, mainCamera.transform.up);
-                    float presentedAzimuthAngle = Vector3.SignedAngle(mainCamera.transform.forward, projectedVec, mainCamera.transform.up);
-                    float presentedElevationAngle = Vector3.SignedAngle(mainCamera.transform.up, hsVec, Vector3.Cross(mainCamera.transform.up, hsVec));
-                    presentedElevationAngle = (presentedElevationAngle - 90.0f) * -1.0f;
-                    float presentedDistance = Vector3.Distance(mainCamera.transform.position, soundSource.transform.position);
 
                     // obtain current azimuth and elevation of the head in the mesh space
                     Vector3 meshHeadVec = Vector3.Normalize((mainCamera.transform.position + mainCamera.transform.forward) - meshContainer.transform.position);
@@ -350,7 +352,7 @@ public class LocalizationTestLogic : MonoBehaviour
                     pointingController.SendHapticImpulse(0, 0.3f, 0.1f);
 
                     // stop renderer plaback
-                    OSCOutput.Instance.sendOSCMessage("/mute", 1);
+                    OSCIO.Instance.SendOSCMessage("/mute", 1);
                 }
                 else if (trigger == 0.0f && triggerPressed)
                 {
@@ -393,10 +395,10 @@ public class LocalizationTestLogic : MonoBehaviour
         soundSource.GetComponent<Renderer>().enabled = false;
 
         // mute renderer
-        OSCOutput.Instance.sendOSCMessage("/mute", 1);
+        OSCIO.Instance.SendOSCMessage("/mute", 1);
 
         // renderer load hrtfs
-        OSCOutput.Instance.sendOSCMessage("/condition", trialList[trialIndex].getConditionId());
+        OSCIO.Instance.SendOSCMessage("/condition", trialList[trialIndex].getConditionId());
         TextDisplays.Instance.PrintDebugMessage(trialList[trialIndex].getConditionId());
 
         // set source position (done in update)
@@ -406,7 +408,7 @@ public class LocalizationTestLogic : MonoBehaviour
         while (timer < delayTime) { timer += Time.deltaTime; yield return null; }
 
         // unmute renderer
-        OSCOutput.Instance.sendOSCMessage("/mute", 0);
+        OSCIO.Instance.SendOSCMessage("/mute", 0);
 
         soundSource.GetComponent<Renderer>().enabled = showSource;
         elapsedTimeOnTarget = 0.0f;

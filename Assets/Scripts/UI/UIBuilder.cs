@@ -175,11 +175,18 @@ public class UIBuilder : MonoBehaviour
     {
         initUI(); // clear UI
 
-        instructionMessage.text = "\n" +
+        instructionMessage.text =
+            "Local IP: " + OSCIO.Instance.GetLocalIP() + "\n" +
+            "Renderer IP: " + OSCIO.Instance.GetRendererIP() + "\n\n" +
             "Choose one of the following options:\n" +
             "- MUSHRA test\n" +
             "- Localization test\n" +
             "- Binaural rendering demonstration";
+
+        //instructionMessage.text = "\n\n\n" +
+        //"- take the VR headset off and lauch the SALTE audio renderer,\n" +
+        //"- enter the following IP address: " + OSCOutput.Instance.localIp + " in the renderer OSC configuration window,\n" +
+        //"- click Connect OSC\n";
 
         // show three buttons
         chooseMixedButton.SetActive(true);
@@ -274,7 +281,8 @@ public class UIBuilder : MonoBehaviour
                 initUI();
                 instructionMessage.text = "\n\n"
                     + "HRTF Evaluation Localization Test" + "\n"
-                    + "Renderer IP: " + OSCOutput.Instance.getRendererIP() + "\n"
+                    + "Local IP: " + OSCIO.Instance.GetLocalIP() + "\n"
+                    + "Renderer IP: " + OSCIO.Instance.GetRendererIP() + "\n"
                     + "\n"
                     + "1. Listen to the presented sound." + "\n"
                     + "2. Point your face at the perceived direction of the sound source." + "\n"

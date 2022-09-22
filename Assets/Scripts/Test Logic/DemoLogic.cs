@@ -61,6 +61,17 @@ public class DemoLogic : MonoBehaviour
                     findControllers();
                 }
 
+                // obtain current position of the presented sound source in reference to the listener
+                Vector3 hsVec = Vector3.Normalize(soundSource.transform.position - mainCamera.transform.position);
+                Vector3 projectedVec = Vector3.ProjectOnPlane(hsVec, mainCamera.transform.up);
+                float presentedAzimuthAngle = Vector3.SignedAngle(mainCamera.transform.forward, projectedVec, mainCamera.transform.up);
+                float presentedElevationAngle = Vector3.SignedAngle(mainCamera.transform.up, hsVec, Vector3.Cross(mainCamera.transform.up, hsVec));
+                presentedElevationAngle = (presentedElevationAngle - 90.0f) * -1.0f;
+                float presentedDistance = Vector3.Distance(mainCamera.transform.position, soundSource.transform.position);
+
+                // send sound source coordinates to the renderer
+                OSCIO.Instance.SendOSCMessage("/source/1/aed", presentedAzimuthAngle, presentedElevationAngle, presentedDistance);
+
                 // check pointing controller
                 if (rightController.isValid) pointingController = rightController;
 
@@ -119,14 +130,14 @@ public class DemoLogic : MonoBehaviour
     }
     void SceneSwitcher()
     {
-        string[] stimuli = new string[] { "stim1", "stim2", "stim3", "stim4" };
+        string[] stimuli = new string[] { "scene1", "scene2", "scene3", "scene4" };
         audioSceneId = (audioSceneId + 1) % 4;
         TextDisplays.Instance.PrintDebugMessage("Stimulus ID: " + audioSceneId.ToString() + " / " + stimuli[audioSceneId]);
-        OSCOutput.Instance.sendOSCMessage("/stimulus", stimuli[audioSceneId]);
+        OSCIO.Instance.SendOSCMessage("/scene", stimuli[audioSceneId]);
     }
     void HrtfSwitcher()
     {
-        string[] conditions = new string[] { "cond1", "cond2", "cond3", "cond4" };
+        string[] conditions = new string[] { "hrtf1", "hrtf2", "hrtf3", "hrtf4" };
         hrtfSetId = (hrtfSetId + 1) % conditions.Length;
 
         switch (hrtfSetId)
@@ -146,7 +157,7 @@ public class DemoLogic : MonoBehaviour
         }
 
         TextDisplays.Instance.PrintDebugMessage("Condition ID: " + hrtfSetId.ToString() + " / " + conditions[hrtfSetId]);
-        OSCOutput.Instance.sendOSCMessage("/condition", conditions[hrtfSetId]);
+        OSCIO.Instance.SendOSCMessage("/condition", conditions[hrtfSetId]);
     }
     void findControllers()
     {
