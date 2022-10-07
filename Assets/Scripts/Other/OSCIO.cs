@@ -32,7 +32,7 @@ public class OSCIO : MonoBehaviour
     OscClient client;
     OscServer server;
 
-    string rendererIp = "192.168.1.236";
+    string rendererIp = "192.168.1.107"; // "192.168.1.236";
     string newRendererIp = "";
 
     int oscPortOut = 9000;  // Renderer receiving port

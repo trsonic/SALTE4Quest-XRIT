@@ -89,6 +89,28 @@ public class TextDisplays : MonoBehaviour
     {
         hmdFixedDisplay.GetComponent<TextMeshProUGUI>().text = message;
     }
+    public IEnumerator DisplayTrialInfo(string text, float fadeInTime, float dispTime, float fadeOutTime)
+    {
+        PrintHMDMessage(text);
+
+        if (fadeInTime > 0.0f)
+        {
+            setHMDdisplayAlpha(0.0f);
+            while (getHMDdisplayAlpha() < 1.0f)
+            { incrementHMDdisplayAlpha(Time.deltaTime / fadeInTime); yield return null; }
+        }
+        else setHMDdisplayAlpha(1.0f);
+
+        while (dispTime > 0.0f) { dispTime -= Time.deltaTime; yield return null; }
+
+        if (fadeOutTime > 0.0f)
+        {
+            while (getHMDdisplayAlpha() > 0.0f)
+            { incrementHMDdisplayAlpha(-Time.deltaTime / fadeInTime); yield return null; }
+
+        }
+        else setHMDdisplayAlpha(0.0f);
+    }
     public float getHMDdisplayAlpha()
     {
         Color current = hmdFixedDisplay.GetComponent<TextMeshProUGUI>().color;

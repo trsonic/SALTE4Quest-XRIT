@@ -26,7 +26,7 @@ public class DemoLogic : MonoBehaviour
     }
     #endregion
 
-    private GameObject mainCamera, soundSource;
+    GameObject mainCamera, soundSource;
 
     public enum TestPhase { Start, InProgress }
     public TestPhase testPhase;
@@ -35,9 +35,7 @@ public class DemoLogic : MonoBehaviour
 
     float primaryButtonPressedTime, secondaryButtonPressedTime;
 
-    int audioSceneId, hrtfSetId;
-
-    float soundSourceDistance = 1.5f;
+    int hrtfSetId = 0;
 
     void Start()
     {
@@ -61,41 +59,33 @@ public class DemoLogic : MonoBehaviour
                     findControllers();
                 }
 
-                // obtain current position of the presented sound source in reference to the listener
-                Vector3 hsVec = Vector3.Normalize(soundSource.transform.position - mainCamera.transform.position);
-                Vector3 projectedVec = Vector3.ProjectOnPlane(hsVec, mainCamera.transform.up);
-                float presentedAzimuthAngle = Vector3.SignedAngle(mainCamera.transform.forward, projectedVec, mainCamera.transform.up);
-                float presentedElevationAngle = Vector3.SignedAngle(mainCamera.transform.up, hsVec, Vector3.Cross(mainCamera.transform.up, hsVec));
-                presentedElevationAngle = (presentedElevationAngle - 90.0f) * -1.0f;
-                float presentedDistance = Vector3.Distance(mainCamera.transform.position, soundSource.transform.position);
+                //// obtain current position of the presented sound source in reference to the listener
+                //Vector3 hsVec = Vector3.Normalize(soundSource.transform.position - mainCamera.transform.position);
+                //Vector3 projectedVec = Vector3.ProjectOnPlane(hsVec, mainCamera.transform.up);
+                //float presentedAzimuthAngle = Vector3.SignedAngle(mainCamera.transform.forward, projectedVec, mainCamera.transform.up);
+                //float presentedElevationAngle = Vector3.SignedAngle(mainCamera.transform.up, hsVec, Vector3.Cross(mainCamera.transform.up, hsVec));
+                //presentedElevationAngle = (presentedElevationAngle - 90.0f) * -1.0f;
+                //float presentedDistance = Vector3.Distance(mainCamera.transform.position, soundSource.transform.position);
 
-                // send sound source coordinates to the renderer
-                OSCIO.Instance.SendOSCMessage("/source/1/aed", presentedAzimuthAngle, presentedElevationAngle, presentedDistance);
+                //// send sound source coordinates to the renderer
+                //OSCIO.Instance.SendOSCMessage("/source/1/aed", presentedAzimuthAngle, presentedElevationAngle, presentedDistance);
 
                 // check pointing controller
                 if (rightController.isValid) pointingController = rightController;
 
-                //if (leftController.isValid | rightController.isValid)
-                //{
-                //    leftController.TryGetFeatureValue(CommonUsages.gripButton, out bool leftGripPressed);
-                //    rightController.TryGetFeatureValue(CommonUsages.gripButton, out bool rightGripPressed);
-
-                //    if (rightGripPressed) pointingController = rightController;
-                //    else if (leftGripPressed) pointingController = leftController;
-                //}
 
                 if (pointingController.isValid)
                 {
-                    soundSource.GetComponent<Renderer>().enabled = true;
+                    //soundSource.GetComponent<Renderer>().enabled = true;
 
-                    // using joystick to change pointer distance
-                    pointingController.TryGetFeatureValue(CommonUsages.primary2DAxis, out Vector2 joystickUpDown);
-                    if (joystickUpDown.y > 0.5f) { soundSourceDistance *= 1.01f; soundSourceDistance = Mathf.Clamp(soundSourceDistance, 0.5f, 5.0f); }
-                    else if (joystickUpDown.y < -0.5f) { soundSourceDistance /= 1.01f; soundSourceDistance = Mathf.Clamp(soundSourceDistance, 0.5f, 5.0f); }
+                    //// using joystick to change pointer distance
+                    //pointingController.TryGetFeatureValue(CommonUsages.primary2DAxis, out Vector2 joystickUpDown);
+                    //if (joystickUpDown.y > 0.5f) { soundSourceDistance *= 1.01f; soundSourceDistance = Mathf.Clamp(soundSourceDistance, 0.5f, 5.0f); }
+                    //else if (joystickUpDown.y < -0.5f) { soundSourceDistance /= 1.01f; soundSourceDistance = Mathf.Clamp(soundSourceDistance, 0.5f, 5.0f); }
 
-                    pointingController.TryGetFeatureValue(CommonUsages.deviceRotation, out Quaternion controllerRotation);
-                    soundSource.transform.rotation = controllerRotation;
-                    soundSource.transform.position = mainCamera.transform.position + soundSource.transform.forward * soundSourceDistance;
+                    //pointingController.TryGetFeatureValue(CommonUsages.deviceRotation, out Quaternion controllerRotation);
+                    //soundSource.transform.rotation = controllerRotation;
+                    //soundSource.transform.position = mainCamera.transform.position + soundSource.transform.forward * soundSourceDistance;
 
                     // if primary button pressed switch audio scene
                     pointingController.TryGetFeatureValue(CommonUsages.primaryButton, out bool primaryButton);
@@ -126,38 +116,35 @@ public class DemoLogic : MonoBehaviour
 
                 break;
         }
-
     }
     void SceneSwitcher()
     {
-        string[] stimuli = new string[] { "scene1", "scene2", "scene3", "scene4" };
-        audioSceneId = (audioSceneId + 1) % 4;
-        TextDisplays.Instance.PrintDebugMessage("Stimulus ID: " + audioSceneId.ToString() + " / " + stimuli[audioSceneId]);
-        OSCIO.Instance.SendOSCMessage("/scene", stimuli[audioSceneId]);
+        AudioSceneManager.Instance.LoadNextScene();
     }
     void HrtfSwitcher()
     {
-        string[] conditions = new string[] { "hrtf1", "hrtf2", "hrtf3", "hrtf4" };
-        hrtfSetId = (hrtfSetId + 1) % conditions.Length;
+        hrtfSetId = (hrtfSetId + 1) % 6;
 
-        switch (hrtfSetId)
-        {
-            case 0:
-                soundSource.GetComponent<Renderer>().material.color = Color.red;
-                break;
-            case 1:
-                soundSource.GetComponent<Renderer>().material.color = Color.green;
-                break;
-            case 2:
-                soundSource.GetComponent<Renderer>().material.color = Color.blue;
-                break;
-            case 3:
-                soundSource.GetComponent<Renderer>().material.color = Color.yellow;
-                break;
-        }
+        //switch (hrtfSetId)
+        //{
+        //    case 0:
+        //        soundSource.GetComponent<Renderer>().material.color = Color.red;
+        //        break;
+        //    case 1:
+        //        soundSource.GetComponent<Renderer>().material.color = Color.green;
+        //        break;
+        //    case 2:
+        //        soundSource.GetComponent<Renderer>().material.color = Color.blue;
+        //        break;
+        //    case 3:
+        //        soundSource.GetComponent<Renderer>().material.color = Color.yellow;
+        //        break;
+        //}
 
-        TextDisplays.Instance.PrintDebugMessage("Condition ID: " + hrtfSetId.ToString() + " / " + conditions[hrtfSetId]);
-        OSCIO.Instance.SendOSCMessage("/condition", conditions[hrtfSetId]);
+        string text = "HRTF set ID: " + (hrtfSetId + 1).ToString();
+        TextDisplays.Instance.PrintDebugMessage(text);
+        StartCoroutine(TextDisplays.Instance.DisplayTrialInfo(text, 0.25f, 0.0f, 0.25f));
+        OSCIO.Instance.SendOSCMessage("/condition", hrtfSetId + 1);
     }
     void findControllers()
     {

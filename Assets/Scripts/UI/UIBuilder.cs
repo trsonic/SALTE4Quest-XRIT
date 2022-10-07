@@ -175,18 +175,13 @@ public class UIBuilder : MonoBehaviour
     {
         initUI(); // clear UI
 
-        instructionMessage.text =
-            "Local IP: " + OSCIO.Instance.GetLocalIP() + "\n" +
+        instructionMessage.text = "\n" +
+            "HMD IP: " + OSCIO.Instance.GetLocalIP() + "\n" +
             "Renderer IP: " + OSCIO.Instance.GetRendererIP() + "\n\n" +
             "Choose one of the following options:\n" +
             "- MUSHRA test\n" +
             "- Localization test\n" +
             "- Binaural rendering demonstration";
-
-        //instructionMessage.text = "\n\n\n" +
-        //"- take the VR headset off and lauch the SALTE audio renderer,\n" +
-        //"- enter the following IP address: " + OSCOutput.Instance.localIp + " in the renderer OSC configuration window,\n" +
-        //"- click Connect OSC\n";
 
         // show three buttons
         chooseMixedButton.SetActive(true);
@@ -207,22 +202,11 @@ public class UIBuilder : MonoBehaviour
                 instructionMessage.text = "\n" +
                     "Thank you for agreeing to participate in this listening test.\n" +
                     "You will be presented with a number of screens containing sliders and buttons.\n" +
-                    "Use buttons (A, B, C, ...) to trigger different experimental conditions.\n" +
+                    "Use the trigger button to select conditions (A, B, C, ...) and change trials.\n" +
                     "Use sliders to rate these conditions according to the specified perceptual attribute. Please rate all conditions.\n" +
+                    "By holding down grip button and operating joystick you can reposition and resize the test interface.\n" +
                     "The results of this test will be saved on your device and uploaded automatically once you finish the test.\n" +
                     "Click Begin Test to confirm your consent and start the test.";
-
-                //instructionMessage.text = "\n\n\n" +
-                //"- take the VR headset off and lauch the SALTE audio renderer,\n" +
-                //"- enter the following IP address: " + OSCOutput.Instance.localIp + " in the renderer OSC configuration window,\n" +
-                //"- click Connect OSC\n";
-
-                //instructionMessage.text = "\n\n\n" +
-                //"- load the test configuration JSON file,\n" +
-                //"- select the result CSV file,\n" +
-                //"- click Begin to start the test.\n\n" +
-                //"Use the trigger button to select conditions and change trials.\n" +
-                //"By holding down grip button and operating joystick you can reposition and resize the test interface.\n";
 
                 // show begin and quit buttons
                 startTestButton.SetActive(true);
@@ -279,9 +263,9 @@ public class UIBuilder : MonoBehaviour
         {
             case LocalizationTestLogic.TestPhase.Start:
                 initUI();
-                instructionMessage.text = "\n\n"
+                instructionMessage.text = "\n"
                     + "HRTF Evaluation Localization Test" + "\n"
-                    + "Local IP: " + OSCIO.Instance.GetLocalIP() + "\n"
+                    + "HMD IP: " + OSCIO.Instance.GetLocalIP() + "\n"
                     + "Renderer IP: " + OSCIO.Instance.GetRendererIP() + "\n"
                     + "\n"
                     + "1. Listen to the presented sound." + "\n"
@@ -333,7 +317,8 @@ public class UIBuilder : MonoBehaviour
 
                 instructionMessage.text = "\n" +
                     "This is an HRTF demo scene." + "\n" +
-                    "Use the secondary button (B) to switch HRTF set" + "\n";
+                    "Use the primary controller button (A) to switch audio scenes." + "\n" +
+                    "Use the secondary controller button (B) to switch HRTF sets.\n";
 
                 // show begin and quit buttons
                 startTestButton.SetActive(true);
@@ -346,7 +331,7 @@ public class UIBuilder : MonoBehaviour
             case DemoLogic.TestPhase.InProgress:
                 initUI();
                 showUI(false);
-
+                
                 break;
         }
     }
@@ -373,16 +358,18 @@ public class UIBuilder : MonoBehaviour
             case "StartButton":
                 switch (testType)
                 {
+                    case TestType.MixedMethods:
+                        DirectTestLogic.Instance.InitializeTest();
+                        break;
+
                     case TestType.Localization:
                         LocalizationTestLogic.Instance.startTest();
                         break;
 
                     case TestType.Demo:
-                        {
-                            DemoLogic.Instance.testPhase = DemoLogic.TestPhase.InProgress;
-                            setUpdateFlag();
-                        }
-                        
+                        DemoLogic.Instance.testPhase = DemoLogic.TestPhase.InProgress;
+                        setUpdateFlag();
+                        AudioSceneManager.Instance.LoadScene(0);
                         break;
                 }
                 break;

@@ -39,7 +39,7 @@ public class LocalizationTestLogic : MonoBehaviour
 
     public GameObject soundSource;
     public GameObject visualPointer;
-    private GameObject headTargetCircle, headVfCircle; //, reticle;
+    private GameObject headTargetCircle, reticle;
     private GameObject mainCamera;
     private GameObject meshContainer;
 
@@ -49,11 +49,12 @@ public class LocalizationTestLogic : MonoBehaviour
     bool showSource = false;
     bool showPointer = false;
     bool showReticle = true;
-    private float meshDistance = 1.5f;
-    private float pointerDistance = 1.5f;
-    private float unsignedLimit = 20.0f; // allowed yaw pitch roll deviation for listening to stimulus (0.0f to turn off)
-    private float stimulusAttenuation = 0.0f;
-    private float horizontalMeshRotation = 0.0f;
+    float reticleSize = 0.25f;
+    float meshDistance = 1.5f;
+    float pointerDistance = 1.5f;
+    float unsignedLimit = 20.0f; // allowed yaw pitch roll deviation for listening to stimulus (0.0f to turn off)
+    float stimulusAttenuation = 0.0f;
+    float horizontalMeshRotation = 0.0f;
 
     public InputDevice pointingController;
     private bool triggerPressed;
@@ -83,14 +84,19 @@ public class LocalizationTestLogic : MonoBehaviour
             headTargetCircle.GetComponent<LineRenderer>().enabled = false;
         }
 
-
-        // draw the head viewfinder circle
-        headVfCircle = new GameObject("Viewfinder Circle");
-        headVfCircle.DrawCircle(0.1f, 0.005f);
-        headVfCircle.GetComponent<Renderer>().material.color = Color.red;
-        headVfCircle.GetComponent<LineRenderer>().enabled = false;
-
-        // reticle = GameObject.Find("LocalizationTestReticle");
+        // create the reticle
+        reticle = new GameObject("Reticle");
+        GameObject sphH = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+        GameObject sphV = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+        sphH.GetComponent<Renderer>().material.color = Color.red;
+        sphV.GetComponent<Renderer>().material.color = Color.red;
+        sphH.transform.localScale = new Vector3(reticleSize, reticleSize * 0.1f, reticleSize * 0.1f);
+        sphV.transform.localScale = new Vector3(reticleSize * 0.1f, reticleSize * 0.1f, reticleSize);
+        sphH.transform.position = reticle.transform.position;
+        sphV.transform.position = reticle.transform.position;
+        sphH.transform.parent = reticle.transform;
+        sphV.transform.parent = reticle.transform;
+        foreach (Renderer r in reticle.GetComponentsInChildren<Renderer>()) r.enabled = false;
 
         testPhase = TestPhase.Start;
     }
@@ -102,8 +108,8 @@ public class LocalizationTestLogic : MonoBehaviour
         createHorizonMesh(meshDistance, .0025f * meshDistance);
         if (headTargetCircle != null) headTargetCircle.GetComponent<LineRenderer>().enabled = true;
         visualPointer.GetComponent<Renderer>().enabled = showPointer;
-        headVfCircle.GetComponent<LineRenderer>().enabled = showReticle;
-        //reticle.GetComponent<Renderer>().enabled = showReticle;
+        foreach (Renderer r in reticle.GetComponentsInChildren<Renderer>()) r.enabled = showReticle;
+
 
         // create subject id
         subjId = "";
@@ -133,20 +139,26 @@ public class LocalizationTestLogic : MonoBehaviour
         List<Vector2> dirs = new List<Vector2>();
         for (int i = 0; i < numOfDirections; ++i)
         {
-            float azimuth = Mathf.Round(Random.Range(-90.0f, 90.0f));
-            float elevation = Mathf.Round(Random.Range(-60.0f, 60.0f));
+            Vector3 randDir = Random.insideUnitSphere.normalized;
+            Vector3 projectedVec = Vector3.ProjectOnPlane(randDir, Vector3.up);
+            float azimuth = Vector3.SignedAngle(mainCamera.transform.forward, projectedVec, mainCamera.transform.up);
+            float elevation = Vector3.SignedAngle(Vector3.up, randDir, Vector3.Cross(Vector3.up, randDir));
+            elevation = (elevation - 90.0f) * -1.0f;
+
+            //float azimuth = Mathf.Round(Random.Range(-900.0f, 90.0f));
+            //float elevation = Mathf.Round(Random.Range(-60.0f, 60.0f));
             dirs.Add(new Vector2(azimuth, elevation));
         }
 
         // conditions
-        string[] conditions = new string[] { "hrtf1", "hrtf2", "hrtf3", "hrtf4" };
+        int[] conditions = new int[] { 0, 1, 2, 3 };
         
         // repetitions
         int numOfRepetitions = 3;
 
         foreach (Vector2 dir in dirs)
         {
-            foreach (string cond in conditions)
+            foreach (int cond in conditions)
             {
                 for (int i = 0; i < numOfRepetitions; ++i)
                 {
@@ -165,7 +177,7 @@ public class LocalizationTestLogic : MonoBehaviour
         // permute trial list
         trialList.Shuffle();
 
-        foreach (string conditionID in conditions) TextDisplays.Instance.PrintDebugMessage("condition: " + conditionID);
+        foreach (int conditionID in conditions) TextDisplays.Instance.PrintDebugMessage("condition: " + conditionID.ToString());
         TextDisplays.Instance.PrintDebugMessage("trial liste size: " + trialList.Count.ToString());
         for (int i = 0; i < trialList.Count; ++i) TextDisplays.Instance.PrintDebugMessage("trial index: " + i.ToString() + ", condition: " + trialList[i].getConditionId());
     }
@@ -188,9 +200,9 @@ public class LocalizationTestLogic : MonoBehaviour
             StartCoroutine(DelayedLoad(0.5f));
 
             // display trial info
-            TextDisplays.Instance.ShowDebugConsole(false);
+            //TextDisplays.Instance.ShowDebugConsole(false);
             string text = (trialIndex + 1).ToString() + " / " + trialList.Count.ToString();
-            StartCoroutine(DisplayTrialInfo(text, 0.25f, 0.0f, 0.25f));
+            StartCoroutine(TextDisplays.Instance.DisplayTrialInfo(text, 0.25f, 0.0f, 0.25f));
 
             testPhase = TestPhase.InProgress;
         }
@@ -210,8 +222,7 @@ public class LocalizationTestLogic : MonoBehaviour
             if (headTargetCircle != null) headTargetCircle.GetComponent<LineRenderer>().enabled = false;
             visualPointer.GetComponent<Renderer>().enabled = false;
             soundSource.GetComponent<Renderer>().enabled = false;
-            headVfCircle.GetComponent<LineRenderer>().enabled = false;
-            //reticle.GetComponent<Renderer>().enabled = false;
+            foreach (Renderer r in reticle.GetComponentsInChildren<Renderer>()) r.enabled = false;
 
             // de-initialize remote audio renderer
             OSCIO.Instance.SendOSCMessage("/attenuation", 0.0f); ;
@@ -243,14 +254,9 @@ public class LocalizationTestLogic : MonoBehaviour
                 }
 
                 // reticle
-                headVfCircle.transform.position = meshContainer.transform.position + mainCamera.transform.forward * meshDistance;
-                //headVfCircle.transform.rotation = mainCamera.transform.rotation;
-                headVfCircle.transform.rotation = Quaternion.LookRotation(headVfCircle.transform.position - mainCamera.transform.position);
-                headVfCircle.transform.Rotate(90.0f, 0.0f, 0.0f);
-
-                //reticle.transform.position = meshContainer.transform.position + mainCamera.transform.forward * meshDistance;
-                //reticle.transform.rotation = Quaternion.LookRotation(headVfCircle.transform.position - mainCamera.transform.position);
-                //reticle.transform.Rotate(90.0f, 0.0f, 0.0f);
+                reticle.transform.position = meshContainer.transform.position + mainCamera.transform.forward * meshDistance;
+                reticle.transform.rotation = Quaternion.LookRotation(reticle.transform.position - mainCamera.transform.position);
+                reticle.transform.Rotate(90.0f, 0.0f, 0.0f);
 
                 // target position
                 soundSource.transform.position = meshContainer.transform.position;
@@ -397,9 +403,12 @@ public class LocalizationTestLogic : MonoBehaviour
         // mute renderer
         OSCIO.Instance.SendOSCMessage("/mute", 1);
 
+        // renderer load scene (noise)
+        OSCIO.Instance.SendOSCMessage("/scene", "scene1");
+
         // renderer load hrtfs
-        OSCIO.Instance.SendOSCMessage("/condition", trialList[trialIndex].getConditionId());
-        TextDisplays.Instance.PrintDebugMessage(trialList[trialIndex].getConditionId());
+        OSCIO.Instance.SendOSCMessage("/condition", trialList[trialIndex].getConditionId() + 1);
+        TextDisplays.Instance.PrintDebugMessage(trialList[trialIndex].getConditionId().ToString());
 
         // set source position (done in update)
 
@@ -415,32 +424,9 @@ public class LocalizationTestLogic : MonoBehaviour
         elapsedTimeOffTarget = 0.0f;
         delayedLoad = false;
     }
-    IEnumerator DisplayTrialInfo(string text, float fadeInTime, float dispTime, float fadeOutTime)
-    {
-        
-        TextDisplays.Instance.PrintHMDMessage(text);
-
-        if (fadeInTime > 0.0f)
-        {
-            TextDisplays.Instance.setHMDdisplayAlpha(0.0f);
-            while (TextDisplays.Instance.getHMDdisplayAlpha() < 1.0f)
-            { TextDisplays.Instance.incrementHMDdisplayAlpha(Time.deltaTime / fadeInTime); yield return null; }
-        }
-        else TextDisplays.Instance.setHMDdisplayAlpha(1.0f);
-
-        while (dispTime > 0.0f) { dispTime -= Time.deltaTime; yield return null; }
-
-        if (fadeOutTime > 0.0f)
-        {
-            while (TextDisplays.Instance.getHMDdisplayAlpha() > 0.0f)
-            { TextDisplays.Instance.incrementHMDdisplayAlpha(-Time.deltaTime / fadeInTime); yield return null; }
-
-        }
-        else TextDisplays.Instance.setHMDdisplayAlpha(0.0f);
-    }
     public void ExportResults()
     {
-        string testId = "xr-hrtf-evaluation";
+        string testId = "xr-hrtf-localization";
 
         // get date as string
         string date = System.DateTime.Now.ToString("yyyyMMddHHmmss");

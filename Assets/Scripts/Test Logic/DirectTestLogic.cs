@@ -187,16 +187,16 @@ public class DirectTestLogic : MonoBehaviour
         TextDisplays.Instance.PrintDebugMessage("loading scene: " + trialList[trialIndex].getTrialId() + ", AB conditions reversed: " + trialList[trialIndex].ABconditionsReversed.ToString());
 
         // set audio source
-        if (trialList[trialIndex].getTrialId() == "scene1") AudioManager.Instance.LoadScene(0);
-        else if (trialList[trialIndex].getTrialId() == "scene2") AudioManager.Instance.LoadScene(1);
-        else if (trialList[trialIndex].getTrialId() == "scene3") AudioManager.Instance.LoadScene(2);
-        else if (trialList[trialIndex].getTrialId() == "scene4") AudioManager.Instance.LoadScene(3);
-        else if (trialList[trialIndex].getTrialId() == "scene5") AudioManager.Instance.LoadScene(4);
-        else if (trialList[trialIndex].getTrialId() == "scene6") AudioManager.Instance.LoadScene(5);
-        else if (trialList[trialIndex].getTrialId() == "scene7") AudioManager.Instance.LoadScene(6);
-        else if (trialList[trialIndex].getTrialId() == "scene8") AudioManager.Instance.LoadScene(7);
-        else if (trialList[trialIndex].getTrialId() == "scene9") AudioManager.Instance.LoadScene(8);
-        else if (trialList[trialIndex].getTrialId() == "scene10") AudioManager.Instance.LoadScene(9);
+        if (trialList[trialIndex].getTrialId() == "scene1") AudioSceneManager.Instance.LoadScene(0);
+        else if (trialList[trialIndex].getTrialId() == "scene2") AudioSceneManager.Instance.LoadScene(1);
+        else if (trialList[trialIndex].getTrialId() == "scene3") AudioSceneManager.Instance.LoadScene(2);
+        else if (trialList[trialIndex].getTrialId() == "scene4") AudioSceneManager.Instance.LoadScene(3);
+        else if (trialList[trialIndex].getTrialId() == "scene5") AudioSceneManager.Instance.LoadScene(4);
+        else if (trialList[trialIndex].getTrialId() == "scene6") AudioSceneManager.Instance.LoadScene(5);
+        else if (trialList[trialIndex].getTrialId() == "scene7") AudioSceneManager.Instance.LoadScene(6);
+        else if (trialList[trialIndex].getTrialId() == "scene8") AudioSceneManager.Instance.LoadScene(7);
+        else if (trialList[trialIndex].getTrialId() == "scene9") AudioSceneManager.Instance.LoadScene(8);
+        else if (trialList[trialIndex].getTrialId() == "scene10") AudioSceneManager.Instance.LoadScene(9);
 
         // set condition A
         trialList[trialIndex].buttonStates[1] = 1;

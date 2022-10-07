@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 public class LocalizationTestTrial
 {
-    private string condId; // no trialId, as there is a single condition per trial in localization tests
+    private int condId; // no trialId, as there is a single condition per trial in localization tests
     private float targetAz, targetEl, targetDist;
     private float presentedAz, presntedEl, presentedDist;
     private float headResponseAz, headResponseEl;
@@ -13,8 +13,8 @@ public class LocalizationTestTrial
     private float onTargetTime, offTargetTime;
     private float playbackLevel;
 
-    public void setConditionId(string id) { condId = id; }
-    public string getConditionId() { return condId; }
+    public void setConditionId(int id) { condId = id; }
+    public int getConditionId() { return condId; }
     public void setPlaybackLevel(float level) { playbackLevel = level; }
     public float getPlaybackLevel() { return playbackLevel; }
     public void setTargetAzEl(float azimuth, float elevation)
