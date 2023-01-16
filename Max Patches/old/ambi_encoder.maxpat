@@ -3375,15 +3375,13 @@
 , 			{
 				"box" : 				{
 					"id" : "obj-17",
-					"linecount" : 2,
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 136.5, 67.607155978679657, 187.0, 34.0 ],
+					"patching_rect" : [ 136.5, 67.607155978679657, 187.0, 20.0 ],
 					"presentation" : 1,
-					"presentation_linecount" : 2,
-					"presentation_rect" : [ 10.0, 8.607155978679657, 160.0, 34.0 ],
-					"text" : "AMBISONIC ENCODER\n(1 to 12 channels)"
+					"presentation_rect" : [ 10.0, 8.607155978679657, 160.0, 20.0 ],
+					"text" : "AMBISONIC ENCODER"
 				}
 
 			}
