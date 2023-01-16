@@ -151,7 +151,7 @@ public class LocalizationTestLogic : MonoBehaviour
         }
 
         // conditions
-        int[] conditions = new int[] { 0, 1, 2, 3 };
+        int[] conditions = new int[] { 1, 2, 3, 4, 5, 6 };
         
         // repetitions
         int numOfRepetitions = 3;
@@ -192,7 +192,7 @@ public class LocalizationTestLogic : MonoBehaviour
             trialIndex = index;
 
             // debug console
-            TextDisplays.Instance.PrintDebugMessage("Trial index: " + trialIndex.ToString() +
+            TextDisplays.Instance.PrintDebugMessage("Trial index: " + (trialIndex + 1).ToString() +
             ", condition ID: " + trialList[trialIndex].getConditionId() +
             ", target az: " + trialList[trialIndex].getTargetAzimuth().ToString() +
             ", target el: " + trialList[trialIndex].getTargetElevation().ToString());
@@ -404,10 +404,10 @@ public class LocalizationTestLogic : MonoBehaviour
         OSCIO.Instance.SendOSCMessage("/mute", 1);
 
         // renderer load scene (noise)
-        OSCIO.Instance.SendOSCMessage("/scene", "scene1");
+        OSCIO.Instance.SendOSCMessage("/scene", 1);
 
         // renderer load hrtfs
-        OSCIO.Instance.SendOSCMessage("/condition", trialList[trialIndex].getConditionId() + 1);
+        OSCIO.Instance.SendOSCMessage("/condition", trialList[trialIndex].getConditionId());
         TextDisplays.Instance.PrintDebugMessage(trialList[trialIndex].getConditionId().ToString());
 
         // set source position (done in update)

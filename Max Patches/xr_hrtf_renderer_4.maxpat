@@ -10,7 +10,7 @@
 		}
 ,
 		"classnamespace" : "box",
-		"rect" : [ 138.0, -1003.0, 1852.0, 929.0 ],
+		"rect" : [ 146.0, -995.0, 1434.0, 929.0 ],
 		"bglocked" : 0,
 		"openinpresentation" : 0,
 		"default_fontsize" : 12.0,
@@ -40,6 +40,48 @@
 		"assistshowspatchername" : 0,
 		"boxes" : [ 			{
 				"box" : 				{
+					"bgmode" : 0,
+					"border" : 0,
+					"clickthrough" : 0,
+					"enablehscroll" : 0,
+					"enablevscroll" : 0,
+					"id" : "obj-26",
+					"lockeddragscroll" : 0,
+					"lockedsize" : 0,
+					"maxclass" : "bpatcher",
+					"name" : "ambi_spat.maxpat",
+					"numinlets" : 2,
+					"numoutlets" : 2,
+					"offset" : [ 0.0, 0.0 ],
+					"outlettype" : [ "signal", "signal" ],
+					"patching_rect" : [ 44.0, 650.5, 170.0, 37.0 ],
+					"viewvisibility" : 1
+				}
+
+			}
+, 			{
+				"box" : 				{
+					"bgmode" : 0,
+					"border" : 0,
+					"clickthrough" : 0,
+					"enablehscroll" : 0,
+					"enablevscroll" : 0,
+					"id" : "obj-25",
+					"lockeddragscroll" : 0,
+					"lockedsize" : 0,
+					"maxclass" : "bpatcher",
+					"name" : "ambi_encoder.maxpat",
+					"numinlets" : 2,
+					"numoutlets" : 1,
+					"offset" : [ 0.0, 0.0 ],
+					"outlettype" : [ "multichannelsignal" ],
+					"patching_rect" : [ 44.0, 598.107142865657806, 170.0, 37.0 ],
+					"viewvisibility" : 1
+				}
+
+			}
+, 			{
+				"box" : 				{
 					"id" : "obj-23",
 					"maxclass" : "message",
 					"numinlets" : 2,
@@ -59,7 +101,7 @@
 					"numoutlets" : 1,
 					"orientation" : 2,
 					"outlettype" : [ "float" ],
-					"patching_rect" : [ 25.0, 589.107142865657806, 116.650401294231415, 168.0 ],
+					"patching_rect" : [ 25.0, 732.107142865657806, 116.650401294231415, 168.0 ],
 					"presentation" : 1,
 					"presentation_rect" : [ 25.0, 589.107142865657806, 116.650401294231415, 168.0 ]
 				}
@@ -1414,7 +1456,7 @@
 					"numoutlets" : 5,
 					"outlettype" : [ "signal", "signal", "", "float", "list" ],
 					"parameter_enable" : 1,
-					"patching_rect" : [ 237.0, 692.607142865657806, 67.0, 115.0 ],
+					"patching_rect" : [ 193.0, 726.607142865657806, 67.0, 115.0 ],
 					"presentation" : 1,
 					"presentation_rect" : [ 237.0, 692.607142865657806, 67.0, 115.0 ],
 					"relative" : 1,
@@ -1691,7 +1733,7 @@
 									"patching_rect" : [ 899.686115682125092, 544.0, 99.313884317874908, 22.0 ],
 									"presentation" : 1,
 									"presentation_rect" : [ 617.186115682125092, 173.111856162548065, 99.313884317874908, 22.0 ],
-									"text" : "-1.244225"
+									"text" : "0."
 								}
 
 							}
@@ -1745,7 +1787,7 @@
 									"patching_rect" : [ 793.086516976356506, 544.0, 99.0, 22.0 ],
 									"presentation" : 1,
 									"presentation_rect" : [ 510.586516976356506, 173.111856162548065, 99.0, 22.0 ],
-									"text" : "-153.04213"
+									"text" : "0."
 								}
 
 							}
@@ -4207,7 +4249,7 @@
 					"maxclass" : "newobj",
 					"numinlets" : 2,
 					"numoutlets" : 0,
-					"patching_rect" : [ 237.0, 827.607142865657806, 55.0, 22.0 ],
+					"patching_rect" : [ 193.0, 861.607142865657806, 55.0, 22.0 ],
 					"text" : "dac~ 1 2"
 				}
 
@@ -4347,15 +4389,22 @@
 			}
 , 			{
 				"patchline" : 				{
+					"destination" : [ "obj-26", 0 ],
+					"source" : [ "obj-25", 0 ]
+				}
+
+			}
+, 			{
+				"patchline" : 				{
 					"destination" : [ "obj-4", 1 ],
-					"source" : [ "obj-3", 1 ]
+					"source" : [ "obj-26", 1 ]
 				}
 
 			}
 , 			{
 				"patchline" : 				{
 					"destination" : [ "obj-4", 0 ],
-					"source" : [ "obj-3", 0 ]
+					"source" : [ "obj-26", 0 ]
 				}
 
 			}
@@ -4370,6 +4419,14 @@
 				"patchline" : 				{
 					"destination" : [ "obj-1", 0 ],
 					"source" : [ "obj-4", 0 ]
+				}
+
+			}
+, 			{
+				"patchline" : 				{
+					"destination" : [ "obj-25", 0 ],
+					"order" : 2,
+					"source" : [ "obj-5", 0 ]
 				}
 
 			}
@@ -4461,6 +4518,19 @@
 			}
  ],
 		"parameters" : 		{
+			"obj-25::obj-21" : [ "vst~[10]", "vst~[8]", 0 ],
+			"obj-25::obj-23" : [ "vst~[15]", "vst~[8]", 0 ],
+			"obj-25::obj-25" : [ "vst~[16]", "vst~[8]", 0 ],
+			"obj-25::obj-27" : [ "vst~[11]", "vst~[8]", 0 ],
+			"obj-25::obj-29" : [ "vst~[17]", "vst~[8]", 0 ],
+			"obj-25::obj-33" : [ "vst~[18]", "vst~[8]", 0 ],
+			"obj-25::obj-42" : [ "vst~[19]", "vst~[8]", 0 ],
+			"obj-25::obj-44" : [ "vst~[20]", "vst~[8]", 0 ],
+			"obj-25::obj-49" : [ "vst~[21]", "vst~[8]", 0 ],
+			"obj-25::obj-56" : [ "vst~[22]", "vst~[8]", 0 ],
+			"obj-25::obj-59" : [ "vst~[23]", "vst~[8]", 0 ],
+			"obj-25::obj-75" : [ "vst~[8]", "vst~[8]", 0 ],
+			"obj-26::obj-9" : [ "vst~[12]", "vst~[12]", 0 ],
 			"obj-29::obj-11" : [ "live.text[14]", "live.text", 0 ],
 			"obj-29::obj-110" : [ "live.text[5]", "live.text", 0 ],
 			"obj-29::obj-16" : [ "live.text[16]", "live.text", 0 ],
@@ -4586,10 +4656,115 @@
 		}
 ,
 		"dependency_cache" : [ 			{
+				"name" : "ambi_encoder.maxpat",
+				"bootpath" : "C:/TR_FILES/local_repositories/SALTE4Quest-XRIT/Max Patches",
+				"patcherrelativepath" : ".",
+				"type" : "JSON",
+				"implicit" : 1
+			}
+, 			{
+				"name" : "ambi_spat.maxpat",
+				"bootpath" : "C:/TR_FILES/local_repositories/SALTE4Quest-XRIT/Max Patches",
+				"patcherrelativepath" : ".",
+				"type" : "JSON",
+				"implicit" : 1
+			}
+, 			{
+				"name" : "ambix_encoder_o7.maxsnap",
+				"bootpath" : "~/Documents/Max 8/Snapshots",
+				"patcherrelativepath" : "../../../../Users/yazso/Documents/Max 8/Snapshots",
+				"type" : "mx@s",
+				"implicit" : 1
+			}
+, 			{
+				"name" : "ambix_encoder_o7_20221020.maxsnap",
+				"bootpath" : "~/Documents/Max 8/Snapshots",
+				"patcherrelativepath" : "../../../../Users/yazso/Documents/Max 8/Snapshots",
+				"type" : "mx@s",
+				"implicit" : 1
+			}
+, 			{
+				"name" : "ambix_encoder_o7_20221020_1.maxsnap",
+				"bootpath" : "~/Documents/Max 8/Snapshots",
+				"patcherrelativepath" : "../../../../Users/yazso/Documents/Max 8/Snapshots",
+				"type" : "mx@s",
+				"implicit" : 1
+			}
+, 			{
+				"name" : "ambix_encoder_o7_20221020_10.maxsnap",
+				"bootpath" : "~/Documents/Max 8/Snapshots",
+				"patcherrelativepath" : "../../../../Users/yazso/Documents/Max 8/Snapshots",
+				"type" : "mx@s",
+				"implicit" : 1
+			}
+, 			{
+				"name" : "ambix_encoder_o7_20221020_2.maxsnap",
+				"bootpath" : "~/Documents/Max 8/Snapshots",
+				"patcherrelativepath" : "../../../../Users/yazso/Documents/Max 8/Snapshots",
+				"type" : "mx@s",
+				"implicit" : 1
+			}
+, 			{
+				"name" : "ambix_encoder_o7_20221020_3.maxsnap",
+				"bootpath" : "~/Documents/Max 8/Snapshots",
+				"patcherrelativepath" : "../../../../Users/yazso/Documents/Max 8/Snapshots",
+				"type" : "mx@s",
+				"implicit" : 1
+			}
+, 			{
+				"name" : "ambix_encoder_o7_20221020_4.maxsnap",
+				"bootpath" : "~/Documents/Max 8/Snapshots",
+				"patcherrelativepath" : "../../../../Users/yazso/Documents/Max 8/Snapshots",
+				"type" : "mx@s",
+				"implicit" : 1
+			}
+, 			{
+				"name" : "ambix_encoder_o7_20221020_5.maxsnap",
+				"bootpath" : "~/Documents/Max 8/Snapshots",
+				"patcherrelativepath" : "../../../../Users/yazso/Documents/Max 8/Snapshots",
+				"type" : "mx@s",
+				"implicit" : 1
+			}
+, 			{
+				"name" : "ambix_encoder_o7_20221020_6.maxsnap",
+				"bootpath" : "~/Documents/Max 8/Snapshots",
+				"patcherrelativepath" : "../../../../Users/yazso/Documents/Max 8/Snapshots",
+				"type" : "mx@s",
+				"implicit" : 1
+			}
+, 			{
+				"name" : "ambix_encoder_o7_20221020_7.maxsnap",
+				"bootpath" : "~/Documents/Max 8/Snapshots",
+				"patcherrelativepath" : "../../../../Users/yazso/Documents/Max 8/Snapshots",
+				"type" : "mx@s",
+				"implicit" : 1
+			}
+, 			{
+				"name" : "ambix_encoder_o7_20221020_8.maxsnap",
+				"bootpath" : "~/Documents/Max 8/Snapshots",
+				"patcherrelativepath" : "../../../../Users/yazso/Documents/Max 8/Snapshots",
+				"type" : "mx@s",
+				"implicit" : 1
+			}
+, 			{
+				"name" : "ambix_encoder_o7_20221020_9.maxsnap",
+				"bootpath" : "~/Documents/Max 8/Snapshots",
+				"patcherrelativepath" : "../../../../Users/yazso/Documents/Max 8/Snapshots",
+				"type" : "mx@s",
+				"implicit" : 1
+			}
+, 			{
 				"name" : "condition-switcher.maxpat",
 				"bootpath" : "C:/TR_FILES/local_repositories/SALTE4Quest-XRIT/Max Patches",
 				"patcherrelativepath" : ".",
 				"type" : "JSON",
+				"implicit" : 1
+			}
+, 			{
+				"name" : "mcfx_convolver64.maxsnap",
+				"bootpath" : "~/Documents/Max 8/Snapshots",
+				"patcherrelativepath" : "../../../../Users/yazso/Documents/Max 8/Snapshots",
+				"type" : "mx@s",
 				"implicit" : 1
 			}
 , 			{
