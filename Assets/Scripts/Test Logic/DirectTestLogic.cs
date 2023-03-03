@@ -33,7 +33,7 @@ public class DirectTestLogic : MonoBehaviour
     public int trialIndex;
     public string subjId;
 
-    public List<DirectTestTrial> trialList; // = new List<DirectTestTrial>();
+    public List<DirectTestTrial> trialList = new List<DirectTestTrial>();
 
     void Start()
     {
@@ -56,56 +56,61 @@ public class DirectTestLogic : MonoBehaviour
         }
     }
 
-    public void InitializeTest()
+    public void StartTest(bool training)
     {
         testPhase = TestPhase.Start;
         trialIndex = 0;
 
-        createTrialList();
+        createTrialList(training);
         UIBuilder.Instance.setUpdateFlag();
     }
 
-    void createTrialList()
+    void createTrialList(bool training)
     {
-        //// setup single trial
-        //trialList.Add(new DirectTestTrial());
-        //trialList[0].setTrialId("trial1");
-        //trialList[0].setScreenMessages("Audio Evaluation - Speech", "Rate timbral quality");
-        //trialList[0].setRatingLabels(new string[] { "very good", "good", "ok", "bad", "very bad" });
-        //trialList[0].setConditions(new string[] { "cond1", "cond2", "cond3", "cond4", "cond5" }, 0.0f, 100.0f, 50.0f);
-
-        //trialList.Add(new DirectTestTrial());
-        //trialList[1].setTrialId("trial2");
-        //trialList[1].setScreenMessages("Audio Evaluation - Speech", "Rate spatial quality");
-        //trialList[1].setRatingLabels(new string[] { "very good", "good", "ok", "bad", "very bad" });
-        //trialList[1].setConditions(new string[] { "cond1", "cond2", "cond3", "cond4" }, 0.0f, 100.0f, 50.0f);
-
-        //trialList.Add(new DirectTestTrial());
-        //trialList[2].setTrialId("trial3");
-        //trialList[2].setScreenMessages("Audio Evaluation - Speech", "Rate externalization");
-        //trialList[2].setRatingLabels(new string[] { "very good", "good", "ok", "bad", "very bad" });
-        //trialList[2].setConditions(new string[] { "cond1", "cond2", "cond3" }, 0.0f, 100.0f, 50.0f);
-
         // setup trials
         trialList.Clear();
 
-        for (int i = 0; i < AudioManager.Instance.directEvaluationStimuli.Length + 1; i++)
+        if (training)
         {
-            trialList.Add(new DirectTestTrial());
-            trialList[i].setTrialId("scene" + (i+1).ToString());
-            trialList[i].setScreenMessages("Audio Evaluation", "Rate perceived quality difference between A and B");
-            trialList[i].setRatingLabels(new string[] { "A is much better than B", "A is better than B", "A is the same as B", "A is worse than B", "A is much worse than B" });
-            // trialList[i].setAttributeLabels(new string[] { "General Preference", "Timbral Fidelity", "Apparent Source Width"}, -50.0f, 50.0f, 0.0f);
-            trialList[i].setAttributeLabels(new string[] { "General Preference" }, -50.0f, 50.0f, 0.0f);
+            //// setup single trial
+            //trialList.Add(new DirectTestTrial());
+            //trialList[0].setTrialId("trial1");
+            //trialList[0].setScreenMessages("Audio Evaluation - Speech", "Rate timbral quality");
+            //trialList[0].setRatingLabels(new string[] { "very good", "good", "ok", "bad", "very bad" });
+            //trialList[0].setConditions(new string[] { "cond1", "cond2", "cond3", "cond4", "cond5" }, 0.0f, 100.0f, 50.0f);
 
+            //trialList.Add(new DirectTestTrial());
+            //trialList[1].setTrialId("trial2");
+            //trialList[1].setScreenMessages("Audio Evaluation - Speech", "Rate spatial quality");
+            //trialList[1].setRatingLabels(new string[] { "very good", "good", "ok", "bad", "very bad" });
+            //trialList[1].setConditions(new string[] { "cond1", "cond2", "cond3", "cond4" }, 0.0f, 100.0f, 50.0f);
 
-            trialList[i].referenceButtonPresent = false;
-            trialList[i].ABbuttonsPresent = true;
-            trialList[i].ABconditionsReversed = randomBoolean();
+            //trialList.Add(new DirectTestTrial());
+            //trialList[2].setTrialId("trial3");
+            //trialList[2].setScreenMessages("Audio Evaluation - Speech", "Rate externalization");
+            //trialList[2].setRatingLabels(new string[] { "very good", "good", "ok", "bad", "very bad" });
+            //trialList[2].setConditions(new string[] { "cond1", "cond2", "cond3" }, 0.0f, 100.0f, 50.0f);
         }
+        else
+        {
+            for (int i = 0; i < AudioManager.Instance.directEvaluationStimuli.Length + 1; i++)
+            {
+                trialList.Add(new DirectTestTrial());
+                trialList[i].setTrialId("scene" + (i + 1).ToString());
+                trialList[i].setScreenMessages("Audio Evaluation", "Rate perceived quality difference between A and B");
+                trialList[i].setRatingLabels(new string[] { "A is much better than B", "A is better than B", "A is the same as B", "A is worse than B", "A is much worse than B" });
+                // trialList[i].setAttributeLabels(new string[] { "General Preference", "Timbral Fidelity", "Apparent Source Width"}, -50.0f, 50.0f, 0.0f);
+                trialList[i].setAttributeLabels(new string[] { "General Preference" }, -50.0f, 50.0f, 0.0f);
 
-        // permute trial list
-        trialList.Shuffle();
+
+                trialList[i].referenceButtonPresent = false;
+                trialList[i].ABbuttonsPresent = true;
+                trialList[i].ABconditionsReversed = randomBoolean();
+            }
+
+            // permute trial list
+            trialList.Shuffle();
+        }
     }
 
     public void sliderChangedCallback(int sliderIndex, float value)

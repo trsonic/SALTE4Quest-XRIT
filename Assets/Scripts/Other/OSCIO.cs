@@ -32,7 +32,7 @@ public class OSCIO : MonoBehaviour
     OscClient client;
     OscServer server;
 
-    string rendererIp = "192.168.1.107"; // "192.168.1.236";
+    string rendererIp = "192.168.1.107";
     string newRendererIp = "";
 
     int oscPortOut = 9000;  // Renderer receiving port
@@ -58,15 +58,6 @@ public class OSCIO : MonoBehaviour
             if (client != null) client.Dispose();
             initOscClient();
         }
-
-        //if (client != null)
-        //{
-        //    // send ht data
-        //    float roll = wrapAngle(_headTrackedCamera.transform.localEulerAngles.z) * -1;
-        //    float pitch = wrapAngle(_headTrackedCamera.transform.localEulerAngles.x) * -1;
-        //    float yaw = wrapAngle(_headTrackedCamera.transform.localEulerAngles.y - LocalizationTestLogic.Instance.horizontalMeshRotation);
-        //    //client.Send("/rendering/htrpy", roll, pitch, yaw);
-        //}
     }
     private void initOscClient()
     {
@@ -99,6 +90,7 @@ public class OSCIO : MonoBehaviour
     public void SendOSCMessage(string address, int value) { if (client != null) client.Send(address, (float)value); }
     public void SendOSCMessage(string address, float value) { if (client != null) client.Send(address, (float)value); }
     public void SendOSCMessage(string address, float v1, float v2, float v3) { if (client != null) client.Send(address, (float)v1, (float)v2, (float)v3); }
+    public void SendOSCMessage(string address, float v1, float v2, float v3, float v4) { if (client != null) client.Send(address, (float)v1, (float)v2, (float)v3, (float)v4); }
     public void SendOSCMessage(string address, string msg) { if (client != null) client.Send(address, (string)msg); }
     private static string LocalIPAddress()
     {

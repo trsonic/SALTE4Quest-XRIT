@@ -117,13 +117,21 @@ public class DemoLogic : MonoBehaviour
                 break;
         }
     }
+
+    public void StartDemo()
+    {
+        testPhase = TestPhase.InProgress;
+        UIBuilder.Instance.setUpdateFlag();
+        AudioSceneManager.Instance.LoadScene(0);
+    }
     void SceneSwitcher()
     {
         AudioSceneManager.Instance.LoadNextScene();
     }
     void HrtfSwitcher()
     {
-        hrtfSetId = (hrtfSetId + 1) % 6;
+        hrtfSetId = (hrtfSetId + 1) % 4;
+        hrtfSetId += 6;
 
         //switch (hrtfSetId)
         //{

@@ -3,8 +3,8 @@
 		"fileversion" : 1,
 		"appversion" : 		{
 			"major" : 8,
-			"minor" : 3,
-			"revision" : 2,
+			"minor" : 5,
+			"revision" : 3,
 			"architecture" : "x64",
 			"modernui" : 1
 		}
@@ -39,6 +39,42 @@
 		"subpatcher_template" : "",
 		"assistshowspatchername" : 0,
 		"boxes" : [ 			{
+				"box" : 				{
+					"id" : "obj-16",
+					"maxclass" : "newobj",
+					"numinlets" : 1,
+					"numoutlets" : 1,
+					"outlettype" : [ "bang" ],
+					"patching_rect" : [ 428.0, 11.0, 58.0, 22.0 ],
+					"text" : "loadbang"
+				}
+
+			}
+, 			{
+				"box" : 				{
+					"id" : "obj-15",
+					"maxclass" : "newobj",
+					"numinlets" : 1,
+					"numoutlets" : 1,
+					"outlettype" : [ "int" ],
+					"patching_rect" : [ 348.5, 46.0, 22.0, 22.0 ],
+					"text" : "t 0"
+				}
+
+			}
+, 			{
+				"box" : 				{
+					"id" : "obj-14",
+					"maxclass" : "newobj",
+					"numinlets" : 1,
+					"numoutlets" : 1,
+					"outlettype" : [ "bang" ],
+					"patching_rect" : [ 348.5, 11.0, 61.0, 22.0 ],
+					"text" : "savebang"
+				}
+
+			}
+, 			{
 				"box" : 				{
 					"id" : "obj-12",
 					"maxclass" : "comment",
@@ -99,8 +135,8 @@
 						"fileversion" : 1,
 						"appversion" : 						{
 							"major" : 8,
-							"minor" : 3,
-							"revision" : 2,
+							"minor" : 5,
+							"revision" : 3,
 							"architecture" : "x64",
 							"modernui" : 1
 						}
@@ -385,7 +421,7 @@
  ]
 					}
 ,
-					"patching_rect" : [ 473.0, 19.0, 115.0, 22.0 ],
+					"patching_rect" : [ 895.0, 18.882050275802612, 115.0, 22.0 ],
 					"saved_object_attributes" : 					{
 						"description" : "",
 						"digest" : "",
@@ -408,8 +444,8 @@
 						"fileversion" : 1,
 						"appversion" : 						{
 							"major" : 8,
-							"minor" : 3,
-							"revision" : 2,
+							"minor" : 5,
+							"revision" : 3,
 							"architecture" : "x64",
 							"modernui" : 1
 						}
@@ -833,7 +869,7 @@
  ]
 					}
 ,
-					"patching_rect" : [ 304.0, 19.117949724197388, 130.0, 22.0 ],
+					"patching_rect" : [ 726.0, 19.0, 130.0, 22.0 ],
 					"saved_object_attributes" : 					{
 						"description" : "",
 						"digest" : "",
@@ -1021,8 +1057,8 @@
 						"fileversion" : 1,
 						"appversion" : 						{
 							"major" : 8,
-							"minor" : 3,
-							"revision" : 2,
+							"minor" : 5,
+							"revision" : 3,
 							"architecture" : "x64",
 							"modernui" : 1
 						}
@@ -1549,7 +1585,7 @@
 			}
 , 			{
 				"box" : 				{
-					"cellmap" : [ [ 2, 3, "stim_pink_bursts.wav" ], [ 2, 2, "stim_gwn_cont.wav" ], [ 2, 0, "FILE" ], [ 2, 4, "stim_gwn_bursts.wav" ], [ 2, 1, "stim_pink_cont.wav" ], [ 2, 5, "speech.wav" ], [ 2, 6, "solo_instr.wav" ], [ 2, 7, "trio.wav" ], [ 2, 8, "stereo.wav" ], [ 2, 9, "5.1.wav" ], [ 2, 11, "tom_slow_1.wav" ], [ 2, 10, "tom_fast_7.wav" ], [ 1, 3, "C:/TR_FILES/local_repositories/XR-HRTF-exp-analysis/SALTE-XR-analysis/stimuli" ], [ 1, 0, "PATH" ], [ 1, 1, "C:/TR_FILES/local_repositories/XR-HRTF-exp-analysis/SALTE-XR-analysis/stimuli" ], [ 1, 2, "C:/TR_FILES/local_repositories/XR-HRTF-exp-analysis/SALTE-XR-analysis/stimuli" ], [ 1, 4, "C:/TR_FILES/local_repositories/XR-HRTF-exp-analysis/SALTE-XR-analysis/stimuli" ], [ 1, 5, "C:/TR_FILES/local_repositories/XR-HRTF-exp-analysis/SALTE-XR-analysis/stimuli/reaper/output" ], [ 1, 6, "C:/TR_FILES/local_repositories/XR-HRTF-exp-analysis/SALTE-XR-analysis/stimuli/reaper/output" ], [ 1, 7, "C:/TR_FILES/local_repositories/XR-HRTF-exp-analysis/SALTE-XR-analysis/stimuli/reaper/output" ], [ 1, 8, "C:/TR_FILES/local_repositories/XR-HRTF-exp-analysis/SALTE-XR-analysis/stimuli/reaper/output" ], [ 1, 9, "C:/TR_FILES/local_repositories/XR-HRTF-exp-analysis/SALTE-XR-analysis/stimuli/reaper/output" ], [ 1, 10, "C:/TR_FILES/AMBISONIC_AUDIO/MUSIC" ], [ 1, 11, "C:/TR_FILES/AMBISONIC_AUDIO/MUSIC" ], [ 0, 0, "ID" ], [ 0, 1, 1 ], [ 0, 2, 2 ], [ 0, 3, 3 ], [ 0, 4, 4 ], [ 0, 5, 5 ], [ 0, 6, 6 ], [ 0, 7, 7 ], [ 0, 8, 8 ], [ 0, 9, 9 ], [ 0, 10, 10 ], [ 0, 11, 11 ], [ 3, 0, "GAIN" ], [ 3, 1, -12 ], [ 3, 2, -16 ], [ 3, 3, -12 ], [ 3, 4, -16 ], [ 3, 5, 0 ], [ 3, 6, 0 ], [ 3, 7, 0 ], [ 3, 8, 0 ], [ 3, 9, 6 ], [ 3, 10, 0 ], [ 3, 11, 0 ] ],
+					"cellmap" : [ [ 2, 3, "stim_pink_bursts.wav" ], [ 2, 2, "stim_gwn_cont.wav" ], [ 2, 0, "FILE" ], [ 2, 4, "stim_gwn_bursts.wav" ], [ 2, 1, "stim_pink_cont.wav" ], [ 2, 5, "audiolab-acoustic-guitar.wav" ], [ 2, 6, "jacob-RockTrackMV-draft.wav" ], [ 2, 7, "omar.wav" ], [ 2, 8, "synth-disco.wav" ], [ 2, 9, "tom-fast.wav" ], [ 2, 10, "tom-slow.wav" ], [ 2, 11, "davidrivas-abbeyroad.wav" ], [ 2, 12, "marco-quartet.wav" ], [ 1, 3, "C:/TR_FILES/local_repositories/XR-HRTF-exp-analysis/SALTE-XR-analysis/stimuli" ], [ 1, 0, "PATH" ], [ 1, 1, "C:/TR_FILES/local_repositories/XR-HRTF-exp-analysis/SALTE-XR-analysis/stimuli" ], [ 1, 2, "C:/TR_FILES/local_repositories/XR-HRTF-exp-analysis/SALTE-XR-analysis/stimuli" ], [ 1, 4, "C:/TR_FILES/local_repositories/XR-HRTF-exp-analysis/SALTE-XR-analysis/stimuli" ], [ 1, 5, "C:/TR_FILES/AMBISONIC_TEST_FILES" ], [ 1, 6, "C:/TR_FILES/AMBISONIC_TEST_FILES" ], [ 1, 7, "C:/TR_FILES/AMBISONIC_TEST_FILES" ], [ 1, 8, "C:/TR_FILES/AMBISONIC_TEST_FILES" ], [ 1, 9, "C:/TR_FILES/AMBISONIC_TEST_FILES" ], [ 1, 10, "C:/TR_FILES/AMBISONIC_TEST_FILES" ], [ 1, 11, "C:/TR_FILES/AMBISONIC_TEST_FILES" ], [ 1, 12, "C:/TR_FILES/AMBISONIC_TEST_FILES" ], [ 0, 0, "ID" ], [ 0, 1, 1 ], [ 0, 2, 2 ], [ 0, 3, 3 ], [ 0, 4, 4 ], [ 0, 5, 5 ], [ 0, 6, 6 ], [ 0, 7, 7 ], [ 0, 8, 8 ], [ 0, 9, 9 ], [ 0, 10, 10 ], [ 0, 11, 11 ], [ 0, 12, 12 ], [ 3, 0, "GAIN" ], [ 3, 1, -12 ], [ 3, 2, -16 ], [ 3, 3, -12 ], [ 3, 4, -16 ], [ 3, 5, 0 ], [ 3, 6, 0 ], [ 3, 7, 0 ], [ 3, 8, 0 ], [ 3, 9, 0 ], [ 3, 10, 0 ], [ 3, 11, 0 ], [ 3, 12, 0 ] ],
 					"coldef" : [ [ 1, 600, 1, 0.0, 0.0, 0.0, 1.0, 1, 0.0, 0.0, 0.0, 1.0, -1, -1, -1 ], [ 0, 30, 1, 0.0, 0.0, 0.0, 1.0, 1, 0.0, 0.0, 0.0, 1.0, -1, -1, -1 ], [ 2, 360, 1, 0.0, 0.0, 0.0, 1.0, 1, 0.0, 0.0, 0.0, 1.0, -1, -1, -1 ], [ 3, 60, 1, 0.0, 0.0, 0.0, 1.0, 1, 0.0, 0.0, 0.0, 1.0, -1, -1, -1 ] ],
 					"colhead" : 1,
 					"cols" : 4,
@@ -1575,7 +1611,7 @@
 			}
 , 			{
 				"box" : 				{
-					"cellmap" : [ [ 2, 1, "D1_48K_24bit_256tap_FIR_SOFA.sofa" ], [ 2, 2, "D2_48K_24bit_256tap_FIR_SOFA.sofa" ], [ 2, 0, "FILE" ], [ 2, 3, "xr-hrtf-interp-dfe.sofa" ], [ 2, 4, "002_TR-xr-hrtf-raw.sofa" ], [ 2, 5, "HRIR_test_86Leb_sub-2_002_TR-xr-hrtf-raw.sofa" ], [ 2, 6, "HRIR_test_86Leb_sub-2_002_TR-xr-hrtf-raw.sofa" ], [ 2, 7, "3OA_sadie2-ku100_resonance.conf" ], [ 2, 8, "3OA_sadie2-ku100_deppisch-MagLS-diffc.conf" ], [ 2, 9, "3OA_sadie2-ku100_akls-nodiffc.conf" ], [ 2, 10, "3OA_sadie2-ku100_akls-diffc.conf" ], [ 1, 0, "PATH" ], [ 1, 1, "C:/TR_FILES/HRTFs/SADIEII/D1_HRIR_SOFA/D1_HRIR_SOFA" ], [ 1, 2, "C:/TR_FILES/HRTFs/SADIEII/D2_HRIR_SOFA/D2_HRIR_SOFA" ], [ 1, 4, "C:/TR_FILES/HRTFs/XR-HRTFs/TR" ], [ 1, 3, "C:/TR_FILES/HRTFs/XR-HRTFs/TR" ], [ 1, 5, "C:/TR_FILES/HRTFs/ML-HRTFs/1454-SADHUTITA" ], [ 1, 6, "C:/TR_FILES/HRTFs/ML-HRTFs/1454-HUMM" ], [ 1, 7, "C:/TR_FILES/MCFX" ], [ 1, 8, "C:/TR_FILES/MCFX" ], [ 1, 9, "C:/TR_FILES/MCFX" ], [ 1, 10, "C:/TR_FILES/MCFX" ], [ 0, 0, "ID" ], [ 0, 1, 1 ], [ 0, 2, 2 ], [ 0, 3, 3 ], [ 0, 4, 4 ], [ 0, 5, 5 ], [ 0, 6, 6 ], [ 0, 7, 7 ], [ 0, 8, 8 ], [ 0, 9, 9 ], [ 0, 10, 10 ], [ 3, 0, "GAIN" ], [ 3, 1, 0 ], [ 3, 2, 0 ], [ 3, 3, -3 ], [ 3, 4, -3 ], [ 3, 5, -3 ], [ 3, 6, -3 ], [ 3, 7, 0 ], [ 3, 8, 0 ], [ 3, 9, 0 ], [ 3, 10, 0 ] ],
+					"cellmap" : [ [ 2, 1, "D1_48K_24bit_256tap_FIR_SOFA.sofa" ], [ 2, 2, "D2_48K_24bit_256tap_FIR_SOFA.sofa" ], [ 2, 0, "FILE" ], [ 2, 3, "xr-hrtf-interp-dfe.sofa" ], [ 2, 4, "002_TR-xr-hrtf-raw.sofa" ], [ 2, 5, "HRIR_test_86Leb_sub-2_002_TR-xr-hrtf-raw.sofa" ], [ 2, 6, "HRIR_test_86Leb_sub-2_002_TR-xr-hrtf-raw.sofa" ], [ 2, 7, "5OA_sadie2-ku100-test_akad-AkLS.conf" ], [ 2, 8, "5OA_sadie2-ku100-test_akad-MagLS.conf" ], [ 2, 9, "5OA_sadie2-ku100-test_akad-MagLS-diffc.conf" ], [ 2, 10, "5OA_sadie2-ku100-test_Resonance-EQ.conf" ], [ 1, 0, "PATH" ], [ 1, 1, "C:/TR_FILES/HRTFs/SADIEII/D1_HRIR_SOFA/D1_HRIR_SOFA" ], [ 1, 2, "C:/TR_FILES/HRTFs/SADIEII/D2_HRIR_SOFA/D2_HRIR_SOFA" ], [ 1, 4, "C:/TR_FILES/HRTFs/XR-HRTFs/TR" ], [ 1, 3, "C:/TR_FILES/HRTFs/XR-HRTFs/TR" ], [ 1, 5, "C:/TR_FILES/HRTFs/ML-HRTFs/1454-SADHUTITA" ], [ 1, 6, "C:/TR_FILES/HRTFs/ML-HRTFs/1454-HUMM" ], [ 1, 7, "C:/TR_FILES/MCFX" ], [ 1, 8, "C:/TR_FILES/MCFX" ], [ 1, 9, "C:/TR_FILES/MCFX" ], [ 1, 10, "C:/TR_FILES/MCFX" ], [ 0, 0, "ID" ], [ 0, 1, 1 ], [ 0, 2, 2 ], [ 0, 3, 3 ], [ 0, 4, 4 ], [ 0, 5, 5 ], [ 0, 6, 6 ], [ 0, 7, 7 ], [ 0, 8, 8 ], [ 0, 9, 9 ], [ 0, 10, 10 ], [ 3, 0, "GAIN" ], [ 3, 1, 0 ], [ 3, 2, 0 ], [ 3, 3, -3 ], [ 3, 4, -3 ], [ 3, 5, -3 ], [ 3, 6, -3 ], [ 3, 7, 0 ], [ 3, 8, 0 ], [ 3, 9, 0 ], [ 3, 10, 0 ] ],
 					"coldef" : [ [ 1, 600, 1, 0.0, 0.0, 0.0, 1.0, 1, 0.0, 0.0, 0.0, 1.0, -1, -1, -1 ], [ 0, 30, 1, 0.0, 0.0, 0.0, 1.0, 1, 0.0, 0.0, 0.0, 1.0, -1, -1, -1 ], [ 2, 360, 1, 0.0, 0.0, 0.0, 1.0, 1, 0.0, 0.0, 0.0, 1.0, -1, -1, -1 ], [ 3, 60, 1, 0.0, 0.0, 0.0, 1.0, 1, 0.0, 0.0, 0.0, 1.0, -1, -1, -1 ] ],
 					"colhead" : 1,
 					"cols" : 4,
@@ -1636,6 +1672,27 @@
 				"patchline" : 				{
 					"destination" : [ "obj-64", 0 ],
 					"source" : [ "obj-11", 0 ]
+				}
+
+			}
+, 			{
+				"patchline" : 				{
+					"destination" : [ "obj-15", 0 ],
+					"source" : [ "obj-14", 0 ]
+				}
+
+			}
+, 			{
+				"patchline" : 				{
+					"destination" : [ "obj-3", 0 ],
+					"source" : [ "obj-15", 0 ]
+				}
+
+			}
+, 			{
+				"patchline" : 				{
+					"destination" : [ "obj-15", 0 ],
+					"source" : [ "obj-16", 0 ]
 				}
 
 			}

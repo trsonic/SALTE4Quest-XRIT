@@ -101,7 +101,7 @@ public class LocalizationTestLogic : MonoBehaviour
         testPhase = TestPhase.Start;
     }
 
-    public void startTest()
+    public void StartTest(bool training)
     {
         // setup visuals
         horizontalMeshRotation = 0.0f;
@@ -117,7 +117,7 @@ public class LocalizationTestLogic : MonoBehaviour
         for (int i = 0; i < 8; ++i) subjId += alphabet[Random.Range(0, alphabet.Length)];
 
         // create trial list
-        createTrialList();
+        createTrialList(training);
 
         // setup pointing controller
         findPointingController();
@@ -129,57 +129,64 @@ public class LocalizationTestLogic : MonoBehaviour
         _timeAtTestStart = Time.realtimeSinceStartup;
         loadTrial(0);
     }
-    void createTrialList()
+    void createTrialList(bool training)
     {
         // setup trials
         trialList.Clear();
 
-        // directions
-        int numOfDirections = 6;
-        List<Vector2> dirs = new List<Vector2>();
-        for (int i = 0; i < numOfDirections; ++i)
+        if(training)
         {
-            Vector3 randDir = Random.insideUnitSphere.normalized;
-            Vector3 projectedVec = Vector3.ProjectOnPlane(randDir, Vector3.up);
-            float azimuth = Vector3.SignedAngle(mainCamera.transform.forward, projectedVec, mainCamera.transform.up);
-            float elevation = Vector3.SignedAngle(Vector3.up, randDir, Vector3.Cross(Vector3.up, randDir));
-            elevation = (elevation - 90.0f) * -1.0f;
-
-            //float azimuth = Mathf.Round(Random.Range(-900.0f, 90.0f));
-            //float elevation = Mathf.Round(Random.Range(-60.0f, 60.0f));
-            dirs.Add(new Vector2(azimuth, elevation));
-        }
-
-        // conditions
-        int[] conditions = new int[] { 1, 2, 3, 4, 5, 6 };
-        
-        // repetitions
-        int numOfRepetitions = 3;
-
-        foreach (Vector2 dir in dirs)
-        {
-            foreach (int cond in conditions)
+            // directions
+            int numOfDirections = 6;
+            List<Vector2> dirs = new List<Vector2>();
+            for (int i = 0; i < numOfDirections; ++i)
             {
-                for (int i = 0; i < numOfRepetitions; ++i)
+                Vector3 randDir = Random.insideUnitSphere.normalized;
+                Vector3 projectedVec = Vector3.ProjectOnPlane(randDir, Vector3.up);
+                float azimuth = Vector3.SignedAngle(mainCamera.transform.forward, projectedVec, mainCamera.transform.up);
+                float elevation = Vector3.SignedAngle(Vector3.up, randDir, Vector3.Cross(Vector3.up, randDir));
+                elevation = (elevation - 90.0f) * -1.0f;
+
+                //float azimuth = Mathf.Round(Random.Range(-900.0f, 90.0f));
+                //float elevation = Mathf.Round(Random.Range(-60.0f, 60.0f));
+                dirs.Add(new Vector2(azimuth, elevation));
+            }
+
+            // conditions
+            int[] conditions = new int[] { 1, 2, 3, 4, 5, 6 };
+
+            // repetitions
+            int numOfRepetitions = 3;
+
+            foreach (Vector2 dir in dirs)
+            {
+                foreach (int cond in conditions)
                 {
-                    LocalizationTestTrial newTrial = new LocalizationTestTrial();
-                    newTrial.setTargetAzEl(dir.x, dir.y);
-                    newTrial.setTargetDistance(meshDistance);
-                    newTrial.setConditionId(cond);
-                    //float range = 2.0f;
-                    //float level = -range + Random.Range(0, range);
-                    //newTrial.setPlaybackLevel(level);
-                    trialList.Add(newTrial);
+                    for (int i = 0; i < numOfRepetitions; ++i)
+                    {
+                        LocalizationTestTrial newTrial = new LocalizationTestTrial();
+                        newTrial.setTargetAzEl(dir.x, dir.y);
+                        newTrial.setTargetDistance(meshDistance);
+                        newTrial.setConditionId(cond);
+                        //float range = 2.0f;
+                        //float level = -range + Random.Range(0, range);
+                        //newTrial.setPlaybackLevel(level);
+                        trialList.Add(newTrial);
+                    }
                 }
             }
+            
+            foreach (int conditionID in conditions) TextDisplays.Instance.PrintDebugMessage("condition: " + conditionID.ToString());
+            TextDisplays.Instance.PrintDebugMessage("trial liste size: " + trialList.Count.ToString());
+            for (int i = 0; i < trialList.Count; ++i) TextDisplays.Instance.PrintDebugMessage("trial index: " + i.ToString() + ", condition: " + trialList[i].getConditionId());
+
+            // permute trial list
+            trialList.Shuffle();
         }
+        else
+        {
 
-        // permute trial list
-        trialList.Shuffle();
-
-        foreach (int conditionID in conditions) TextDisplays.Instance.PrintDebugMessage("condition: " + conditionID.ToString());
-        TextDisplays.Instance.PrintDebugMessage("trial liste size: " + trialList.Count.ToString());
-        for (int i = 0; i < trialList.Count; ++i) TextDisplays.Instance.PrintDebugMessage("trial index: " + i.ToString() + ", condition: " + trialList[i].getConditionId());
+        }
     }
     void loadTrial(int index)
     {

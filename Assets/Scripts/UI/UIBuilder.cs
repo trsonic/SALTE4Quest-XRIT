@@ -45,7 +45,7 @@ public class UIBuilder : MonoBehaviour
 
     GameObject chooseMixedButton, chooseLocalizationButton, chooseDemoButton;
     //GameObject selectLeftControllerButton, selectRightControllerButton;
-    GameObject startTestButton, quitAppButton, restartTestButton, switchHandButton;
+    GameObject startTrainingButton, startTestButton, quitAppButton, restartTestButton, switchHandButton;
     [SerializeField] List<GameObject> activeLabels = new List<GameObject>();
     [SerializeField] List<GameObject> activeSliders = new List<GameObject>();
     [SerializeField] List<GameObject> buttonList = new List<GameObject>();
@@ -78,7 +78,8 @@ public class UIBuilder : MonoBehaviour
         chooseDemoButton = transform.Find("ButtonCanvas/ChooseDemoButton").gameObject;
         //selectLeftControllerButton = transform.Find("ButtonCanvas/SelectLeftControllerButton").gameObject;
         //selectRightControllerButton = transform.Find("ButtonCanvas/SelectRightControllerButton").gameObject;
-        startTestButton = transform.Find("ButtonCanvas/StartButton").gameObject;
+        startTrainingButton = transform.Find("ButtonCanvas/StartTrainingButton").gameObject;
+        startTestButton = transform.Find("ButtonCanvas/StartTestButton").gameObject;
         quitAppButton = transform.Find("ButtonCanvas/QuitAppButton").gameObject;
         restartTestButton = transform.Find("ButtonCanvas/RestartButton").gameObject;
         switchHandButton = transform.Find("ButtonCanvas/SwitchHandButton").gameObject;
@@ -142,6 +143,7 @@ public class UIBuilder : MonoBehaviour
         chooseMixedButton.SetActive(false);
         chooseLocalizationButton.SetActive(false);
         chooseDemoButton.SetActive(false);
+        startTrainingButton.SetActive(false);
         startTestButton.SetActive(false);
         quitAppButton.SetActive(false);
         restartTestButton.SetActive(false);
@@ -209,9 +211,11 @@ public class UIBuilder : MonoBehaviour
                     "Click Begin Test to confirm your consent and start the test.";
 
                 // show begin and quit buttons
+                startTrainingButton.SetActive(true);
+                startTrainingButton.GetComponentInChildren<TextMeshProUGUI>().text = "Training";
                 startTestButton.SetActive(true);
                 quitAppButton.SetActive(true);
-                quitAppButton.GetComponentInChildren<TextMeshProUGUI>().text = "Main Menu";
+                quitAppButton.GetComponentInChildren<TextMeshProUGUI>().text = "Back";
                 controllersHelp.SetActive(true);
                 break;
 
@@ -250,7 +254,7 @@ public class UIBuilder : MonoBehaviour
                     DirectTestLogic.Instance.subjId;
 
                 quitAppButton.SetActive(true);
-                quitAppButton.GetComponentInChildren<TextMeshProUGUI>().text = "Main Menu";
+                quitAppButton.GetComponentInChildren<TextMeshProUGUI>().text = "Back";
                 showUI(true);
 
                 break;
@@ -275,9 +279,11 @@ public class UIBuilder : MonoBehaviour
                     + "Click Start to begin the test." + "\n";
 
                 // show start and quit buttons
+                startTrainingButton.SetActive(true);
+                startTrainingButton.GetComponentInChildren<TextMeshProUGUI>().text = "Training";
                 startTestButton.SetActive(true);
                 quitAppButton.SetActive(true);
-                quitAppButton.GetComponentInChildren<TextMeshProUGUI>().text = "Main Menu";
+                quitAppButton.GetComponentInChildren<TextMeshProUGUI>().text = "Back";
                 controllersHelp.SetActive(true);
                 switchHandButton.SetActive(true);
 
@@ -302,7 +308,7 @@ public class UIBuilder : MonoBehaviour
                 // show restart and quit buttons
                 restartTestButton.SetActive(true);
                 quitAppButton.SetActive(true);
-                quitAppButton.GetComponentInChildren<TextMeshProUGUI>().text = "Main Menu";
+                quitAppButton.GetComponentInChildren<TextMeshProUGUI>().text = "Back";
                 showUI(true);
                 break;
         }
@@ -321,9 +327,10 @@ public class UIBuilder : MonoBehaviour
                     "Use the secondary controller button (B) to switch HRTF sets.\n";
 
                 // show begin and quit buttons
-                startTestButton.SetActive(true);
+                startTrainingButton.SetActive(true);
+                startTrainingButton.GetComponentInChildren<TextMeshProUGUI>().text = "Demo";
                 quitAppButton.SetActive(true);
-                quitAppButton.GetComponentInChildren<TextMeshProUGUI>().text = "Main Menu";
+                quitAppButton.GetComponentInChildren<TextMeshProUGUI>().text = "Back";
                 controllersHelp.SetActive(true);
                 showUI(true);
 
@@ -355,21 +362,32 @@ public class UIBuilder : MonoBehaviour
                 LocalizationTestLogic.Instance.testPhase = LocalizationTestLogic.TestPhase.Start;
                 break;
 
-            case "StartButton":
+            case "StartTrainingButton":
                 switch (testType)
                 {
                     case TestType.MixedMethods:
-                        DirectTestLogic.Instance.InitializeTest();
+                        DirectTestLogic.Instance.StartTest(true);
                         break;
 
                     case TestType.Localization:
-                        LocalizationTestLogic.Instance.startTest();
+                        LocalizationTestLogic.Instance.StartTest(true);
                         break;
 
                     case TestType.Demo:
-                        DemoLogic.Instance.testPhase = DemoLogic.TestPhase.InProgress;
-                        setUpdateFlag();
-                        AudioSceneManager.Instance.LoadScene(0);
+                        DemoLogic.Instance.StartDemo();
+                        break;
+                }
+                break;
+
+            case "StartTestButton":
+                switch (testType)
+                {
+                    case TestType.MixedMethods:
+                        DirectTestLogic.Instance.StartTest(false);
+                        break;
+
+                    case TestType.Localization:
+                        LocalizationTestLogic.Instance.StartTest(false);
                         break;
                 }
                 break;
@@ -384,7 +402,6 @@ public class UIBuilder : MonoBehaviour
                     Application.Quit();
                 else
                     SetScene(TestType.Intro);
-
                 break;
         }
     }

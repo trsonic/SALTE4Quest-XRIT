@@ -1,7 +1,9 @@
 using System.Collections.Generic;
+using System.Reflection;
 using Unity.XR.CoreUtils;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using static AudioScene;
 
 public class AudioSceneManager : MonoBehaviour
 {
@@ -39,15 +41,12 @@ public class AudioSceneManager : MonoBehaviour
         sceneContainer = new GameObject { name = "Scene Container" };
 
         CreateSceneList();
-
-        // LoadScene(0);
     }
 
     void Update()
     {
         sceneContainer.transform.position = mainCamera.transform.position;
         sceneContainer.transform.rotation = new Quaternion();
-        //sceneContainer.transform.Rotate(sceneContainer.transform.up, horizontalMeshRotation);
 
         // position sound sources
         List<GameObject> sourceObjects = new List<GameObject>();
@@ -55,68 +54,123 @@ public class AudioSceneManager : MonoBehaviour
         for (int i = 0; i < sourceObjects.Count; i++)
         {
             // position sound source
-            SourceAED srcAED = sceneList[currentSceneIndex].sourceList[i].GetPosition();
+            PointSourceAED srcAED = sceneList[currentSceneIndex].sourceList[i].GetPosition();
             sourceObjects[i].transform.position = sceneContainer.transform.position;
             sourceObjects[i].transform.rotation = sceneContainer.transform.rotation;
             sourceObjects[i].transform.Rotate(-srcAED.elevation, srcAED.azimuth, 0.0f);
             sourceObjects[i].transform.position = sceneContainer.transform.position + sourceObjects[i].transform.forward * srcAED.distance;
-
-            // obtain current position of the presented sound source in reference to the listener
-            Vector3 hsVec = Vector3.Normalize(sourceObjects[i].transform.position - mainCamera.transform.position);
-            Vector3 projectedVec = Vector3.ProjectOnPlane(hsVec, mainCamera.transform.up);
-            float presentedAzimuthAngle = Vector3.SignedAngle(mainCamera.transform.forward, projectedVec, mainCamera.transform.up);
-            float presentedElevationAngle = Vector3.SignedAngle(mainCamera.transform.up, hsVec, Vector3.Cross(mainCamera.transform.up, hsVec));
-            presentedElevationAngle = (presentedElevationAngle - 90.0f) * -1.0f;
-            float presentedDistance = Vector3.Distance(mainCamera.transform.position, sourceObjects[i].transform.position);
-
-            // send sound source coordinates to the renderer
-            string address = "/source/" + (i + 1).ToString() + "/aed";
-            OSCIO.Instance.SendOSCMessage(address, presentedAzimuthAngle, presentedElevationAngle, presentedDistance);
-
             sourceObjects[i].GetComponent<Renderer>().enabled = true;
             sourceObjects[i].GetComponentInChildren<Renderer>().material.color = sceneList[currentSceneIndex].sourceList[i].GetColor();
         }
+
+ 
+        bool includeHeadRotation = false;
+
+        Transform origin;
+        Quaternion headRotation;
+
+        if (includeHeadRotation)
+        {
+            origin = mainCamera.transform;
+            headRotation = new Quaternion();
+        }
+        else
+        {
+            origin = sceneContainer.transform;
+            headRotation = mainCamera.transform.rotation;
+        }
+
+        for (int i = 0; i < sourceObjects.Count; i++)
+        {
+            // obtain current position of the presented sound source in reference to the scene container
+            Vector3 hsVec = Vector3.Normalize(sourceObjects[i].transform.position - origin.position);
+            Vector3 projectedVec = Vector3.ProjectOnPlane(hsVec, origin.up);
+            float azimuth = Vector3.SignedAngle(origin.forward, projectedVec, origin.up);
+            float elevation = Vector3.SignedAngle(origin.up, hsVec, Vector3.Cross(origin.up, hsVec));
+            elevation = (elevation - 90.0f) * -1.0f;
+            float distance = Vector3.Distance(origin.position, sourceObjects[i].transform.position);
+
+            // send sound source coordinates to the renderer
+            string address = "/source/" + (i + 1).ToString() + "/aed";
+            OSCIO.Instance.SendOSCMessage(address, azimuth, elevation, distance);
+        }
+
+
+
+        //    // send ht data
+        //    float roll = wrapAngle(_headTrackedCamera.transform.localEulerAngles.z) * -1;
+        //    float pitch = wrapAngle(_headTrackedCamera.transform.localEulerAngles.x) * -1;
+        //    float yaw = wrapAngle(_headTrackedCamera.transform.localEulerAngles.y - LocalizationTestLogic.Instance.horizontalMeshRotation);
+        //    //client.Send("/rendering/htrpy", roll, pitch, yaw);
+
+        // send head rotation
+        float qW = headRotation.w;
+        float qX = headRotation.x;
+        float qY = headRotation.y;
+        float qZ = headRotation.z;
+        OSCIO.Instance.SendOSCMessage("/quaternion", qW, qX, qY, qZ);
     }
     void CreateSceneList()
     {
         sceneList.Clear();
-        AudioScene scene = new AudioScene();
-        Color color = new Color();
+        int index = 0;
 
-        // scene 1 - 6
-        for (int i = 0; i < 6; i++)
+        // first scene (single source - pink noise)
+        sceneList.Add(new AudioScene());
+        sceneList[index].sceneID = index + 1;
+        sceneList[index].sceneName = "PinkNoiseSingleSource";
+        sceneList[index].AddSource(0.0f, 0.0f, 1.5f, Random.ColorHSV());
+
+        // second scene (single source - white noise)
+        sceneList.Add(new AudioScene());
+        index++;
+        sceneList[index].sceneID = index + 1;
+        sceneList[index].sceneName = "WhiteNoiseSingleSource";
+        sceneList[index].AddSource(0.0f, 0.0f, 1.5f, Random.ColorHSV());
+
+        // add 8 Ambisonic scenes
+        for (int i = 0; i < 8; i++)
         {
-            scene = new AudioScene();
-            color = Random.ColorHSV();
-            scene.AddSource(0.0f, 0.0f, 1.5f, color);
-            sceneList.Add(scene);
+            sceneList.Add(new AudioScene());
+            index++;
+            sceneList[index].sceneID = index + 1;
+            sceneList[index].sceneName = "AmbisonicScene";
         }
 
-        // scene 7
-        scene = new AudioScene();
-        color = Random.ColorHSV();
-        scene.AddSource(-60.0f, 0.0f, 1.5f, color);
-        scene.AddSource(0.0f, 0.0f, 1.5f, color);
-        scene.AddSource(60.0f, 0.0f, 1.5f, color);
-        sceneList.Add(scene);
+        //// scene 1 - 6
+        //for (int i = 0; i < 6; i++)
+        //{
+        //    scene = new AudioScene();
+        //    color = Random.ColorHSV();
+        //    scene.AddSource(0.0f, 0.0f, 1.5f, color);
+        //    sceneList.Add(scene);
+        //}
 
-        // scene 8
-        scene = new AudioScene();
-        color = Random.ColorHSV();
-        scene.AddSource(-30.0f, 0.0f, 1.5f, color);
-        scene.AddSource(30.0f, 0.0f, 1.5f, color);
-        sceneList.Add(scene);
+        //// scene 7
+        //scene = new AudioScene();
+        //color = Random.ColorHSV();
+        //scene.AddSource(-60.0f, 0.0f, 1.5f, color);
+        //scene.AddSource(0.0f, 0.0f, 1.5f, color);
+        //scene.AddSource(60.0f, 0.0f, 1.5f, color);
+        //sceneList.Add(scene);
 
-        // scene 9
-        scene = new AudioScene();
-        color = Random.ColorHSV();
-        scene.AddSource(-30.0f, 0.0f, 1.5f, color);
-        scene.AddSource(0.0f, 0.0f, 1.5f, color);
-        scene.AddSource(30.0f, 0.0f, 1.5f, color);
-        scene.AddSource(-125.0f, 0.0f, 1.5f, color);
-        scene.AddSource(0.0f, -45.0f, 1.5f, color);
-        scene.AddSource(125.0f, 0.0f, 1.5f, color);
-        sceneList.Add(scene);
+        //// scene 8
+        //scene = new AudioScene();
+        //color = Random.ColorHSV();
+        //scene.AddSource(-30.0f, 0.0f, 1.5f, color);
+        //scene.AddSource(30.0f, 0.0f, 1.5f, color);
+        //sceneList.Add(scene);
+
+        //// scene 9
+        //scene = new AudioScene();
+        //color = Random.ColorHSV();
+        //scene.AddSource(-30.0f, 0.0f, 1.5f, color);
+        //scene.AddSource(0.0f, 0.0f, 1.5f, color);
+        //scene.AddSource(30.0f, 0.0f, 1.5f, color);
+        //scene.AddSource(-125.0f, 0.0f, 1.5f, color);
+        //scene.AddSource(0.0f, -45.0f, 1.5f, color);
+        //scene.AddSource(125.0f, 0.0f, 1.5f, color);
+        //sceneList.Add(scene);
     }
     public void LoadNextScene()
     {
@@ -129,21 +183,19 @@ public class AudioSceneManager : MonoBehaviour
     {
         DestroyCurrentScene();
         currentSceneIndex = sceneIndex;
-        foreach (SoundSource source in sceneList[currentSceneIndex].sourceList) Instantiate(soundSource, sceneContainer.transform);
-        
+        foreach (PointSource source in sceneList[currentSceneIndex].sourceList) Instantiate(soundSource, sceneContainer.transform);
+
         // mute renderer
         OSCIO.Instance.SendOSCMessage("/mute", 1);
         OSCIO.Instance.SendOSCMessage("/attenuation", 0.0f);
 
-        TextDisplays.Instance.PrintDebugMessage("Scene ID: " + currentSceneIndex.ToString());
+        TextDisplays.Instance.PrintDebugMessage("Scene ID: " + sceneList[currentSceneIndex].sceneID.ToString());
 
         // renderer load scene
-        OSCIO.Instance.SendOSCMessage("/scene", currentSceneIndex + 1);
+        OSCIO.Instance.SendOSCMessage("/scene", sceneList[currentSceneIndex].sceneID);
 
         // unmute renderer
         OSCIO.Instance.SendOSCMessage("/mute", 0);
-
-
     }
     void DestroyCurrentScene()
     {
@@ -155,29 +207,33 @@ public class AudioSceneManager : MonoBehaviour
 }
 public class AudioScene
 {
-    public List<SoundSource> sourceList = new List<SoundSource>();
+    public int sceneID;
+    public string sceneName;
+    public enum rendererType { Objects, Ambisonics }
+
+    public List<PointSource> sourceList = new List<PointSource>();
     public void AddSource(float azimuth, float elevation, float distance, Color color)
     {
-        SoundSource source = new SoundSource();
+        PointSource source = new PointSource();
         source.SetPosition(azimuth, elevation, distance);
         source.SetColor(color);
         sourceList.Add(source);
     }
 }
-public class SoundSource
+public class PointSource
 {
-    SourceAED sourcePosition;
+    PointSourceAED sourcePosition;
     Color sourceColor;
 
     public void SetPosition(float azimuth, float elevation, float distance)
     {
-        sourcePosition = new SourceAED(azimuth, elevation, distance);
+        sourcePosition = new PointSourceAED(azimuth, elevation, distance);
     }
     public void SetColor(Color color)
     {
         sourceColor = color;
     }
-    public SourceAED GetPosition()
+    public PointSourceAED GetPosition()
     {
         return sourcePosition;
     }
@@ -187,13 +243,13 @@ public class SoundSource
     }
 }
 
-public class SourceAED
+public class PointSourceAED
 {
     public float azimuth;
     public float elevation;
     public float distance;
 
-    public SourceAED(float azimuth, float elevation, float distance)
+    public PointSourceAED(float azimuth, float elevation, float distance)
     {
         this.azimuth = azimuth;
         this.elevation = elevation;
