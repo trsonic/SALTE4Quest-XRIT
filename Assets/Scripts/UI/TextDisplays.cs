@@ -38,7 +38,7 @@ public class TextDisplays : MonoBehaviour
         debugDisplay = GameObject.Find("Debug Canvas");
         hmdFixedDisplay = GameObject.Find("HMD-fixed Canvas");
 
-        ShowDebugConsole(false);
+        ShowDebugConsole(true);
     }
     private void Update()
     {

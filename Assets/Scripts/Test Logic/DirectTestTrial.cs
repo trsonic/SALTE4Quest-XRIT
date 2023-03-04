@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class DirectTestTrial
@@ -12,13 +13,12 @@ public class DirectTestTrial
     public int[] buttonStates = new int[6];
     public float slidersMinVal, slidersMaxVal;
     public List<float> sliderValues = new List<float>();
-    public List<string> condIdList = new List<string>();
+    public List<TestCondition> conditionList = new List<TestCondition>();
     public List<int> condTrigStates = new List<int>();
     public List<string> attributeLabels = new List<string>();
     public bool referenceButtonPresent;
     public bool ABbuttonsPresent;
     public bool ABconditionsReversed;
-
 
     //// 360 video playback
     //public string video360filename;
@@ -36,35 +36,10 @@ public class DirectTestTrial
         buttonStates[4] = 0; // stop
         buttonStates[5] = 0; // loop
 
-        //// sliders
-        //slidersMinVal = 0.0f;
-        //slidersMaxVal = 100.0f;
-        //sliderValues.Add(0);
-        //sliderValues.Add(0);
-        //sliderValues.Add(0);
-        //sliderValues[0] = 5.0f;
-        //sliderValues[1] = 25.0f;
-        //sliderValues[2] = 45.0f;
-
-        //// condition trigger buttons
-        //condTrigStates.Add(0);
-        //condTrigStates.Add(0);
-        //condTrigStates.Add(0);
-        //condTrigStates[0] = 0;
-        //condTrigStates[1] = 1;
-        //condTrigStates[2] = 0;
-
-        //// attribute labels
-        //attributeLabels.Add("");
-        //attributeLabels.Add("");
-        //attributeLabels.Add("");
-        //attributeLabels[0] = "dupa 1";
-        //attributeLabels[1] = "dupa 2";
-        //attributeLabels[2] = "dupa 3";
-
         // reference and A/B buttons present
         referenceButtonPresent = false;
         ABbuttonsPresent = false; // if true, attribute lables will be shown
+        ABconditionsReversed = false;
     }
 
     public void setTrialId(string id)
@@ -92,7 +67,6 @@ public class DirectTestTrial
             ratingLabels.Add(labelsArray[i]);
         }
     }
-
     public void setAttributeLabels(string[] labelsArray, float slMinVal, float slMaxVal, float slDefVal)
     {
         attributeLabels.Clear();
@@ -109,20 +83,31 @@ public class DirectTestTrial
             sliderValues.Add(slDefVal);
         }
     }
-
-    public void setConditions(string[] condIdArray, float slMinVal, float slMaxVal, float slDefVal)
+    public void setConditions(List<TestCondition> conds, float slMinVal, float slMaxVal, float slDefVal)
     {
         slidersMinVal = slMinVal;
         slidersMaxVal = slMaxVal;
         sliderValues.Clear();
         condTrigStates.Clear();
-        for (int i = 0; i < condIdArray.Length; i++)
+        for (int i = 0; i < conds.Count; i++)
         {
             sliderValues.Add(slDefVal);
             condTrigStates.Add(0);
-            condIdList.Add(condIdArray[i]);
+            conditionList.Add(conds[i]);
         }
+    }
+}
 
-        // permute conditions
+public class TestCondition
+{
+    public string audioFilePath, hrtfFilePath;
+    public float audioFileGainDB, hrtfFileGainDB;
+
+    public TestCondition(string audioFilePath, float audioFileGainDB, string hrtfFilePath, float hrtfFileGainDB)
+    {
+        this.audioFilePath = audioFilePath;
+        this.audioFileGainDB = audioFileGainDB;
+        this.hrtfFilePath = hrtfFilePath;
+        this.hrtfFileGainDB = hrtfFileGainDB;
     }
 }

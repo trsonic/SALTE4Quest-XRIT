@@ -31,7 +31,7 @@ public class LocalizationTestLogic : MonoBehaviour
     [Range(0.0f, 1.0f)]
     public float manualTrigger = 0.0f;
 
-    public enum TestPhase { Start, InProgress, Final }
+    public enum TestPhase { Introduction, InProgress, Final }
     public TestPhase testPhase;
     public bool useLeftController4Pointing = false;
     public int trialIndex;
@@ -61,6 +61,8 @@ public class LocalizationTestLogic : MonoBehaviour
     private float elapsedTimeOnTarget, elapsedTimeOffTarget;
     private bool delayedLoad = false;
     private double _timeAtTestStart;
+
+    RendererControl rc = new RendererControl();
 
     void Start()
     {
@@ -98,151 +100,13 @@ public class LocalizationTestLogic : MonoBehaviour
         sphV.transform.parent = reticle.transform;
         foreach (Renderer r in reticle.GetComponentsInChildren<Renderer>()) r.enabled = false;
 
-        testPhase = TestPhase.Start;
-    }
-
-    public void StartTest(bool training)
-    {
-        // setup visuals
-        horizontalMeshRotation = 0.0f;
-        createHorizonMesh(meshDistance, .0025f * meshDistance);
-        if (headTargetCircle != null) headTargetCircle.GetComponent<LineRenderer>().enabled = true;
-        visualPointer.GetComponent<Renderer>().enabled = showPointer;
-        foreach (Renderer r in reticle.GetComponentsInChildren<Renderer>()) r.enabled = showReticle;
-
-
-        // create subject id
-        subjId = "";
-        string[] alphabet = new string[26] { "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z" };
-        for (int i = 0; i < 8; ++i) subjId += alphabet[Random.Range(0, alphabet.Length)];
-
-        // create trial list
-        createTrialList(training);
-
-        // setup pointing controller
-        findPointingController();
-
-        // initialize remote audio renderer
-        OSCIO.Instance.SendOSCMessage("/attenuation", 0.0f);
-        OSCIO.Instance.SendOSCMessage("/mute", 1);
-
-        _timeAtTestStart = Time.realtimeSinceStartup;
-        loadTrial(0);
-    }
-    void createTrialList(bool training)
-    {
-        // setup trials
-        trialList.Clear();
-
-        if(training)
-        {
-            // directions
-            int numOfDirections = 6;
-            List<Vector2> dirs = new List<Vector2>();
-            for (int i = 0; i < numOfDirections; ++i)
-            {
-                Vector3 randDir = Random.insideUnitSphere.normalized;
-                Vector3 projectedVec = Vector3.ProjectOnPlane(randDir, Vector3.up);
-                float azimuth = Vector3.SignedAngle(mainCamera.transform.forward, projectedVec, mainCamera.transform.up);
-                float elevation = Vector3.SignedAngle(Vector3.up, randDir, Vector3.Cross(Vector3.up, randDir));
-                elevation = (elevation - 90.0f) * -1.0f;
-
-                //float azimuth = Mathf.Round(Random.Range(-900.0f, 90.0f));
-                //float elevation = Mathf.Round(Random.Range(-60.0f, 60.0f));
-                dirs.Add(new Vector2(azimuth, elevation));
-            }
-
-            // conditions
-            int[] conditions = new int[] { 1, 2, 3, 4, 5, 6 };
-
-            // repetitions
-            int numOfRepetitions = 3;
-
-            foreach (Vector2 dir in dirs)
-            {
-                foreach (int cond in conditions)
-                {
-                    for (int i = 0; i < numOfRepetitions; ++i)
-                    {
-                        LocalizationTestTrial newTrial = new LocalizationTestTrial();
-                        newTrial.setTargetAzEl(dir.x, dir.y);
-                        newTrial.setTargetDistance(meshDistance);
-                        newTrial.setConditionId(cond);
-                        //float range = 2.0f;
-                        //float level = -range + Random.Range(0, range);
-                        //newTrial.setPlaybackLevel(level);
-                        trialList.Add(newTrial);
-                    }
-                }
-            }
-            
-            foreach (int conditionID in conditions) TextDisplays.Instance.PrintDebugMessage("condition: " + conditionID.ToString());
-            TextDisplays.Instance.PrintDebugMessage("trial liste size: " + trialList.Count.ToString());
-            for (int i = 0; i < trialList.Count; ++i) TextDisplays.Instance.PrintDebugMessage("trial index: " + i.ToString() + ", condition: " + trialList[i].getConditionId());
-
-            // permute trial list
-            trialList.Shuffle();
-        }
-        else
-        {
-
-        }
-    }
-    void loadTrial(int index)
-    {
-        if (trialList.Count == 0) { TextDisplays.Instance.PrintDebugMessage("No trials defined"); return; }
-
-        if (index < 0 || index > trialList.Count) { TextDisplays.Instance.PrintDebugMessage("Wrong trial index"); return; }
-
-        if (index < trialList.Count)
-        {
-            trialIndex = index;
-
-            // debug console
-            TextDisplays.Instance.PrintDebugMessage("Trial index: " + (trialIndex + 1).ToString() +
-            ", condition ID: " + trialList[trialIndex].getConditionId() +
-            ", target az: " + trialList[trialIndex].getTargetAzimuth().ToString() +
-            ", target el: " + trialList[trialIndex].getTargetElevation().ToString());
-
-            StartCoroutine(DelayedLoad(0.5f));
-
-            // display trial info
-            //TextDisplays.Instance.ShowDebugConsole(false);
-            string text = (trialIndex + 1).ToString() + " / " + trialList.Count.ToString();
-            StartCoroutine(TextDisplays.Instance.DisplayTrialInfo(text, 0.25f, 0.0f, 0.25f));
-
-            testPhase = TestPhase.InProgress;
-        }
-        else if (index == trialList.Count) // deinit
-        {
-            testPhase = TestPhase.Final;
-
-            TextDisplays.Instance.ShowDebugConsole(true);
-            TextDisplays.Instance.PrintDebugMessage("Test finished.");
-            TextDisplays.Instance.PrintHMDMessage("");
-
-            // dump results
-            ExportResults();
-
-            deleteHorizonMesh();
-            horizontalMeshRotation = 0.0f;
-            if (headTargetCircle != null) headTargetCircle.GetComponent<LineRenderer>().enabled = false;
-            visualPointer.GetComponent<Renderer>().enabled = false;
-            soundSource.GetComponent<Renderer>().enabled = false;
-            foreach (Renderer r in reticle.GetComponentsInChildren<Renderer>()) r.enabled = false;
-
-            // de-initialize remote audio renderer
-            OSCIO.Instance.SendOSCMessage("/attenuation", 0.0f); ;
-            OSCIO.Instance.SendOSCMessage("/mute", 1);
-        }
-
-        UIBuilder.Instance.setUpdateFlag();
+        testPhase = TestPhase.Introduction;
     }
     void Update()
     {
         switch (testPhase)
         {
-            case TestPhase.Start:
+            case TestPhase.Introduction:
 
                 break;
 
@@ -296,7 +160,7 @@ public class LocalizationTestLogic : MonoBehaviour
                 float presentedDistance = Vector3.Distance(mainCamera.transform.position, soundSource.transform.position);
 
                 // send sound source coordinates to the renderer
-                OSCIO.Instance.SendOSCMessage("/source/1/aed", presentedAzimuthAngle, presentedElevationAngle, presentedDistance);
+                //OSCIO.Instance.SendOSCMessage("/source/1/aed", presentedAzimuthAngle, presentedElevationAngle, presentedDistance);
 
                 // calculate and send osc with stimulus attenuation in dB
                 float att;
@@ -316,7 +180,7 @@ public class LocalizationTestLogic : MonoBehaviour
                 if (att != stimulusAttenuation)
                 {
                     stimulusAttenuation = att;
-                    OSCIO.Instance.SendOSCMessage("/attenuation", stimulusAttenuation);
+                    rc.SetAttenuation(stimulusAttenuation);
                 }
 
                 // click joystick to show debug console
@@ -365,7 +229,7 @@ public class LocalizationTestLogic : MonoBehaviour
                     pointingController.SendHapticImpulse(0, 0.3f, 0.1f);
 
                     // stop renderer plaback
-                    OSCIO.Instance.SendOSCMessage("/mute", 1);
+                    rc.Stop();
                 }
                 else if (trigger == 0.0f && triggerPressed)
                 {
@@ -383,6 +247,141 @@ public class LocalizationTestLogic : MonoBehaviour
                 break;
 
         }
+    }
+    public void StartTest(bool training)
+    {
+        // create subject id
+        subjId = "";
+        string[] alphabet = new string[26] { "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z" };
+        for (int i = 0; i < 8; ++i) subjId += alphabet[Random.Range(0, alphabet.Length)];
+
+        // create trial list
+        createTrialList(training);
+
+        // setup pointing controller
+        findPointingController();
+
+        _timeAtTestStart = Time.realtimeSinceStartup;
+        loadTrial(0);
+    }
+    void createTrialList(bool training)
+    {
+        // setup trials
+        trialList.Clear();
+
+        if (training)
+        {
+            // directions
+            int numOfDirections = 6;
+            List<Vector2> dirs = new List<Vector2>();
+            for (int i = 0; i < numOfDirections; ++i)
+            {
+                Vector3 randDir = Random.insideUnitSphere.normalized;
+                Vector3 projectedVec = Vector3.ProjectOnPlane(randDir, Vector3.up);
+                float azimuth = Vector3.SignedAngle(mainCamera.transform.forward, projectedVec, mainCamera.transform.up);
+                float elevation = Vector3.SignedAngle(Vector3.up, randDir, Vector3.Cross(Vector3.up, randDir));
+                elevation = (elevation - 90.0f) * -1.0f;
+
+                //float azimuth = Mathf.Round(Random.Range(-900.0f, 90.0f));
+                //float elevation = Mathf.Round(Random.Range(-60.0f, 60.0f));
+                dirs.Add(new Vector2(azimuth, elevation));
+            }
+
+            // conditions
+            int[] conditions = new int[] { 1, 2, 3, 4, 5, 6 };
+
+            // repetitions
+            int numOfRepetitions = 3;
+
+            foreach (Vector2 dir in dirs)
+            {
+                foreach (int cond in conditions)
+                {
+                    for (int i = 0; i < numOfRepetitions; ++i)
+                    {
+                        LocalizationTestTrial newTrial = new LocalizationTestTrial();
+                        newTrial.setTargetAzEl(dir.x, dir.y);
+                        newTrial.setTargetDistance(meshDistance);
+                        newTrial.setConditionId(cond);
+                        //float range = 2.0f;
+                        //float level = -range + Random.Range(0, range);
+                        //newTrial.setPlaybackLevel(level);
+                        trialList.Add(newTrial);
+                    }
+                }
+            }
+
+            foreach (int conditionID in conditions) TextDisplays.Instance.PrintDebugMessage("condition: " + conditionID.ToString());
+            TextDisplays.Instance.PrintDebugMessage("trial liste size: " + trialList.Count.ToString());
+            for (int i = 0; i < trialList.Count; ++i) TextDisplays.Instance.PrintDebugMessage("trial index: " + i.ToString() + ", condition: " + trialList[i].getConditionId());
+
+            // permute trial list
+            trialList.Shuffle();
+        }
+        else
+        {
+
+        }
+    }
+    void loadTrial(int index)
+    {
+        if (trialList.Count == 0) { TextDisplays.Instance.PrintDebugMessage("No trials defined"); return; }
+
+        if (index < 0 || index > trialList.Count) { TextDisplays.Instance.PrintDebugMessage("Wrong trial index"); return; }
+
+        if (index < trialList.Count)
+        {
+            trialIndex = index;
+
+            if (trialIndex == 0) // setup visuals
+            {
+                horizontalMeshRotation = 0.0f;
+                createHorizonMesh(meshDistance, .0025f * meshDistance);
+                if (headTargetCircle != null) headTargetCircle.GetComponent<LineRenderer>().enabled = true;
+                visualPointer.GetComponent<Renderer>().enabled = showPointer;
+                foreach (Renderer r in reticle.GetComponentsInChildren<Renderer>()) r.enabled = showReticle;
+            }
+
+            // debug console
+            TextDisplays.Instance.PrintDebugMessage("Trial index: " + (trialIndex + 1).ToString() +
+            ", condition ID: " + trialList[trialIndex].getConditionId() +
+            ", target az: " + trialList[trialIndex].getTargetAzimuth().ToString() +
+            ", target el: " + trialList[trialIndex].getTargetElevation().ToString());
+
+            StartCoroutine(DelayedLoad(0.5f));
+
+            // display trial info
+            //TextDisplays.Instance.ShowDebugConsole(false);
+            string text = (trialIndex + 1).ToString() + " / " + trialList.Count.ToString();
+            StartCoroutine(TextDisplays.Instance.DisplayTrialInfo(text, 0.25f, 0.0f, 0.25f));
+
+            testPhase = TestPhase.InProgress;
+        }
+        else if (index == trialList.Count) // deinit
+        {
+            testPhase = TestPhase.Final;
+
+            TextDisplays.Instance.ShowDebugConsole(true);
+            TextDisplays.Instance.PrintDebugMessage("Test finished.");
+            TextDisplays.Instance.PrintHMDMessage("");
+
+            // dump results
+            ExportResults();
+
+            deleteHorizonMesh();
+            horizontalMeshRotation = 0.0f;
+            if (headTargetCircle != null) headTargetCircle.GetComponent<LineRenderer>().enabled = false;
+            visualPointer.GetComponent<Renderer>().enabled = false;
+            soundSource.GetComponent<Renderer>().enabled = false;
+            foreach (Renderer r in reticle.GetComponentsInChildren<Renderer>()) r.enabled = false;
+
+            // de-initialize remote audio renderer
+            rc.Mute();
+            rc.Stop();
+            rc.SetAttenuation(0.0f);
+        }
+
+        UIBuilder.Instance.setUpdateFlag();
     }
     private void findPointingController()
     {
@@ -407,14 +406,14 @@ public class LocalizationTestLogic : MonoBehaviour
         delayedLoad = true;
         soundSource.GetComponent<Renderer>().enabled = false;
 
-        // mute renderer
-        OSCIO.Instance.SendOSCMessage("/mute", 1);
+        //// mute renderer
+        //OSCIO.Instance.SendOSCMessage("/mute", 1);
 
-        // renderer load scene (noise)
-        OSCIO.Instance.SendOSCMessage("/scene", 1);
+        //// renderer load scene (noise)
+        //OSCIO.Instance.SendOSCMessage("/scene", 1);
 
-        // renderer load hrtfs
-        OSCIO.Instance.SendOSCMessage("/condition", trialList[trialIndex].getConditionId());
+        //// renderer load hrtfs
+        //OSCIO.Instance.SendOSCMessage("/condition", trialList[trialIndex].getConditionId());
         TextDisplays.Instance.PrintDebugMessage(trialList[trialIndex].getConditionId().ToString());
 
         // set source position (done in update)
@@ -424,7 +423,7 @@ public class LocalizationTestLogic : MonoBehaviour
         while (timer < delayTime) { timer += Time.deltaTime; yield return null; }
 
         // unmute renderer
-        OSCIO.Instance.SendOSCMessage("/mute", 0);
+        //OSCIO.Instance.SendOSCMessage("/mute", 0);
 
         soundSource.GetComponent<Renderer>().enabled = showSource;
         elapsedTimeOnTarget = 0.0f;

@@ -12,6 +12,7 @@ public class ButtonOutput : MonoBehaviour
             _timeAtButtonClicked = Time.realtimeSinceStartup;
             TextDisplays.Instance.PrintDebugMessage("Button Clicked: " + gameObject.name);
             UIBuilder.Instance.btnPressedCallback(gameObject.name);
+            DirectTestLogic.Instance.btnPressedCallback(gameObject.name);
         }
     }
 }

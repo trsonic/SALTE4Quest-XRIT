@@ -44,7 +44,6 @@ public class UIBuilder : MonoBehaviour
     RectTransform sliderCanvasTransform;
 
     GameObject chooseMixedButton, chooseLocalizationButton, chooseDemoButton;
-    //GameObject selectLeftControllerButton, selectRightControllerButton;
     GameObject startTrainingButton, startTestButton, quitAppButton, restartTestButton, switchHandButton;
     [SerializeField] List<GameObject> activeLabels = new List<GameObject>();
     [SerializeField] List<GameObject> activeSliders = new List<GameObject>();
@@ -55,8 +54,6 @@ public class UIBuilder : MonoBehaviour
     int lastTrialIndex;
     int[] lastButtonStates = new int[6];
     List<int> lastTrigStates = new List<int>();
-
-    DirectTestTrial localDTT;
 
     void Start()
     {
@@ -76,23 +73,21 @@ public class UIBuilder : MonoBehaviour
         chooseMixedButton = transform.Find("ButtonCanvas/ChooseMixedButton").gameObject;
         chooseLocalizationButton = transform.Find("ButtonCanvas/ChooseLocalizationButton").gameObject;
         chooseDemoButton = transform.Find("ButtonCanvas/ChooseDemoButton").gameObject;
-        //selectLeftControllerButton = transform.Find("ButtonCanvas/SelectLeftControllerButton").gameObject;
-        //selectRightControllerButton = transform.Find("ButtonCanvas/SelectRightControllerButton").gameObject;
         startTrainingButton = transform.Find("ButtonCanvas/StartTrainingButton").gameObject;
         startTestButton = transform.Find("ButtonCanvas/StartTestButton").gameObject;
         quitAppButton = transform.Find("ButtonCanvas/QuitAppButton").gameObject;
         restartTestButton = transform.Find("ButtonCanvas/RestartButton").gameObject;
         switchHandButton = transform.Find("ButtonCanvas/SwitchHandButton").gameObject;
 
-        buttonList.Add(transform.Find("ButtonCanvas/ReferenceButton").gameObject);
-        buttonList.Add(transform.Find("ButtonCanvas/AButton").gameObject);
-        buttonList.Add(transform.Find("ButtonCanvas/BButton").gameObject);
-        buttonList.Add(transform.Find("ButtonCanvas/PlayButton").gameObject);
-        buttonList.Add(transform.Find("ButtonCanvas/StopButton").gameObject);
-        buttonList.Add(transform.Find("ButtonCanvas/LoopButton").gameObject);
-        buttonList.Add(transform.Find("ButtonCanvas/PreviousButton").gameObject);
-        buttonList.Add(transform.Find("ButtonCanvas/NextButton").gameObject);
-        buttonList.Add(transform.Find("ButtonCanvas/FinishButton").gameObject);
+        buttonList.Add(transform.Find("ButtonCanvas/ReferenceButton").gameObject);  // 0
+        buttonList.Add(transform.Find("ButtonCanvas/AButton").gameObject);          // 1
+        buttonList.Add(transform.Find("ButtonCanvas/BButton").gameObject);          // 2
+        buttonList.Add(transform.Find("ButtonCanvas/PlayButton").gameObject);       // 3
+        buttonList.Add(transform.Find("ButtonCanvas/StopButton").gameObject);       // 4
+        buttonList.Add(transform.Find("ButtonCanvas/LoopButton").gameObject);       // 5
+        buttonList.Add(transform.Find("ButtonCanvas/PreviousButton").gameObject);   // 6
+        buttonList.Add(transform.Find("ButtonCanvas/NextButton").gameObject);       // 7
+        buttonList.Add(transform.Find("ButtonCanvas/FinishButton").gameObject);     // 8
 
         controllersHelp = transform.Find("OculusTouchControllers").gameObject;
 
@@ -134,6 +129,7 @@ public class UIBuilder : MonoBehaviour
     void SetScene(TestType scene)
     {
         testType = scene;
+
         setUpdateFlag();
     }
 
@@ -157,6 +153,7 @@ public class UIBuilder : MonoBehaviour
         activeLabels.Clear();
         foreach (GameObject slider in activeSliders) Destroy(slider);
         activeSliders.Clear();
+        lastTrialIndex = 666; // set last trial index to be different than the actual trial indices
 
         // remove text
         trialIndexMessage.text = "";
@@ -198,8 +195,8 @@ public class UIBuilder : MonoBehaviour
     {
         switch (DirectTestLogic.Instance.testPhase)
         {
-            case DirectTestLogic.TestPhase.Start:
-                initUI(); // clear UI
+            case DirectTestLogic.TestPhase.Introduction:
+                initUI();
 
                 instructionMessage.text = "\n" +
                     "Thank you for agreeing to participate in this listening test.\n" +
@@ -220,28 +217,31 @@ public class UIBuilder : MonoBehaviour
                 break;
 
             case DirectTestLogic.TestPhase.InProgress:
-                localDTT = DirectTestLogic.Instance.trialList[DirectTestLogic.Instance.trialIndex];
 
-                showUI(true);
-                if (lastTrialIndex != DirectTestLogic.Instance.trialIndex)
+                int trialIndex = DirectTestLogic.Instance.trialIndex;
+                DirectTestTrial trialCopy = DirectTestLogic.Instance.trialList[trialIndex];
+
+                if (lastTrialIndex != trialIndex)
                 {
-                    if (localDTT.screenMessages.Count == 2)
+                    initUI();
+
+                    if (trialCopy.screenMessages.Count == 2)
                     {
-                        int displayedTrialIndex = DirectTestLogic.Instance.trialIndex + 1;
-                        trialIndexMessage.text = "Trial " + displayedTrialIndex.ToString() + " of " + DirectTestLogic.Instance.trialList.Count.ToString();
-                        trialNameMessage.text = localDTT.screenMessages[0];
-                        instructionMessage.text = localDTT.screenMessages[1];
+                        trialIndexMessage.text = "Trial " + (trialIndex + 1).ToString() + " of " + DirectTestLogic.Instance.trialList.Count.ToString();
+                        trialNameMessage.text = trialCopy.screenMessages[0];
+                        instructionMessage.text = trialCopy.screenMessages[1];
                     }
 
-                    createLabels();
-                    updateLabels();
-                    createSliders();
-                    updateButtons();
+                    createLabels(trialCopy);
+                    updateLabels(trialCopy);
+                    createSliders(trialCopy);
+                    updateButtons(trialCopy);
                     lastTrialIndex = DirectTestLogic.Instance.trialIndex;
                 }
 
-                updateSliders();
-                updateButtonStates();
+                updateSliders(trialCopy);
+                updateButtonStates(trialCopy);
+                showUI(true);
                 controllersHelp.SetActive(false);
                 break;
 
@@ -254,7 +254,7 @@ public class UIBuilder : MonoBehaviour
                     DirectTestLogic.Instance.subjId;
 
                 quitAppButton.SetActive(true);
-                quitAppButton.GetComponentInChildren<TextMeshProUGUI>().text = "Back";
+                quitAppButton.GetComponentInChildren<TextMeshProUGUI>().text = "Main Menu";
                 showUI(true);
 
                 break;
@@ -265,7 +265,7 @@ public class UIBuilder : MonoBehaviour
     {
         switch (LocalizationTestLogic.Instance.testPhase)
         {
-            case LocalizationTestLogic.TestPhase.Start:
+            case LocalizationTestLogic.TestPhase.Introduction:
                 initUI();
                 instructionMessage.text = "\n"
                     + "HRTF Evaluation Localization Test" + "\n"
@@ -308,7 +308,7 @@ public class UIBuilder : MonoBehaviour
                 // show restart and quit buttons
                 restartTestButton.SetActive(true);
                 quitAppButton.SetActive(true);
-                quitAppButton.GetComponentInChildren<TextMeshProUGUI>().text = "Back";
+                quitAppButton.GetComponentInChildren<TextMeshProUGUI>().text = "Main Menu";
                 showUI(true);
                 break;
         }
@@ -318,7 +318,7 @@ public class UIBuilder : MonoBehaviour
     {
         switch (DemoLogic.Instance.testPhase)
         {
-            case DemoLogic.TestPhase.Start:
+            case DemoLogic.TestPhase.Introduction:
                 initUI();
 
                 instructionMessage.text = "\n" +
@@ -348,18 +348,21 @@ public class UIBuilder : MonoBehaviour
         {
             case "ChooseMixedButton":
                 SetScene(TestType.MixedMethods);
+                DirectTestLogic.Instance.testPhase = DirectTestLogic.TestPhase.Introduction;
                 break;
 
             case "ChooseLocalizationButton":
                 SetScene(TestType.Localization);
+                LocalizationTestLogic.Instance.testPhase = LocalizationTestLogic.TestPhase.Introduction;
                 break;
 
             case "ChooseDemoButton":
                 SetScene(TestType.Demo);
+                DemoLogic.Instance.testPhase = DemoLogic.TestPhase.Introduction;
                 break;
 
             case "RestartButton":
-                LocalizationTestLogic.Instance.testPhase = LocalizationTestLogic.TestPhase.Start;
+                LocalizationTestLogic.Instance.testPhase = LocalizationTestLogic.TestPhase.Introduction;
                 break;
 
             case "StartTrainingButton":
@@ -405,13 +408,13 @@ public class UIBuilder : MonoBehaviour
                 break;
         }
     }
-    private void createLabels()
+    private void createLabels(DirectTestTrial trialCopy)
     {
         foreach (GameObject label in activeLabels) Destroy(label);
         activeLabels.Clear();
 
         labelPrefab.SetActive(true);
-        int numberOfLabels = localDTT.ratingLabels.Count;
+        int numberOfLabels = trialCopy.ratingLabels.Count;
         float ratingLabelHeight = labelCanvasTransform.rect.height / numberOfLabels;
 
         for (int i = 0; i < numberOfLabels; ++i)
@@ -424,21 +427,21 @@ public class UIBuilder : MonoBehaviour
         labelPrefab.SetActive(false);
     }
 
-    private void updateLabels()
+    private void updateLabels(DirectTestTrial trialCopy)
     {
         for (int i = 0; i < this.activeLabels.Count; ++i)
         {
-            activeLabels[i].GetComponent<TextMeshProUGUI>().text = localDTT.ratingLabels[i];
+            activeLabels[i].GetComponent<TextMeshProUGUI>().text = trialCopy.ratingLabels[i];
         }
     }
 
-    private void createSliders()
+    private void createSliders(DirectTestTrial trialCopy)
     {
         foreach (GameObject slider in activeSliders) Destroy(slider);
         activeSliders.Clear();
 
         sliderPrefab.SetActive(true);
-        int numberOfSliders = localDTT.sliderValues.Count;
+        int numberOfSliders = trialCopy.sliderValues.Count;
         float sliderWidth = sliderCanvasTransform.rect.width / numberOfSliders;
 
         for (int i = 0; i < numberOfSliders; ++i)
@@ -451,32 +454,33 @@ public class UIBuilder : MonoBehaviour
         }
         sliderPrefab.SetActive(false);
     }
-    private void updateSliders()
+    private void updateSliders(DirectTestTrial trialCopy)
     {
-        for (int i = 0; i < activeSliders.Count; ++i)
+        for (int i = 0; i < activeSliders.Count; i++)
         {
-            activeSliders[i].GetComponent<Slider>().minValue = localDTT.slidersMinVal;
-            activeSliders[i].GetComponent<Slider>().maxValue = localDTT.slidersMaxVal;
-            activeSliders[i].GetComponent<Slider>().value = localDTT.sliderValues[i];
-            activeSliders[i].GetComponent<SliderSettings>().updateSliderValue();
-            if (localDTT.ABbuttonsPresent)
+            activeSliders[i].GetComponentInChildren<Slider>().minValue = trialCopy.slidersMinVal;
+            activeSliders[i].GetComponentInChildren<Slider>().maxValue = trialCopy.slidersMaxVal;
+            activeSliders[i].GetComponentInChildren<Slider>().value = trialCopy.sliderValues[i];
+            activeSliders[i].GetComponentInChildren<SliderSettings>().updateSliderValue();
+
+            if (trialCopy.ABbuttonsPresent)
             {
-                string label = localDTT.attributeLabels[i];
-                activeSliders[i].GetComponent<SliderSettings>().setAttributeLabel(label);
+                string label = trialCopy.attributeLabels[i];
+                activeSliders[i].GetComponentInChildren<SliderSettings>().setAttributeLabel(label);
             }
         }
     }
-    private void updateButtons()
+    private void updateButtons(DirectTestTrial trialCopy)
     {
-        bool referenceButtonPresent = localDTT.referenceButtonPresent;
-        bool ABbuttonsPresent = localDTT.ABbuttonsPresent;
+        bool referenceButtonPresent = trialCopy.referenceButtonPresent;
+        bool ABbuttonsPresent = trialCopy.ABbuttonsPresent;
 
         buttonList[0].SetActive(referenceButtonPresent);
         buttonList[1].SetActive(ABbuttonsPresent);
         buttonList[2].SetActive(ABbuttonsPresent);
 
-        buttonList[3].SetActive(true); // play
-        buttonList[4].SetActive(true); // stop
+        buttonList[3].SetActive(false); // play
+        buttonList[4].SetActive(false); // stop
         buttonList[5].SetActive(false); // loop
 
         if (DirectTestLogic.Instance.trialIndex == 0)
@@ -498,14 +502,14 @@ public class UIBuilder : MonoBehaviour
             buttonList[8].SetActive(false);
         }
     }
-    private void updateButtonStates()
+    private void updateButtonStates(DirectTestTrial trialCopy)
     {
-        if (!lastButtonStates.Equals(localDTT.buttonStates))
+        if (!lastButtonStates.Equals(trialCopy.buttonStates))
         {
             for (int i = 0; i < 6; ++i)
             {
                 var colors = buttonList[i].GetComponent<Button>().colors;
-                if (localDTT.buttonStates[i] == 1)
+                if (trialCopy.buttonStates[i] == 1)
                 {
                     colors.normalColor = Color.red;
                     colors.selectedColor = Color.red;
@@ -518,21 +522,20 @@ public class UIBuilder : MonoBehaviour
                 buttonList[i].GetComponent<Button>().colors = colors;
             }
 
-            localDTT.buttonStates.CopyTo(lastButtonStates, 0);
+            trialCopy.buttonStates.CopyTo(lastButtonStates, 0);
         }
 
-        if (!lastTrigStates.Equals(localDTT.condTrigStates) && !localDTT.ABbuttonsPresent)
+        if (!lastTrigStates.Equals(trialCopy.condTrigStates) && !DirectTestLogic.Instance.trialList[DirectTestLogic.Instance.trialIndex].ABbuttonsPresent)
         {
-            int numOfCondTrigBtns = localDTT.condTrigStates.Count;
-            for (int i = 0; i < numOfCondTrigBtns; ++i)
+            for (int i = 0; i < trialCopy.condTrigStates.Count; ++i)
             {
-                if (localDTT.condTrigStates[i] == 1)
-                    activeSliders[i].GetComponent<SliderSettings>().setButtonActiveState(true);
+                if (trialCopy.condTrigStates[i] == 1)
+                    activeSliders[i].GetComponentInChildren<SliderSettings>().setButtonActiveState(true);
                 else
-                    activeSliders[i].GetComponent<SliderSettings>().setButtonActiveState(false);
+                    activeSliders[i].GetComponentInChildren<SliderSettings>().setButtonActiveState(false);
             }
 
-            lastTrigStates = new List<int>(localDTT.condTrigStates);
+            lastTrigStates = new List<int>(trialCopy.condTrigStates);
         }
     }
 }

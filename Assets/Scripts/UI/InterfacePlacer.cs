@@ -19,7 +19,8 @@ public class InterfacePlacer : MonoBehaviour
 
         // place interface in front
         interfaceDistance = 2.0f;
-        interfaceScale = 0.003f;
+        interfaceScale = 0.006f;
+        testInterfaceTransform.localScale = new Vector3(interfaceScale, interfaceScale, 1.0f);
         testInterfaceTransform.position = mainCameraTransform.position + mainCameraTransform.forward * interfaceDistance;
         testInterfaceTransform.rotation = Quaternion.LookRotation(testInterfaceTransform.position - mainCameraTransform.position);
 
@@ -71,7 +72,7 @@ public class InterfacePlacer : MonoBehaviour
             if (axisVec.x != 0.0f)
             {
                 interfaceScale *= 1 + axisVec.x * 0.02f;
-                interfaceScale = Mathf.Clamp(interfaceScale, 0.0005f, 0.005f);
+                interfaceScale = Mathf.Clamp(interfaceScale, 0.0005f, 0.01f);
             }
 
             testInterfaceTransform.localScale = new Vector3(interfaceScale, interfaceScale, 1.0f);

@@ -8,6 +8,8 @@ using static AudioScene;
 public class AudioSceneManager : MonoBehaviour
 {
 
+    // THIS COMPONENT IS DEPRACATED
+
     #region Singleton
     private static AudioSceneManager _instance;
 

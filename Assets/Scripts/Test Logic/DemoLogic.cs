@@ -28,7 +28,7 @@ public class DemoLogic : MonoBehaviour
 
     GameObject mainCamera, soundSource;
 
-    public enum TestPhase { Start, InProgress }
+    public enum TestPhase { Introduction, InProgress }
     public TestPhase testPhase;
 
     InputDevice leftController, rightController, pointingController;
@@ -37,19 +37,21 @@ public class DemoLogic : MonoBehaviour
 
     int hrtfSetId = 0;
 
+    RendererControl rc = new RendererControl();
+
     void Start()
     {
         mainCamera = GameObject.Find("Main Camera");
         soundSource = GameObject.Find("Sound Source");
 
-        testPhase = TestPhase.Start;
+        testPhase = TestPhase.Introduction;
     }
 
     void Update()
     {
         switch (testPhase)
         {
-            case TestPhase.Start:
+            case TestPhase.Introduction:
                 break;
 
             case TestPhase.InProgress:
@@ -122,11 +124,10 @@ public class DemoLogic : MonoBehaviour
     {
         testPhase = TestPhase.InProgress;
         UIBuilder.Instance.setUpdateFlag();
-        AudioSceneManager.Instance.LoadScene(0);
     }
     void SceneSwitcher()
     {
-        AudioSceneManager.Instance.LoadNextScene();
+        rc.LoadAudioFile("", 0.0f);
     }
     void HrtfSwitcher()
     {
@@ -152,7 +153,8 @@ public class DemoLogic : MonoBehaviour
         string text = "HRTF set ID: " + (hrtfSetId + 1).ToString();
         TextDisplays.Instance.PrintDebugMessage(text);
         StartCoroutine(TextDisplays.Instance.DisplayTrialInfo(text, 0.25f, 0.0f, 0.25f));
-        OSCIO.Instance.SendOSCMessage("/condition", hrtfSetId + 1);
+
+        rc.LoadHrtfFile("", 0.0f);
     }
     void findControllers()
     {

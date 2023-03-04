@@ -32,7 +32,7 @@ public class OSCIO : MonoBehaviour
     OscClient client;
     OscServer server;
 
-    string rendererIp = "192.168.1.107";
+    string rendererIp = "127.0.0.1"; // "192.168.1.107";
     string newRendererIp = "";
 
     int oscPortOut = 9000;  // Renderer receiving port
@@ -46,6 +46,8 @@ public class OSCIO : MonoBehaviour
 
     void OnDestroy()
     {
+        if (client != null) client.Send("/mute", 1);
+        if (client != null) client.Send("/stop", 1);
         if (client != null) client.Dispose();
         if (server != null) server.Dispose();
     }
