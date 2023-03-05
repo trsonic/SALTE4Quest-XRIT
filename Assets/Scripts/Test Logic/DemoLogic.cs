@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Networking.Types;
 using UnityEngine.XR;
 
 public class DemoLogic : MonoBehaviour
@@ -27,6 +28,7 @@ public class DemoLogic : MonoBehaviour
     #endregion
 
     GameObject mainCamera, soundSource;
+    float soundSourceDistance = 1.5f;
 
     public enum TestPhase { Introduction, InProgress }
     public TestPhase testPhase;
@@ -35,6 +37,9 @@ public class DemoLogic : MonoBehaviour
 
     float primaryButtonPressedTime, secondaryButtonPressedTime;
 
+    public List<AudioScene> audioScenes = new List<AudioScene>();
+
+    int sceneId = 0;
     int hrtfSetId = 0;
 
     RendererControl rc = new RendererControl();
@@ -43,7 +48,6 @@ public class DemoLogic : MonoBehaviour
     {
         mainCamera = GameObject.Find("Main Camera");
         soundSource = GameObject.Find("Sound Source");
-
         testPhase = TestPhase.Introduction;
     }
 
@@ -61,58 +65,78 @@ public class DemoLogic : MonoBehaviour
                     findControllers();
                 }
 
-                //// obtain current position of the presented sound source in reference to the listener
-                //Vector3 hsVec = Vector3.Normalize(soundSource.transform.position - mainCamera.transform.position);
-                //Vector3 projectedVec = Vector3.ProjectOnPlane(hsVec, mainCamera.transform.up);
-                //float presentedAzimuthAngle = Vector3.SignedAngle(mainCamera.transform.forward, projectedVec, mainCamera.transform.up);
-                //float presentedElevationAngle = Vector3.SignedAngle(mainCamera.transform.up, hsVec, Vector3.Cross(mainCamera.transform.up, hsVec));
-                //presentedElevationAngle = (presentedElevationAngle - 90.0f) * -1.0f;
-                //float presentedDistance = Vector3.Distance(mainCamera.transform.position, soundSource.transform.position);
-
-                //// send sound source coordinates to the renderer
-                //OSCIO.Instance.SendOSCMessage("/source/1/aed", presentedAzimuthAngle, presentedElevationAngle, presentedDistance);
+                // send head rotation
+                rc.SendHeadRotation(mainCamera);
 
                 // check pointing controller
                 if (rightController.isValid) pointingController = rightController;
 
-
                 if (pointingController.isValid)
                 {
-                    //soundSource.GetComponent<Renderer>().enabled = true;
+                    if (audioScenes[sceneId].type == AudioScene.AudioSceneType.ObjectBased)
+                    {
+                        // using joystick to change pointer distance
+                        pointingController.TryGetFeatureValue(CommonUsages.primary2DAxis, out Vector2 joystickUpDown);
+                        if (joystickUpDown.y > 0.5f) { soundSourceDistance *= 1.01f; soundSourceDistance = Mathf.Clamp(soundSourceDistance, 0.5f, 5.0f); }
+                        else if (joystickUpDown.y < -0.5f) { soundSourceDistance /= 1.01f; soundSourceDistance = Mathf.Clamp(soundSourceDistance, 0.5f, 5.0f); }
 
-                    //// using joystick to change pointer distance
-                    //pointingController.TryGetFeatureValue(CommonUsages.primary2DAxis, out Vector2 joystickUpDown);
-                    //if (joystickUpDown.y > 0.5f) { soundSourceDistance *= 1.01f; soundSourceDistance = Mathf.Clamp(soundSourceDistance, 0.5f, 5.0f); }
-                    //else if (joystickUpDown.y < -0.5f) { soundSourceDistance /= 1.01f; soundSourceDistance = Mathf.Clamp(soundSourceDistance, 0.5f, 5.0f); }
+                        pointingController.TryGetFeatureValue(CommonUsages.deviceRotation, out Quaternion controllerRotation);
+                        soundSource.transform.rotation = controllerRotation;
+                        soundSource.transform.position = mainCamera.transform.position + soundSource.transform.forward * soundSourceDistance;
 
-                    //pointingController.TryGetFeatureValue(CommonUsages.deviceRotation, out Quaternion controllerRotation);
-                    //soundSource.transform.rotation = controllerRotation;
-                    //soundSource.transform.position = mainCamera.transform.position + soundSource.transform.forward * soundSourceDistance;
+                        //// obtain current position of the presented sound source in reference to the listener
+                        //Vector3 hsVec = Vector3.Normalize(soundSource.transform.position - mainCamera.transform.position);
+                        //Vector3 projectedVec = Vector3.ProjectOnPlane(hsVec, mainCamera.transform.up);
+                        //float presentedAzimuthAngle = Vector3.SignedAngle(mainCamera.transform.forward, projectedVec, mainCamera.transform.up);
+                        //float presentedElevationAngle = Vector3.SignedAngle(mainCamera.transform.up, hsVec, Vector3.Cross(mainCamera.transform.up, hsVec));
+                        //presentedElevationAngle = (presentedElevationAngle - 90.0f) * -1.0f;
+                        //float presentedDistance = Vector3.Distance(mainCamera.transform.position, soundSource.transform.position);
+                        // obtain current position of the presented sound source in reference to the listener
 
+                        Vector3 hsVec = Vector3.Normalize(soundSource.transform.position - mainCamera.transform.position);
+                        Vector3 projectedVec = Vector3.ProjectOnPlane(hsVec, Vector3.up);
+                        float sourceAzimuth = Vector3.SignedAngle(Vector3.forward, projectedVec, Vector3.up);
+                        float sourceElevation = Vector3.SignedAngle(Vector3.up, hsVec, Vector3.Cross(Vector3.up, hsVec));
+                        sourceElevation = (sourceElevation - 90.0f) * -1.0f;
+                        float sourceDistance = Vector3.Distance(mainCamera.transform.position, soundSource.transform.position);
+
+                        // send sound source coordinates to the renderer
+                        rc.SendSourcePosition(1, sourceAzimuth, sourceElevation, sourceDistance);
+                    }
+
+                    
                     // if primary button pressed switch audio scene
                     pointingController.TryGetFeatureValue(CommonUsages.primaryButton, out bool primaryButton);
                     if (primaryButtonPressedTime == 0.0f & primaryButton)
                     {
-                        TextDisplays.Instance.PrintDebugMessage("Primary Button Pressed");
                         primaryButtonPressedTime = Time.realtimeSinceStartup;
-                        SceneSwitcher();
+                        SwitchAudioScene(sceneId + 1);
                     }
-                    else if ((Time.realtimeSinceStartup - primaryButtonPressedTime) > 0.5f & !primaryButton)
+                    else if ((Time.realtimeSinceStartup - primaryButtonPressedTime) > 0.25f & !primaryButton)
                     {
                         primaryButtonPressedTime = 0.0f;
+                    }
+                    else if ((Time.realtimeSinceStartup - primaryButtonPressedTime) > 1.5f & primaryButton)
+                    {
+                        primaryButtonPressedTime = 0.0f;
+                        EndDemo();
                     }
 
                     // if secondary button pressed switch hrtf set
                     pointingController.TryGetFeatureValue(CommonUsages.secondaryButton, out bool secondaryButton);
                     if (secondaryButtonPressedTime == 0.0f & secondaryButton)
                     {
-                        TextDisplays.Instance.PrintDebugMessage("Secondary Button Pressed");
                         secondaryButtonPressedTime = Time.realtimeSinceStartup;
-                        HrtfSwitcher();
+                        SwitchHrtf(hrtfSetId + 1);
                     }
-                    else if ((Time.realtimeSinceStartup - secondaryButtonPressedTime) > 0.5f & !secondaryButton)
+                    else if ((Time.realtimeSinceStartup - secondaryButtonPressedTime) > 0.25f & !secondaryButton)
                     {
                         secondaryButtonPressedTime = 0.0f;
+                    }
+                    else if ((Time.realtimeSinceStartup - secondaryButtonPressedTime) > 1.5f & secondaryButton)
+                    {
+                        secondaryButtonPressedTime = 0.0f;
+                        EndDemo();
                     }
                 }
 
@@ -122,39 +146,61 @@ public class DemoLogic : MonoBehaviour
 
     public void StartDemo()
     {
+        audioScenes.Clear();
+        audioScenes.Add(new AudioScene(AudioScene.AudioSceneType.ObjectBased, "C:/TR_FILES/NOISE_TEST_FILES/stim_pink_cont.wav", -20.0f));
+        audioScenes.Add(new AudioScene(AudioScene.AudioSceneType.Ambisonic, "C:/TR_FILES/AMBISONIC_TEST_FILES/audiolab-acoustic-guitar.wav", -20.0f));
+        audioScenes.Add(new AudioScene(AudioScene.AudioSceneType.Ambisonic, "C:/TR_FILES/AMBISONIC_TEST_FILES/jacob-RockTrackMV-draft.wav", -20.0f));
+        audioScenes.Add(new AudioScene(AudioScene.AudioSceneType.Ambisonic, "C:/TR_FILES/AMBISONIC_TEST_FILES/synth-disco.wav", -20.0f));
+        audioScenes.Add(new AudioScene(AudioScene.AudioSceneType.Ambisonic, "C:/TR_FILES/AMBISONIC_TEST_FILES/tom-fast.wav", -20.0f));
+
+        SwitchAudioScene(0);
+        SwitchHrtf(0);
         testPhase = TestPhase.InProgress;
         UIBuilder.Instance.setUpdateFlag();
     }
-    void SceneSwitcher()
+
+    public void EndDemo()
     {
-        rc.LoadAudioFile("", 0.0f);
+        rc.Stop();
+        testPhase = TestPhase.Introduction;
+        UIBuilder.Instance.setUpdateFlag();
     }
-    void HrtfSwitcher()
+    void SwitchAudioScene(int newId)
     {
-        hrtfSetId = (hrtfSetId + 1) % 4;
-        hrtfSetId += 6;
+        sceneId = newId % audioScenes.Count;
+        if (audioScenes[sceneId].type == AudioScene.AudioSceneType.ObjectBased)
+            soundSource.GetComponent<Renderer>().enabled = true;
+        else
+            soundSource.GetComponent<Renderer>().enabled = false;
 
-        //switch (hrtfSetId)
-        //{
-        //    case 0:
-        //        soundSource.GetComponent<Renderer>().material.color = Color.red;
-        //        break;
-        //    case 1:
-        //        soundSource.GetComponent<Renderer>().material.color = Color.green;
-        //        break;
-        //    case 2:
-        //        soundSource.GetComponent<Renderer>().material.color = Color.blue;
-        //        break;
-        //    case 3:
-        //        soundSource.GetComponent<Renderer>().material.color = Color.yellow;
-        //        break;
-        //}
+        rc.LoadAudioFile(audioScenes[sceneId].audioFilePath, audioScenes[sceneId].audioFileGainDB);
+        TextDisplays.Instance.PrintDebugMessage("Audio file path: " + audioScenes[sceneId].audioFilePath);
+    }
+    void SwitchHrtf(int newId)
+    {
+        string[] hrtfPaths = new string[]
+        {
+            "1OA_sadie2-ku100-test_akad-AkLS.conf",
+            "1OA_sadie2-ku100-test_akad-MagLS.conf",
+            "1OA_sadie2-ku100-test_akad-MagLS-diffc.conf",
+            "1OA_sadie2-ku100-test_akad-Resonance-EQ.conf"
+            //"3OA_sadie2-ku100-test_akad-AkLS.conf",
+            //"3OA_sadie2-ku100-test_akad-MagLS.conf",
+            //"3OA_sadie2-ku100-test_akad-MagLS-diffc.conf",
+            //"3OA_sadie2-ku100-test_akad-Resonance-EQ.conf",
+            //"5OA_sadie2-ku100-test_akad-AkLS.conf",
+            //"5OA_sadie2-ku100-test_akad-MagLS.conf",
+            //"5OA_sadie2-ku100-test_akad-MagLS-diffc.conf",
+            //"5OA_sadie2-ku100-test_akad-Resonance-EQ.conf"
+        };
 
-        string text = "HRTF set ID: " + (hrtfSetId + 1).ToString();
+        hrtfSetId = newId % hrtfPaths.Length;
+
+        rc.LoadHrtfFile(hrtfPaths[hrtfSetId], 0.0f);
+        string text = "HRTF set ID: " + hrtfPaths[hrtfSetId];
         TextDisplays.Instance.PrintDebugMessage(text);
         StartCoroutine(TextDisplays.Instance.DisplayTrialInfo(text, 0.25f, 0.0f, 0.25f));
-
-        rc.LoadHrtfFile("", 0.0f);
+        
     }
     void findControllers()
     {
@@ -166,5 +212,20 @@ public class DemoLogic : MonoBehaviour
             if (device.name.Contains("Left")) leftController = device;
             if (device.name.Contains("Right")) rightController = device;
         }
+    }
+}
+
+public class AudioScene
+{
+    public enum AudioSceneType {Ambisonic, ObjectBased, ChannelBased};
+    public AudioSceneType type;
+    public string audioFilePath;
+    public float audioFileGainDB;
+
+    public AudioScene(AudioSceneType type, string audioFilePath, float audioFileGainDB)
+    {
+        this.type = type;
+        this.audioFilePath = audioFilePath;
+        this.audioFileGainDB = audioFileGainDB;
     }
 }

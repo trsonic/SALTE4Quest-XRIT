@@ -18,8 +18,8 @@ public class InterfacePlacer : MonoBehaviour
         rightControllerTransform = GameObject.Find("RightHand Controller").transform;
 
         // place interface in front
-        interfaceDistance = 2.0f;
-        interfaceScale = 0.006f;
+        interfaceDistance = 1.75f;
+        interfaceScale = 0.002f;
         testInterfaceTransform.localScale = new Vector3(interfaceScale, interfaceScale, 1.0f);
         testInterfaceTransform.position = mainCameraTransform.position + mainCameraTransform.forward * interfaceDistance;
         testInterfaceTransform.rotation = Quaternion.LookRotation(testInterfaceTransform.position - mainCameraTransform.position);

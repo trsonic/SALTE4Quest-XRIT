@@ -56,7 +56,7 @@ public class DirectTestLogic : MonoBehaviour
 
             case TestPhase.InProgress:
                 // send head rotation
-                rc.SendHeadRotation(mainCamera.transform.rotation);
+                rc.SendHeadRotation(mainCamera);
                 break;
 
             case TestPhase.Final:
@@ -157,14 +157,12 @@ public class DirectTestLogic : MonoBehaviour
         TextDisplays.Instance.PrintDebugMessage("HRTF Path: " + tc.hrtfFilePath);
         TextDisplays.Instance.PrintDebugMessage("HRTF Gain: " + tc.hrtfFileGainDB + " dB");
 
-        rc.Mute();
         if (lastAudioPath !=  tc.audioFilePath)
         {
             lastAudioPath = tc.audioFilePath;
             rc.LoadAudioFile(tc.audioFilePath, tc.audioFileGainDB);
         }
         rc.LoadHrtfFile(tc.hrtfFilePath, tc.hrtfFileGainDB);
-        rc.Unmute();
 
         UIBuilder.Instance.setUpdateFlag();
     }
@@ -211,7 +209,6 @@ public class DirectTestLogic : MonoBehaviour
         else if (buttonName == "FinishButton")
         {
             // initialize remote audio renderer
-            rc.Mute();
             rc.Stop();
 
             exportResults();
@@ -227,8 +224,6 @@ public class DirectTestLogic : MonoBehaviour
         TextDisplays.Instance.PrintDebugMessage("loading trial: " + trialList[trialIndex].getTrialId());
 
         // initialize remote audio renderer
-        rc.SetAttenuation(0.0f);
-        rc.Mute();
         rc.Stop();
         lastAudioPath = "";
 

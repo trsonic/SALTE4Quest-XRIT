@@ -376,9 +376,7 @@ public class LocalizationTestLogic : MonoBehaviour
             foreach (Renderer r in reticle.GetComponentsInChildren<Renderer>()) r.enabled = false;
 
             // de-initialize remote audio renderer
-            rc.Mute();
             rc.Stop();
-            rc.SetAttenuation(0.0f);
         }
 
         UIBuilder.Instance.setUpdateFlag();
@@ -543,11 +541,5 @@ public class LocalizationTestLogic : MonoBehaviour
         {
             Destroy(child.gameObject);
         }
-    }
-    private float wrapAngle(float deg)
-    {
-        while (deg <= -180.0f) deg += 360.0f;
-        while (deg > 180.0f) deg -= 360.0f;
-        return deg;
     }
 }
