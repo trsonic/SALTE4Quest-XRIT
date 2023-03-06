@@ -38,9 +38,10 @@ public class DemoLogic : MonoBehaviour
     float primaryButtonPressedTime, secondaryButtonPressedTime;
 
     public List<AudioScene> audioScenes = new List<AudioScene>();
+    public List<AudioRenderer> audioRenderers = new List<AudioRenderer>();
 
     int sceneId = 0;
-    int hrtfSetId = 0;
+    int rendererId = 0;
 
     RendererControl rc = new RendererControl();
 
@@ -127,7 +128,7 @@ public class DemoLogic : MonoBehaviour
                     if (secondaryButtonPressedTime == 0.0f & secondaryButton)
                     {
                         secondaryButtonPressedTime = Time.realtimeSinceStartup;
-                        SwitchHrtf(hrtfSetId + 1);
+                        SwitchHrtf(rendererId + 1);
                     }
                     else if ((Time.realtimeSinceStartup - secondaryButtonPressedTime) > 0.25f & !secondaryButton)
                     {
@@ -140,18 +141,53 @@ public class DemoLogic : MonoBehaviour
                     }
                 }
 
+                TextDisplays.Instance.PrintHMDMessage(audioScenes[sceneId].filepath + "\n" + audioRenderers[rendererId].filepath);
+
                 break;
         }
     }
 
     public void StartDemo()
     {
+        // define audio scenes
         audioScenes.Clear();
         audioScenes.Add(new AudioScene(AudioScene.AudioSceneType.ObjectBased, "C:/TR_FILES/NOISE_TEST_FILES/stim_pink_cont.wav", -20.0f));
-        audioScenes.Add(new AudioScene(AudioScene.AudioSceneType.Ambisonic, "C:/TR_FILES/AMBISONIC_TEST_FILES/audiolab-acoustic-guitar.wav", -20.0f));
-        audioScenes.Add(new AudioScene(AudioScene.AudioSceneType.Ambisonic, "C:/TR_FILES/AMBISONIC_TEST_FILES/jacob-RockTrackMV-draft.wav", -20.0f));
-        audioScenes.Add(new AudioScene(AudioScene.AudioSceneType.Ambisonic, "C:/TR_FILES/AMBISONIC_TEST_FILES/synth-disco.wav", -20.0f));
-        audioScenes.Add(new AudioScene(AudioScene.AudioSceneType.Ambisonic, "C:/TR_FILES/AMBISONIC_TEST_FILES/tom-fast.wav", -20.0f));
+
+        string[] wavs = new string[]
+        {
+            "3OA_music-3.wav",
+            "3OA_audiolab-acoustic-guitar.wav",
+            "3OA_marco-single_trumpet.wav",
+            "3OA_music-2.wav",
+            "3OA_conversation-1.wav",
+            "3OA_marco-piano2.wav",
+            "3OA_marco-acappella.wav",
+            "3OA_marco-quartet.wav",
+            "3OA_render-4.wav",
+            "3OA_moving-pnoise-frontal.wav",
+            "3OA_moving-pnoise-horizontal.wav",
+            "3OA_moving-pnoise-median.wav",
+            "3OA_under-the-bridge.wav",
+            "3OA_tom-slow.wav",
+            "3OA_davidrivas-abbeyroad.wav",
+            "3OA_RockTrack_IEM_V3.wav",
+            "3OA_RockTrack_MV_V19.wav",
+            "3OA_synth-disco.wav",
+            "3OA_tom-fast.wav",
+            "3OA_omar.wav"
+        };
+
+        for (int i = 0; i < wavs.Length; i++)
+            audioScenes.Add(new AudioScene(AudioScene.AudioSceneType.Ambisonic, "C:/TR_FILES/AMBISONIC_TEST_FILES/" + wavs[i], -6.0f));
+
+        // define renderers
+        audioRenderers.Clear();
+        audioRenderers.Add(new AudioRenderer(AudioRenderer.AudioRendererType.Ambisonic, "3OA_sadie2-ku100-test_akad-AkLS.conf", 0.0f));
+        audioRenderers.Add(new AudioRenderer(AudioRenderer.AudioRendererType.Ambisonic, "3OA_sadie2-ku100-test_akad-MagLS.conf", 0.0f));
+        audioRenderers.Add(new AudioRenderer(AudioRenderer.AudioRendererType.Ambisonic, "3OA_sadie2-ku100-test_akad-MagLS-diffc.conf", 0.0f));
+        audioRenderers.Add(new AudioRenderer(AudioRenderer.AudioRendererType.Ambisonic, "3OA_sadie2-ku100-test_akad-LebSub-EQ.conf", 0.0f));
+        audioRenderers.Add(new AudioRenderer(AudioRenderer.AudioRendererType.Ambisonic, "3OA_sadie2-ku100-brir-test_akad-LebSub-EQ.conf", -6.0f));
+        audioRenderers.Add(new AudioRenderer(AudioRenderer.AudioRendererType.Ambisonic, "3OA_sadie1-ku100_original-resonance.conf", 9.0f));
 
         SwitchAudioScene(0);
         SwitchHrtf(0);
@@ -163,6 +199,8 @@ public class DemoLogic : MonoBehaviour
     {
         rc.Stop();
         testPhase = TestPhase.Introduction;
+        TextDisplays.Instance.PrintHMDMessage("");
+        soundSource.GetComponent<Renderer>().enabled = false;
         UIBuilder.Instance.setUpdateFlag();
     }
     void SwitchAudioScene(int newId)
@@ -173,34 +211,15 @@ public class DemoLogic : MonoBehaviour
         else
             soundSource.GetComponent<Renderer>().enabled = false;
 
-        rc.LoadAudioFile(audioScenes[sceneId].audioFilePath, audioScenes[sceneId].audioFileGainDB);
-        TextDisplays.Instance.PrintDebugMessage("Audio file path: " + audioScenes[sceneId].audioFilePath);
+        rc.LoadAudioFile(audioScenes[sceneId].filepath, audioScenes[sceneId].gaindB);
+        TextDisplays.Instance.PrintDebugMessage("Audio file path: " + audioScenes[sceneId].filepath);
     }
     void SwitchHrtf(int newId)
     {
-        string[] hrtfPaths = new string[]
-        {
-            "1OA_sadie2-ku100-test_akad-AkLS.conf",
-            "1OA_sadie2-ku100-test_akad-MagLS.conf",
-            "1OA_sadie2-ku100-test_akad-MagLS-diffc.conf",
-            "1OA_sadie2-ku100-test_akad-Resonance-EQ.conf"
-            //"3OA_sadie2-ku100-test_akad-AkLS.conf",
-            //"3OA_sadie2-ku100-test_akad-MagLS.conf",
-            //"3OA_sadie2-ku100-test_akad-MagLS-diffc.conf",
-            //"3OA_sadie2-ku100-test_akad-Resonance-EQ.conf",
-            //"5OA_sadie2-ku100-test_akad-AkLS.conf",
-            //"5OA_sadie2-ku100-test_akad-MagLS.conf",
-            //"5OA_sadie2-ku100-test_akad-MagLS-diffc.conf",
-            //"5OA_sadie2-ku100-test_akad-Resonance-EQ.conf"
-        };
+        rendererId = newId % audioRenderers.Count;
 
-        hrtfSetId = newId % hrtfPaths.Length;
-
-        rc.LoadHrtfFile(hrtfPaths[hrtfSetId], 0.0f);
-        string text = "HRTF set ID: " + hrtfPaths[hrtfSetId];
-        TextDisplays.Instance.PrintDebugMessage(text);
-        StartCoroutine(TextDisplays.Instance.DisplayTrialInfo(text, 0.25f, 0.0f, 0.25f));
-        
+        rc.LoadHrtfFile(audioRenderers[rendererId].filepath, audioRenderers[rendererId].gaindB);
+        TextDisplays.Instance.PrintDebugMessage("Renderer: " + audioRenderers[rendererId].filepath);
     }
     void findControllers()
     {
@@ -219,13 +238,28 @@ public class AudioScene
 {
     public enum AudioSceneType {Ambisonic, ObjectBased, ChannelBased};
     public AudioSceneType type;
-    public string audioFilePath;
-    public float audioFileGainDB;
+    public string filepath;
+    public float gaindB;
 
-    public AudioScene(AudioSceneType type, string audioFilePath, float audioFileGainDB)
+    public AudioScene(AudioSceneType type, string filepath, float gaindB)
     {
         this.type = type;
-        this.audioFilePath = audioFilePath;
-        this.audioFileGainDB = audioFileGainDB;
+        this.filepath = filepath;
+        this.gaindB = gaindB;
+    }
+}
+
+public class AudioRenderer
+{
+    public enum AudioRendererType { Ambisonic, Direct };
+    public AudioRendererType type;
+    public string filepath;
+    public float gaindB;
+
+    public AudioRenderer(AudioRendererType type, string filepath, float gaindB)
+    {
+        this.type = type;
+        this.filepath = filepath;
+        this.gaindB = gaindB;
     }
 }

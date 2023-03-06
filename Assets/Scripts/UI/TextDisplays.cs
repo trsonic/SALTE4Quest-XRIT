@@ -38,7 +38,7 @@ public class TextDisplays : MonoBehaviour
         debugDisplay = GameObject.Find("Debug Canvas");
         hmdFixedDisplay = GameObject.Find("HMD-fixed Canvas");
 
-        ShowDebugConsole(true);
+        ShowDebugConsole(false);
     }
     private void Update()
     {
@@ -93,23 +93,25 @@ public class TextDisplays : MonoBehaviour
     {
         PrintHMDMessage(text);
 
-        if (fadeInTime > 0.0f)
-        {
-            setHMDdisplayAlpha(0.0f);
-            while (getHMDdisplayAlpha() < 1.0f)
-            { incrementHMDdisplayAlpha(Time.deltaTime / fadeInTime); yield return null; }
-        }
-        else setHMDdisplayAlpha(1.0f);
+        //if (fadeInTime > 0.0f)
+        //{
+        //    setHMDdisplayAlpha(0.0f);
+        //    while (getHMDdisplayAlpha() < 1.0f)
+        //    { incrementHMDdisplayAlpha(Time.deltaTime / fadeInTime); yield return null; }
+        //}
+        //else setHMDdisplayAlpha(1.0f);
 
         while (dispTime > 0.0f) { dispTime -= Time.deltaTime; yield return null; }
 
-        if (fadeOutTime > 0.0f)
-        {
-            while (getHMDdisplayAlpha() > 0.0f)
-            { incrementHMDdisplayAlpha(-Time.deltaTime / fadeInTime); yield return null; }
+        //if (fadeOutTime > 0.0f)
+        //{
+        //    while (getHMDdisplayAlpha() > 0.0f)
+        //    { incrementHMDdisplayAlpha(-Time.deltaTime / fadeInTime); yield return null; }
 
-        }
-        else setHMDdisplayAlpha(0.0f);
+        //}
+        //else setHMDdisplayAlpha(0.0f);
+
+        PrintHMDMessage("");
     }
     public float getHMDdisplayAlpha()
     {
