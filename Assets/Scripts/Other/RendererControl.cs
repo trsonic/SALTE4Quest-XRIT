@@ -63,6 +63,12 @@ public class RendererControl
     {
         OSCIO.Instance.SendOSCMessage("/source/" + sourceId.ToString() + "/aed", az, el, dist);
     }
+
+    public void SetBrirLevel(float brirBoostdB)
+    {
+        OSCIO.Instance.SendOSCMessage("/brirgain", brirBoostdB);
+    }
+
     private float wrapAngle(float deg)
     {
         while (deg <= -180.0f) deg += 360.0f;

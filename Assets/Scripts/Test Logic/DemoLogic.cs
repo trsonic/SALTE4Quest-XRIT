@@ -37,6 +37,8 @@ public class DemoLogic : MonoBehaviour
 
     float primaryButtonPressedTime, secondaryButtonPressedTime;
 
+    float brirBoostdB = -10.0f;
+
     public List<AudioScene> audioScenes = new List<AudioScene>();
     public List<AudioRenderer> audioRenderers = new List<AudioRenderer>();
 
@@ -77,9 +79,9 @@ public class DemoLogic : MonoBehaviour
                     if (audioScenes[sceneId].type == AudioScene.AudioSceneType.ObjectBased)
                     {
                         // using joystick to change pointer distance
-                        pointingController.TryGetFeatureValue(CommonUsages.primary2DAxis, out Vector2 joystickUpDown);
-                        if (joystickUpDown.y > 0.5f) { soundSourceDistance *= 1.01f; soundSourceDistance = Mathf.Clamp(soundSourceDistance, 0.5f, 5.0f); }
-                        else if (joystickUpDown.y < -0.5f) { soundSourceDistance /= 1.01f; soundSourceDistance = Mathf.Clamp(soundSourceDistance, 0.5f, 5.0f); }
+                        //pointingController.TryGetFeatureValue(CommonUsages.primary2DAxis, out Vector2 joystickUpDown);
+                        //if (joystickUpDown.y > 0.5f) { soundSourceDistance *= 1.01f; soundSourceDistance = Mathf.Clamp(soundSourceDistance, 0.5f, 5.0f); }
+                        //else if (joystickUpDown.y < -0.5f) { soundSourceDistance /= 1.01f; soundSourceDistance = Mathf.Clamp(soundSourceDistance, 0.5f, 5.0f); }
 
                         pointingController.TryGetFeatureValue(CommonUsages.deviceRotation, out Quaternion controllerRotation);
                         soundSource.transform.rotation = controllerRotation;
@@ -139,9 +141,22 @@ public class DemoLogic : MonoBehaviour
                         secondaryButtonPressedTime = 0.0f;
                         EndDemo();
                     }
+
+                    // using joystick to adjust BRIR boos level
+                    pointingController.TryGetFeatureValue(CommonUsages.primary2DAxis, out Vector2 joystickUpDown);
+                    if (joystickUpDown.y > 0.75f) brirBoostdB += 0.1f;
+                    else if (joystickUpDown.y < -0.75f) brirBoostdB -= 0.1f;
+                    else if (joystickUpDown.y > 0.5f) brirBoostdB += 0.05f;
+                    else if (joystickUpDown.y < -0.5f) brirBoostdB -= 0.05f;
+                    brirBoostdB = Mathf.Clamp(brirBoostdB, -80.0f, 30.0f);
+                    rc.SetBrirLevel(brirBoostdB);
                 }
 
-                TextDisplays.Instance.PrintHMDMessage(audioScenes[sceneId].filepath + "\n" + audioRenderers[rendererId].filepath);
+                TextDisplays.Instance.PrintHMDMessage(audioScenes[sceneId].filepath + "\n"
+                    + audioRenderers[rendererId].filepath + "\n"
+                    + "BRIR boost: " + brirBoostdB.ToString("F2") + " dB");
+
+                
 
                 break;
         }
@@ -182,12 +197,12 @@ public class DemoLogic : MonoBehaviour
 
         // define renderers
         audioRenderers.Clear();
-        audioRenderers.Add(new AudioRenderer(AudioRenderer.AudioRendererType.Ambisonic, "3OA_sadie2-ku100-test_akad-AkLS.conf", 0.0f));
-        audioRenderers.Add(new AudioRenderer(AudioRenderer.AudioRendererType.Ambisonic, "3OA_sadie2-ku100-test_akad-MagLS.conf", 0.0f));
-        audioRenderers.Add(new AudioRenderer(AudioRenderer.AudioRendererType.Ambisonic, "3OA_sadie2-ku100-test_akad-MagLS-diffc.conf", 0.0f));
-        audioRenderers.Add(new AudioRenderer(AudioRenderer.AudioRendererType.Ambisonic, "3OA_sadie2-ku100-test_akad-LebSub-EQ.conf", 0.0f));
-        audioRenderers.Add(new AudioRenderer(AudioRenderer.AudioRendererType.Ambisonic, "3OA_sadie2-ku100-brir-test_akad-LebSub-EQ.conf", -6.0f));
-        audioRenderers.Add(new AudioRenderer(AudioRenderer.AudioRendererType.Ambisonic, "3OA_sadie1-ku100_original-resonance.conf", 9.0f));
+        audioRenderers.Add(new AudioRenderer(AudioRenderer.AudioRendererType.Ambisonic, "3OA_sadie2-ku100_akad-AkLS.conf", 0.0f));
+        audioRenderers.Add(new AudioRenderer(AudioRenderer.AudioRendererType.Ambisonic, "3OA_sadie2-ku100_akad-MagLS.conf", 0.0f));
+        //audioRenderers.Add(new AudioRenderer(AudioRenderer.AudioRendererType.Ambisonic, "3OA_sadie2-ku100-test_akad-MagLS-diffc.conf", 0.0f));
+        //audioRenderers.Add(new AudioRenderer(AudioRenderer.AudioRendererType.Ambisonic, "3OA_sadie2-ku100-test_akad-LebSub-EQ.conf", 0.0f));
+        //audioRenderers.Add(new AudioRenderer(AudioRenderer.AudioRendererType.Ambisonic, "3OA_sadie2-ku100-brir-test_akad-LebSub-EQ.conf", -6.0f));
+        //audioRenderers.Add(new AudioRenderer(AudioRenderer.AudioRendererType.Ambisonic, "3OA_sadie1-ku100_original-resonance.conf", 9.0f));
 
         SwitchAudioScene(0);
         SwitchHrtf(0);
