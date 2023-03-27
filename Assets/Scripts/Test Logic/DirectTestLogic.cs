@@ -162,7 +162,7 @@ public class DirectTestLogic : MonoBehaviour
             lastAudioPath = tc.audioFilePath;
             rc.LoadAudioFile(tc.audioFilePath, tc.audioFileGainDB);
         }
-        rc.LoadHrtfFile(tc.hrtfFilePath, tc.hrtfFileGainDB);
+        rc.LoadHRIR(tc.hrtfFilePath, tc.hrtfFileGainDB);
 
         UIBuilder.Instance.setUpdateFlag();
     }

@@ -142,18 +142,18 @@ public class DemoLogic : MonoBehaviour
                         EndDemo();
                     }
 
-                    // using joystick to adjust BRIR boos level
-                    pointingController.TryGetFeatureValue(CommonUsages.primary2DAxis, out Vector2 joystickUpDown);
-                    if (joystickUpDown.y > 0.75f) brirBoostdB += 0.1f;
-                    else if (joystickUpDown.y < -0.75f) brirBoostdB -= 0.1f;
-                    else if (joystickUpDown.y > 0.5f) brirBoostdB += 0.05f;
-                    else if (joystickUpDown.y < -0.5f) brirBoostdB -= 0.05f;
-                    brirBoostdB = Mathf.Clamp(brirBoostdB, -80.0f, 30.0f);
-                    rc.SetBrirLevel(brirBoostdB);
+                    //// using joystick to adjust BRIR boos level
+                    //pointingController.TryGetFeatureValue(CommonUsages.primary2DAxis, out Vector2 joystickUpDown);
+                    //if (joystickUpDown.y > 0.75f) brirBoostdB += 0.1f;
+                    //else if (joystickUpDown.y < -0.75f) brirBoostdB -= 0.1f;
+                    //else if (joystickUpDown.y > 0.5f) brirBoostdB += 0.05f;
+                    //else if (joystickUpDown.y < -0.5f) brirBoostdB -= 0.05f;
+                    //brirBoostdB = Mathf.Clamp(brirBoostdB, -80.0f, 30.0f);
+                    //rc.SetVolumeDRR(brirBoostdB);
                 }
 
                 TextDisplays.Instance.PrintHMDMessage(audioScenes[sceneId].filepath + "\n"
-                    + audioRenderers[rendererId].filepath + "\n"
+                    + audioRenderers[rendererId].hrirPath + "\n"
                     + "BRIR boost: " + brirBoostdB.ToString("F2") + " dB");
 
                 
@@ -233,8 +233,8 @@ public class DemoLogic : MonoBehaviour
     {
         rendererId = newId % audioRenderers.Count;
 
-        rc.LoadHrtfFile(audioRenderers[rendererId].filepath, audioRenderers[rendererId].gaindB);
-        TextDisplays.Instance.PrintDebugMessage("Renderer: " + audioRenderers[rendererId].filepath);
+        rc.LoadHRIR(audioRenderers[rendererId].hrirPath, audioRenderers[rendererId].gaindB);
+        TextDisplays.Instance.PrintDebugMessage("Renderer: " + audioRenderers[rendererId].hrirPath);
     }
     void findControllers()
     {
@@ -246,35 +246,5 @@ public class DemoLogic : MonoBehaviour
             if (device.name.Contains("Left")) leftController = device;
             if (device.name.Contains("Right")) rightController = device;
         }
-    }
-}
-
-public class AudioScene
-{
-    public enum AudioSceneType {Ambisonic, ObjectBased, ChannelBased};
-    public AudioSceneType type;
-    public string filepath;
-    public float gaindB;
-
-    public AudioScene(AudioSceneType type, string filepath, float gaindB)
-    {
-        this.type = type;
-        this.filepath = filepath;
-        this.gaindB = gaindB;
-    }
-}
-
-public class AudioRenderer
-{
-    public enum AudioRendererType { Ambisonic, Direct };
-    public AudioRendererType type;
-    public string filepath;
-    public float gaindB;
-
-    public AudioRenderer(AudioRendererType type, string filepath, float gaindB)
-    {
-        this.type = type;
-        this.filepath = filepath;
-        this.gaindB = gaindB;
     }
 }

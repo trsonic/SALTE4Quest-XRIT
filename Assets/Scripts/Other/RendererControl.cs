@@ -22,11 +22,18 @@ public class RendererControl
         OSCIO.Instance.SendOSCMessage("/audiofilegain", gaindb);
         OSCIO.Instance.SendOSCMessage("/mute", 0);
     }
-    public void LoadHrtfFile(string filepath, float gaindb)
+    public void LoadHRIR(string filepath, float gaindb)
     {
         OSCIO.Instance.SendOSCMessage("/mute", 1);
-        OSCIO.Instance.SendOSCMessage("/hrtffilepath", filepath);
-        OSCIO.Instance.SendOSCMessage("/hrtffilegain", gaindb);
+        OSCIO.Instance.SendOSCMessage("/hrir_path", filepath);
+        OSCIO.Instance.SendOSCMessage("/hrir_gain", gaindb);
+        OSCIO.Instance.SendOSCMessage("/mute", 0);
+    }
+    public void LoadBRIR(string filepath, float gaindb)
+    {
+        OSCIO.Instance.SendOSCMessage("/mute", 1);
+        OSCIO.Instance.SendOSCMessage("/brir_path", filepath);
+        OSCIO.Instance.SendOSCMessage("/brir_gain", gaindb);
         OSCIO.Instance.SendOSCMessage("/mute", 0);
     }
     public void SetAttenuation(float att)
@@ -64,9 +71,10 @@ public class RendererControl
         OSCIO.Instance.SendOSCMessage("/source/" + sourceId.ToString() + "/aed", az, el, dist);
     }
 
-    public void SetBrirLevel(float brirBoostdB)
+    public void SetDRGains(float hrirLevel, float brirLevel)
     {
-        OSCIO.Instance.SendOSCMessage("/brirgain", brirBoostdB);
+        OSCIO.Instance.SendOSCMessage("/hrir_gain", hrirLevel);
+        OSCIO.Instance.SendOSCMessage("/brir_gain", brirLevel);
     }
 
     private float wrapAngle(float deg)

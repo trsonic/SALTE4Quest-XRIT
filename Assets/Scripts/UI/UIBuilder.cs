@@ -29,7 +29,7 @@ public class UIBuilder : MonoBehaviour
     }
     #endregion
 
-    public enum TestType { Intro, MixedMethods, Localization, Demo }
+    public enum TestType { Intro, MixedMethods, Localization, DRRTest, Demo}
     public TestType testType;
 
     private bool UIUpdateNeeded;
@@ -43,7 +43,7 @@ public class UIBuilder : MonoBehaviour
     RectTransform labelCanvasTransform;
     RectTransform sliderCanvasTransform;
 
-    GameObject chooseMixedButton, chooseLocalizationButton, chooseDemoButton;
+    GameObject chooseMixedButton, chooseLocalizationButton, chooseDRRButton;
     GameObject startTrainingButton, startTestButton, quitAppButton, restartTestButton, switchHandButton;
     [SerializeField] List<GameObject> activeLabels = new List<GameObject>();
     [SerializeField] List<GameObject> activeSliders = new List<GameObject>();
@@ -72,7 +72,7 @@ public class UIBuilder : MonoBehaviour
 
         chooseMixedButton = transform.Find("ButtonCanvas/ChooseMixedButton").gameObject;
         chooseLocalizationButton = transform.Find("ButtonCanvas/ChooseLocalizationButton").gameObject;
-        chooseDemoButton = transform.Find("ButtonCanvas/ChooseDemoButton").gameObject;
+        chooseDRRButton = transform.Find("ButtonCanvas/ChooseDRRButton").gameObject;
         startTrainingButton = transform.Find("ButtonCanvas/StartTrainingButton").gameObject;
         startTestButton = transform.Find("ButtonCanvas/StartTestButton").gameObject;
         quitAppButton = transform.Find("ButtonCanvas/QuitAppButton").gameObject;
@@ -111,6 +111,9 @@ public class UIBuilder : MonoBehaviour
                 case TestType.Demo:
                     SetDemoScenes();
                     break;
+                case TestType.DRRTest:
+                    SetDRRTestScenes();
+                    break;
             }
 
             UIUpdateNeeded = false;
@@ -138,7 +141,7 @@ public class UIBuilder : MonoBehaviour
         // hide buttons
         chooseMixedButton.SetActive(false);
         chooseLocalizationButton.SetActive(false);
-        chooseDemoButton.SetActive(false);
+        chooseDRRButton.SetActive(false);
         startTrainingButton.SetActive(false);
         startTestButton.SetActive(false);
         quitAppButton.SetActive(false);
@@ -180,12 +183,12 @@ public class UIBuilder : MonoBehaviour
             "Choose one of the following options:\n" +
             "- MUSHRA test\n" +
             "- Localization test\n" +
-            "- Binaural rendering demonstration";
+            "- DRR test";
 
         // show three buttons
         chooseMixedButton.SetActive(true);
         chooseLocalizationButton.SetActive(true);
-        chooseDemoButton.SetActive(true);
+        chooseDRRButton.SetActive(true);
 
         quitAppButton.SetActive(true);
         quitAppButton.GetComponentInChildren<TextMeshProUGUI>().text = "Quit App";
@@ -342,6 +345,35 @@ public class UIBuilder : MonoBehaviour
                 break;
         }
     }
+
+    void SetDRRTestScenes()
+    {
+        switch (DRRTestLogic.Instance.testPhase)
+        {
+            case DRRTestLogic.TestPhase.Introduction:
+                initUI();
+
+                instructionMessage.text = "\n" +
+                    "This is a DRR test scene." + "\n" +
+                    "Use the primary controller button (A) to go to the next trial." + "\n" +
+                    "Use the secondary controller button (B) to go to the previous trial.\n";
+
+                // show begin and quit buttons
+                startTrainingButton.SetActive(true);
+                startTrainingButton.GetComponentInChildren<TextMeshProUGUI>().text = "Start";
+                quitAppButton.SetActive(true);
+                quitAppButton.GetComponentInChildren<TextMeshProUGUI>().text = "Back";
+                controllersHelp.SetActive(true);
+                showUI(true);
+
+                break;
+            case DRRTestLogic.TestPhase.InProgress:
+                initUI();
+                showUI(false);
+
+                break;
+        }
+    }
     public void btnPressedCallback(string buttonName)
     {
         switch (buttonName)
@@ -356,9 +388,11 @@ public class UIBuilder : MonoBehaviour
                 LocalizationTestLogic.Instance.testPhase = LocalizationTestLogic.TestPhase.Introduction;
                 break;
 
-            case "ChooseDemoButton":
-                SetScene(TestType.Demo);
-                DemoLogic.Instance.testPhase = DemoLogic.TestPhase.Introduction;
+            case "ChooseDRRButton":
+                //SetScene(TestType.Demo);
+                //DemoLogic.Instance.testPhase = DemoLogic.TestPhase.Introduction;
+                SetScene(TestType.DRRTest);
+                DRRTestLogic.Instance.testPhase = DRRTestLogic.TestPhase.Introduction;
                 break;
 
             case "RestartButton":
@@ -378,6 +412,10 @@ public class UIBuilder : MonoBehaviour
 
                     case TestType.Demo:
                         DemoLogic.Instance.StartDemo();
+                        break;
+
+                    case TestType.DRRTest:
+                        DRRTestLogic.Instance.StartTest();
                         break;
                 }
                 break;
