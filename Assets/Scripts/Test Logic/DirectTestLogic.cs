@@ -242,7 +242,7 @@ public class DirectTestLogic : MonoBehaviour
         return false;
     }
 
-public void exportResults()
+    void exportResults()
     {
         string testId = "test123";
 

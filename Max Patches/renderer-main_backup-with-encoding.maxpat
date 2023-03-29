@@ -70,7 +70,7 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 673.200200647115707, 199.714298844337463, 83.0, 22.0 ],
-					"text" : "-9.195061"
+					"text" : "-1.349641"
 				}
 
 			}
@@ -82,7 +82,7 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 578.200200647115707, 199.714298844337463, 67.0, 22.0 ],
-					"text" : "4.463854"
+					"text" : "-0.795764"
 				}
 
 			}
@@ -118,7 +118,7 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 758.5, 314.5, 526.0, 22.0 ],
-					"text" : "C:/TR_FILES/DRR_TEST_STIMULI/5OA_tom-fast.wav"
+					"text" : "C:/TR_FILES/DRR_TEST_STIMULI/5OA_protest470.wav"
 				}
 
 			}
@@ -166,7 +166,7 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 769.5, 211.607116639614105, 246.0, 22.0 ],
-					"text" : "0.986991 0.116943 0.057524 0.094147"
+					"text" : "0.620691 -0.003638 -0.006337 -0.784021"
 				}
 
 			}
@@ -555,7 +555,7 @@
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 1088.0, 97.0, 281.0, 22.0 ],
-									"text" : "0.986991 0.116943 0.057524 0.094147"
+									"text" : "0.620691 -0.003638 -0.006337 -0.784021"
 								}
 
 							}
@@ -781,7 +781,7 @@
 											"version" : 1,
 											"isbank" : 0,
 											"isbase64" : 1,
-											"blob" : "304.CMlaKA....fQPMDZ....ADjTucC....Y....A..........................................8VMjLgrN....OMkETLU0QI4zTEQEUI4zQSABL8HBLtHCMzDiLyXiM2PyM3TiMwPCLwLyMh.RL8HBLtLyLzjyM2TSN1jSN3HSLzbiLwXCNh.hL8HBLtjyM3HyL0.CL1LyLxLSN2PiMvjCMh.xL8HBLh.BM8HBLtjSNyPSN0TCNyTyLzHCMvbiLxXiMh.RM8HBLtTSM3PyMwLCNwXiMzHyM1DiLy.SMh.hM8HBLtTiL3biMx.CMxTiLxPyLvPSL4jiLh.xM8HBLtTCM2.yMyXiMxHCNw.yL1LyM1jSMh.BN8HBLh.xWw80XnElamUFY8HRLh7hO.."
+											"blob" : "304.CMlaKA....fQPMDZ....ADjTucC....Y....A..........................................8VMjLgrN....OMkETLU0QI4zTEQEUI4zQSABL8HBLtHCMzDiLyXiM2PyM3TiMwPCLwLyMh.RL8HBLtLyLzjyM2TSN1jSN3HSLzbiLwXCNh.hL8HBLtjyM3HyL0.CL1LyLxLSN2PiMvjCMh.xL8HBLh.BM8HBLtfSLvLCM0TyLvTCL4jCM3byLvPyMh.RM8HBLtPSN3DCNvfyL1PyL4DyLxXSNvPyLh.hM8HBLtPSN1fyLwbSL0DCL1jiMzDSLwLyLh.xM8HBLtDCL2jCN4LyMvfiLxjCL1PSNzDCMh.BN8HBLh.xWw80XnElamUFY8HRLh7hO.."
 										}
 ,
 										"snapshotlist" : 										{
@@ -803,7 +803,7 @@
 														"version" : 1,
 														"isbank" : 0,
 														"isbase64" : 1,
-														"blob" : "304.CMlaKA....fQPMDZ....ADjTucC....Y....A..........................................8VMjLgrN....OMkETLU0QI4zTEQEUI4zQSABL8HBLtHCMzDiLyXiM2PyM3TiMwPCLwLyMh.RL8HBLtLyLzjyM2TSN1jSN3HSLzbiLwXCNh.hL8HBLtjyM3HyL0.CL1LyLxLSN2PiMvjCMh.xL8HBLh.BM8HBLtjSNyPSN0TCNyTyLzHCMvbiLxXiMh.RM8HBLtTSM3PyMwLCNwXiMzHyM1DiLy.SMh.hM8HBLtTiL3biMx.CMxTiLxPyLvPSL4jiLh.xM8HBLtTCM2.yMyXiMxHCNw.yL1LyM1jSMh.BN8HBLh.xWw80XnElamUFY8HRLh7hO.."
+														"blob" : "304.CMlaKA....fQPMDZ....ADjTucC....Y....A..........................................8VMjLgrN....OMkETLU0QI4zTEQEUI4zQSABL8HBLtHCMzDiLyXiM2PyM3TiMwPCLwLyMh.RL8HBLtLyLzjyM2TSN1jSN3HSLzbiLwXCNh.hL8HBLtjyM3HyL0.CL1LyLxLSN2PiMvjCMh.xL8HBLh.BM8HBLtfSLvLCM0TyLvTCL4jCM3byLvPyMh.RM8HBLtPSN3DCNvfyL1PyL4DyLxXSNvPyLh.hM8HBLtPSN1fyLwbSL0DCL1jiMzDSLwLyLh.xM8HBLtDCL2jCN4LyMvfiLxjCL1PSNzDCMh.BN8HBLh.xWw80XnElamUFY8HRLh7hO.."
 													}
 ,
 													"fileref" : 													{
@@ -3743,18 +3743,6 @@
 						"assistshowspatchername" : 0,
 						"boxes" : [ 							{
 								"box" : 								{
-									"id" : "obj-28",
-									"maxclass" : "newobj",
-									"numinlets" : 1,
-									"numoutlets" : 1,
-									"outlettype" : [ "bang" ],
-									"patching_rect" : [ 119.852782348791777, 430.0, 58.0, 22.0 ],
-									"text" : "loadbang"
-								}
-
-							}
-, 							{
-								"box" : 								{
 									"id" : "obj-49",
 									"maxclass" : "button",
 									"numinlets" : 1,
@@ -3832,7 +3820,7 @@
 									"numinlets" : 1,
 									"numoutlets" : 5,
 									"outlettype" : [ "", "", "", "", "" ],
-									"patching_rect" : [ 583.686115682125092, 141.535714328289032, 115.0, 22.0 ],
+									"patching_rect" : [ 110.686115682125092, 441.0, 115.0, 22.0 ],
 									"text" : "regexp AMBISONIC"
 								}
 
@@ -4018,8 +4006,8 @@
 									"numinlets" : 2,
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
-									"patching_rect" : [ 918.0, 557.0, 105.0, 36.0 ],
-									"text" : "5OA_tom-fast.wav"
+									"patching_rect" : [ 918.0, 557.0, 111.0, 36.0 ],
+									"text" : "5OA_protest470.wav"
 								}
 
 							}
@@ -4241,7 +4229,7 @@
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 424.0, 184.321428596973419, 623.0, 22.0 ],
-									"text" : "open C:/TR_FILES/DRR_TEST_STIMULI/5OA_tom-fast.wav"
+									"text" : "open C:/TR_FILES/DRR_TEST_STIMULI/5OA_protest470.wav"
 								}
 
 							}
@@ -4594,15 +4582,22 @@
 							}
 , 							{
 								"patchline" : 								{
-									"destination" : [ "obj-49", 0 ],
-									"source" : [ "obj-28", 0 ]
+									"destination" : [ "obj-12", 0 ],
+									"source" : [ "obj-3", 0 ]
 								}
 
 							}
 , 							{
 								"patchline" : 								{
-									"destination" : [ "obj-12", 0 ],
-									"source" : [ "obj-3", 0 ]
+									"destination" : [ "obj-41", 0 ],
+									"source" : [ "obj-32", 3 ]
+								}
+
+							}
+, 							{
+								"patchline" : 								{
+									"destination" : [ "obj-49", 0 ],
+									"source" : [ "obj-32", 2 ]
 								}
 
 							}
@@ -4750,7 +4745,7 @@
 , 							{
 								"patchline" : 								{
 									"destination" : [ "obj-32", 0 ],
-									"order" : 0,
+									"order" : 1,
 									"source" : [ "obj-5", 0 ]
 								}
 
@@ -4758,7 +4753,7 @@
 , 							{
 								"patchline" : 								{
 									"destination" : [ "obj-6", 0 ],
-									"order" : 1,
+									"order" : 0,
 									"source" : [ "obj-5", 0 ]
 								}
 
@@ -5500,7 +5495,7 @@
 				"patchline" : 				{
 					"destination" : [ "obj-12", 0 ],
 					"order" : 1,
-					"source" : [ "obj-5", 1 ]
+					"source" : [ "obj-5", 0 ]
 				}
 
 			}
@@ -5508,7 +5503,7 @@
 				"patchline" : 				{
 					"destination" : [ "obj-16", 0 ],
 					"order" : 0,
-					"source" : [ "obj-5", 1 ]
+					"source" : [ "obj-5", 0 ]
 				}
 
 			}
