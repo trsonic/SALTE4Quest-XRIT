@@ -108,9 +108,9 @@ public class UIBuilder : MonoBehaviour
                 case TestType.Localization:
                     SetLocalizationScenes();
                     break;
-                case TestType.Demo:
-                    SetDemoScenes();
-                    break;
+                //case TestType.Demo:
+                //    SetDemoScenes();
+                //    break;
                 case TestType.DRRTest:
                     SetDRRTestScenes();
                     break;
@@ -181,9 +181,9 @@ public class UIBuilder : MonoBehaviour
             "HMD IP: " + OSCIO.Instance.GetLocalIP() + "\n" +
             "Renderer IP: " + OSCIO.Instance.GetRendererIP() + "\n\n" +
             "Choose one of the following options:\n" +
-            "- MUSHRA test\n" +
-            "- Localization test\n" +
-            "- DRR test";
+            "- Test 1 (MUSHRA test)\n" +
+            "- Test 2 (Localization test)\n" +
+            "- Test 3 (DRR test)";
 
         // show three buttons
         chooseMixedButton.SetActive(true);
@@ -317,34 +317,34 @@ public class UIBuilder : MonoBehaviour
         }
     }
 
-    void SetDemoScenes()
-    {
-        switch (DemoLogic.Instance.testPhase)
-        {
-            case DemoLogic.TestPhase.Introduction:
-                initUI();
+    //void SetDemoScenes()
+    //{
+    //    switch (DemoLogic.Instance.testPhase)
+    //    {
+    //        case DemoLogic.TestPhase.Introduction:
+    //            initUI();
 
-                instructionMessage.text = "\n" +
-                    "This is an HRTF demo scene." + "\n" +
-                    "Use the primary controller button (A) to switch audio scenes." + "\n" +
-                    "Use the secondary controller button (B) to switch HRTF sets.\n";
+    //            instructionMessage.text = "\n" +
+    //                "This is an HRTF demo scene." + "\n" +
+    //                "Use the primary controller button (A) to switch audio scenes." + "\n" +
+    //                "Use the secondary controller button (B) to switch HRTF sets.\n";
 
-                // show begin and quit buttons
-                startTrainingButton.SetActive(true);
-                startTrainingButton.GetComponentInChildren<TextMeshProUGUI>().text = "Demo";
-                quitAppButton.SetActive(true);
-                quitAppButton.GetComponentInChildren<TextMeshProUGUI>().text = "Back";
-                controllersHelp.SetActive(true);
-                showUI(true);
+    //            // show begin and quit buttons
+    //            startTrainingButton.SetActive(true);
+    //            startTrainingButton.GetComponentInChildren<TextMeshProUGUI>().text = "Demo";
+    //            quitAppButton.SetActive(true);
+    //            quitAppButton.GetComponentInChildren<TextMeshProUGUI>().text = "Back";
+    //            controllersHelp.SetActive(true);
+    //            showUI(true);
 
-                break;
-            case DemoLogic.TestPhase.InProgress:
-                initUI();
-                showUI(false);
+    //            break;
+    //        case DemoLogic.TestPhase.InProgress:
+    //            initUI();
+    //            showUI(false);
                 
-                break;
-        }
-    }
+    //            break;
+    //    }
+    //}
 
     void SetDRRTestScenes()
     {
@@ -356,15 +356,27 @@ public class UIBuilder : MonoBehaviour
                 instructionMessage.text = "\n" +
                     "This is a DRR test scene." + "\n" +
                     "Use the primary controller button (A) to go to the next trial." + "\n" +
-                    "Use the secondary controller button (B) to go to the previous trial.\n";
+                    "Use the secondary controller button (B) to go to the previous trial.\n" +
+                    "\n" +
+                    "Click Start to begin the test." +
+                    "\n";
 
-                // show begin and quit buttons
+                // show training, start and back buttons
                 startTrainingButton.SetActive(true);
-                startTrainingButton.GetComponentInChildren<TextMeshProUGUI>().text = "Start";
+                startTrainingButton.GetComponentInChildren<TextMeshProUGUI>().text = "Training";
+                startTestButton.SetActive(true);
                 quitAppButton.SetActive(true);
                 quitAppButton.GetComponentInChildren<TextMeshProUGUI>().text = "Back";
                 controllersHelp.SetActive(true);
+                switchHandButton.SetActive(true);
+
+                if (LocalizationTestLogic.Instance.useLeftController4Pointing)
+                    switchHandButton.GetComponentInChildren<TextMeshProUGUI>().text = "Use right controller";
+                else
+                    switchHandButton.GetComponentInChildren<TextMeshProUGUI>().text = "Use left controller";
+
                 showUI(true);
+
 
                 break;
             case DRRTestLogic.TestPhase.InProgress:
@@ -410,12 +422,12 @@ public class UIBuilder : MonoBehaviour
                         LocalizationTestLogic.Instance.StartTest(true);
                         break;
 
-                    case TestType.Demo:
-                        DemoLogic.Instance.StartDemo();
-                        break;
+                    //case TestType.Demo:
+                    //    DemoLogic.Instance.StartDemo();
+                    //    break;
 
                     case TestType.DRRTest:
-                        DRRTestLogic.Instance.StartTest();
+                        DRRTestLogic.Instance.StartTest(true);
                         break;
                 }
                 break;
@@ -430,11 +442,16 @@ public class UIBuilder : MonoBehaviour
                     case TestType.Localization:
                         LocalizationTestLogic.Instance.StartTest(false);
                         break;
+
+                    case TestType.DRRTest:
+                        DRRTestLogic.Instance.StartTest(false);
+                        break;
                 }
                 break;
 
             case "SwitchHandButton":
                 LocalizationTestLogic.Instance.useLeftController4Pointing = !LocalizationTestLogic.Instance.useLeftController4Pointing;
+                DRRTestLogic.Instance.useLeftController4Pointing = !DRRTestLogic.Instance.useLeftController4Pointing;
                 setUpdateFlag();
                 break;
 

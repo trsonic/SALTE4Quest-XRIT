@@ -10,7 +10,7 @@
 		}
 ,
 		"classnamespace" : "box",
-		"rect" : [ 291.0, 105.0, 1376.0, 835.0 ],
+		"rect" : [ 710.0, -918.0, 1103.0, 551.0 ],
 		"bglocked" : 0,
 		"openinpresentation" : 0,
 		"default_fontsize" : 12.0,
@@ -45,8 +45,8 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 827.5, 278.500013113021851, 402.0, 22.0 ],
-					"text" : "5OA_reverb-Meas+AKVL.conf"
+					"patching_rect" : [ 503.5, 244.500013113021851, 452.0, 22.0 ],
+					"text" : "3OA_reverb-Meas+AKVL.conf"
 				}
 
 			}
@@ -57,7 +57,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 2,
 					"outlettype" : [ "", "" ],
-					"patching_rect" : [ 1087.0, 167.214285731315613, 90.0, 22.0 ],
+					"patching_rect" : [ 832.0, 135.214285731315613, 90.0, 22.0 ],
 					"text" : "route /brir_path"
 				}
 
@@ -69,8 +69,8 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 673.200200647115707, 199.714298844337463, 83.0, 22.0 ],
-					"text" : "-9.195061"
+					"patching_rect" : [ 323.200200647115707, 244.500013113021851, 114.0, 22.0 ],
+					"text" : "-1.240154"
 				}
 
 			}
@@ -81,8 +81,8 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 578.200200647115707, 199.714298844337463, 67.0, 22.0 ],
-					"text" : "4.463854"
+					"patching_rect" : [ 323.200200647115707, 211.500013113021851, 89.0, 22.0 ],
+					"text" : "3.354607"
 				}
 
 			}
@@ -93,7 +93,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 2,
 					"outlettype" : [ "", "" ],
-					"patching_rect" : [ 673.200200647115707, 167.214285731315613, 89.0, 22.0 ],
+					"patching_rect" : [ 418.200200647115707, 135.214285731315613, 89.0, 22.0 ],
 					"text" : "route /brir_gain"
 				}
 
@@ -105,7 +105,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 2,
 					"outlettype" : [ "", "" ],
-					"patching_rect" : [ 578.200200647115707, 167.214285731315613, 89.0, 22.0 ],
+					"patching_rect" : [ 323.200200647115707, 135.214285731315613, 89.0, 22.0 ],
 					"text" : "route /hrir_gain"
 				}
 
@@ -117,8 +117,8 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 758.5, 314.5, 526.0, 22.0 ],
-					"text" : "C:/TR_FILES/DRR_TEST_STIMULI/5OA_tom-fast.wav"
+					"patching_rect" : [ 503.5, 276.5, 526.0, 22.0 ],
+					"text" : "C:/TR_FILES/DRR_TEST_STIMULI/3OA_tom-fast.wav"
 				}
 
 			}
@@ -129,7 +129,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 2,
 					"outlettype" : [ "", "" ],
-					"patching_rect" : [ 1184.5, 167.214285731315613, 111.0, 22.0 ],
+					"patching_rect" : [ 929.5, 135.214285731315613, 111.0, 22.0 ],
 					"text" : "route /audiofilepath"
 				}
 
@@ -141,8 +141,8 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 758.5, 243.500013113021851, 402.0, 22.0 ],
-					"text" : "5OA_direct-MagLS.conf"
+					"patching_rect" : [ 503.5, 211.500013113021851, 337.0, 22.0 ],
+					"text" : "3OA_direct-MagLS.conf"
 				}
 
 			}
@@ -153,7 +153,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 2,
 					"outlettype" : [ "", "" ],
-					"patching_rect" : [ 983.5, 167.214285731315613, 90.0, 22.0 ],
+					"patching_rect" : [ 728.5, 135.214285731315613, 90.0, 22.0 ],
 					"text" : "route /hrir_path"
 				}
 
@@ -165,8 +165,8 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 769.5, 211.607116639614105, 246.0, 22.0 ],
-					"text" : "0.986991 0.116943 0.057524 0.094147"
+					"patching_rect" : [ 503.5, 179.607116639614105, 246.0, 22.0 ],
+					"text" : "0.999327 -0.011754 -0.015856 -0.030933"
 				}
 
 			}
@@ -177,7 +177,7 @@
 					"numinlets" : 2,
 					"numoutlets" : 2,
 					"outlettype" : [ "", "" ],
-					"patching_rect" : [ 769.5, 167.214285731315613, 99.0, 22.0 ],
+					"patching_rect" : [ 514.5, 135.214285731315613, 99.0, 22.0 ],
 					"text" : "route /quaternion"
 				}
 
@@ -306,7 +306,7 @@
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 1001.0, 375.607155978679657, 356.0, 22.0 ],
-									"text" : "5OA_reverb-Meas+AKVL.conf"
+									"text" : "3OA_reverb-Meas+AKVL.conf"
 								}
 
 							}
@@ -478,7 +478,7 @@
 											"version" : 1,
 											"isbank" : 0,
 											"isbase64" : 1,
-											"blob" : "330.CMlaKA....fQPMDZ....AzzPv.G.A.......A........................................DfCVMjLgTP....O+fWarAhckI2bo8la8HRLt.iHfTlai8FYo41Y8HRUTYTK3HxO9.BOMkETLU0QI4zTEQEUI4zQSARXiQWZ1UFTxU1bkQWOhTySA8kbkYWYxIVKMUVXysRPKYEStL1atYlHf.mbkMWYzQTZx0iHCoCWUMWYxMGW4Eldy8FWAAGbDEFcgwkTuEVao41Yb01XlgGWi8la18Fa1UlbeAmbkMWYzMmHfLzatYmP0YlYkI2TooWY8HhL0XiHfzTX3AUXxQ2TooWY8HBNwjiLh.xayMVRt0iHwHBHuM2XI4FTuIGc8HxMy.CLh.xbz8lbkMzatYVZmQTXzEVRtAkbuoVYiQWOh.iHu3C."
+											"blob" : "330.CMlaKA....fQPMDZ....AzzPv.G.A.......A........................................DfCVMjLgTP....O+fWarAhckI2bo8la8HRLt.iHfTlai8FYo41Y8HRUTYTK3HxO9.BOMkETLU0QI4zTEQEUI4zQSARXiQWZ1UFTxU1bkQWOhLySA8kbkYWYxIVKMUVXysRPKYEStL1atYlHf.mbkMWYzQTZx0iHCoCWUMWYxMGW4Eldy8FWAAGbDEFcgwkTuEVao41Yb01XlgGWi8la18Fa1UlbeAmbkMWYzMmHfLzatYmP0YlYkI2TooWY8HhL0XiHfzTX3AUXxQ2TooWY8HBNwjiLh.xayMVRt0iHwHBHuM2XI4FTuIGc8HxMy.CLh.xbz8lbkMzatYVZmQTXzEVRtAkbuoVYiQWOh.iHu3C."
 										}
 ,
 										"snapshotlist" : 										{
@@ -500,7 +500,7 @@
 														"version" : 1,
 														"isbank" : 0,
 														"isbase64" : 1,
-														"blob" : "330.CMlaKA....fQPMDZ....AzzPv.G.A.......A........................................DfCVMjLgTP....O+fWarAhckI2bo8la8HRLt.iHfTlai8FYo41Y8HRUTYTK3HxO9.BOMkETLU0QI4zTEQEUI4zQSARXiQWZ1UFTxU1bkQWOhTySA8kbkYWYxIVKMUVXysRPKYEStL1atYlHf.mbkMWYzQTZx0iHCoCWUMWYxMGW4Eldy8FWAAGbDEFcgwkTuEVao41Yb01XlgGWi8la18Fa1UlbeAmbkMWYzMmHfLzatYmP0YlYkI2TooWY8HhL0XiHfzTX3AUXxQ2TooWY8HBNwjiLh.xayMVRt0iHwHBHuM2XI4FTuIGc8HxMy.CLh.xbz8lbkMzatYVZmQTXzEVRtAkbuoVYiQWOh.iHu3C."
+														"blob" : "330.CMlaKA....fQPMDZ....AzzPv.G.A.......A........................................DfCVMjLgTP....O+fWarAhckI2bo8la8HRLt.iHfTlai8FYo41Y8HRUTYTK3HxO9.BOMkETLU0QI4zTEQEUI4zQSARXiQWZ1UFTxU1bkQWOhLySA8kbkYWYxIVKMUVXysRPKYEStL1atYlHf.mbkMWYzQTZx0iHCoCWUMWYxMGW4Eldy8FWAAGbDEFcgwkTuEVao41Yb01XlgGWi8la18Fa1UlbeAmbkMWYzMmHfLzatYmP0YlYkI2TooWY8HhL0XiHfzTX3AUXxQ2TooWY8HBNwjiLh.xayMVRt0iHwHBHuM2XI4FTuIGc8HxMy.CLh.xbz8lbkMzatYVZmQTXzEVRtAkbuoVYiQWOh.iHu3C."
 													}
 ,
 													"fileref" : 													{
@@ -555,7 +555,7 @@
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 1088.0, 97.0, 281.0, 22.0 ],
-									"text" : "0.986991 0.116943 0.057524 0.094147"
+									"text" : "0.999327 -0.011754 -0.015856 -0.030933"
 								}
 
 							}
@@ -781,7 +781,7 @@
 											"version" : 1,
 											"isbank" : 0,
 											"isbase64" : 1,
-											"blob" : "304.CMlaKA....fQPMDZ....ADjTucC....Y....A..........................................8VMjLgrN....OMkETLU0QI4zTEQEUI4zQSABL8HBLtHCMzDiLyXiM2PyM3TiMwPCLwLyMh.RL8HBLtLyLzjyM2TSN1jSN3HSLzbiLwXCNh.hL8HBLtjyM3HyL0.CL1LyLxLSN2PiMvjCMh.xL8HBLh.BM8HBLtjSNyPSN0TCNyTyLzHCMvbiLxXiMh.RM8HBLtTSM3PyMwLCNwXiMzHyM1DiLy.SMh.hM8HBLtTiL3biMx.CMxTiLxPyLvPSL4jiLh.xM8HBLtTCM2.yMyXiMxHCNw.yL1LyM1jSMh.BN8HBLh.xWw80XnElamUFY8HRLh7hO.."
+											"blob" : "304.CMlaKA....fQPMDZ....ADjTucC....Y....A..........................................8VMjLgrN....OMkETLU0QI4zTEQEUI4zQSABL8HBLtHCMzDiLyXiM2PyM3TiMwPCLwLyMh.RL8HBLtLyLzjyM2TSN1jSN3HSLzbiLwXCNh.hL8HBLtjyM3HyL0.CL1LyLxLSN2PiMvjCMh.xL8HBLh.BM8HBLtjSN4XiMyHyLybSM2.SL4.CMxjyMh.RM8HBLtPSNzDiLy.yMwPyLxDSLyXCM2PiMh.hM8HBLtPSNx.yMwfiM1jCN4DyL0bCMxDSNh.xM8HBLtPCNzTyLyLSN4LCMyPSNvXCLvTSNh.BN8HBLh.xWw80XnElamUFY8HRLh7hO.."
 										}
 ,
 										"snapshotlist" : 										{
@@ -803,7 +803,7 @@
 														"version" : 1,
 														"isbank" : 0,
 														"isbase64" : 1,
-														"blob" : "304.CMlaKA....fQPMDZ....ADjTucC....Y....A..........................................8VMjLgrN....OMkETLU0QI4zTEQEUI4zQSABL8HBLtHCMzDiLyXiM2PyM3TiMwPCLwLyMh.RL8HBLtLyLzjyM2TSN1jSN3HSLzbiLwXCNh.hL8HBLtjyM3HyL0.CL1LyLxLSN2PiMvjCMh.xL8HBLh.BM8HBLtjSNyPSN0TCNyTyLzHCMvbiLxXiMh.RM8HBLtTSM3PyMwLCNwXiMzHyM1DiLy.SMh.hM8HBLtTiL3biMx.CMxTiLxPyLvPSL4jiLh.xM8HBLtTCM2.yMyXiMxHCNw.yL1LyM1jSMh.BN8HBLh.xWw80XnElamUFY8HRLh7hO.."
+														"blob" : "304.CMlaKA....fQPMDZ....ADjTucC....Y....A..........................................8VMjLgrN....OMkETLU0QI4zTEQEUI4zQSABL8HBLtHCMzDiLyXiM2PyM3TiMwPCLwLyMh.RL8HBLtLyLzjyM2TSN1jSN3HSLzbiLwXCNh.hL8HBLtjyM3HyL0.CL1LyLxLSN2PiMvjCMh.xL8HBLh.BM8HBLtjSN4XiMyHyLybSM2.SL4.CMxjyMh.RM8HBLtPSNzDiLy.yMwPyLxDSLyXCM2PiMh.hM8HBLtPSNx.yMwfiM1jCN4DyL0bCMxDSNh.xM8HBLtPCNzTyLyLSN4LCMyPSNvXCLvTSNh.BN8HBLh.xWw80XnElamUFY8HRLh7hO.."
 													}
 ,
 													"fileref" : 													{
@@ -869,7 +869,7 @@
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 425.0, 375.607155978679657, 356.0, 22.0 ],
-									"text" : "5OA_direct-MagLS.conf"
+									"text" : "3OA_direct-MagLS.conf"
 								}
 
 							}
@@ -1028,7 +1028,7 @@
 											"version" : 1,
 											"isbank" : 0,
 											"isbase64" : 1,
-											"blob" : "326.CMlaKA....fQPMDZ....AzzPv.G.A.......A........................................DfBVMjLgDP....O+fWarAhckI2bo8la8HRLt.iHfTlai8FYo41Y8HRUTYTK3HxO9.BOMkETLU0QI4zTEQEUI4zQSARXiQWZ1UFTxU1bkQWOhTySA8EYoIWYiQWKME1YLMkKi8lalIBHvIWYyUFcDklb8HxP5vUUyUlbywUdgo2buwUPvAGQgQWXbI0ag0VZtcFWsMlY3w0Xu4lcuwlckI2WvIWYyUFcyIBHC8la1ITclYVYxMUZ5UVOhHSM1HBHMEFdPElbzMUZ5UVOhfSL4HiHf71bikja8HRLh.xayMVRtA0axQWOhbiLv.iHfLGcuIWYC8lalk1YDEFcgkjaPI2apU1Xz0iHvHxK9.."
+											"blob" : "326.CMlaKA....fQPMDZ....AzzPv.G.A.......A........................................DfBVMjLgDP....O+fWarAhckI2bo8la8HRLt.iHfTlai8FYo41Y8HRUTYTK3HxO9.BOMkETLU0QI4zTEQEUI4zQSARXiQWZ1UFTxU1bkQWOhLySA8EYoIWYiQWKME1YLMkKi8lalIBHvIWYyUFcDklb8HxP5vUUyUlbywUdgo2buwUPvAGQgQWXbI0ag0VZtcFWsMlY3w0Xu4lcuwlckI2WvIWYyUFcyIBHC8la1ITclYVYxMUZ5UVOhHSM1HBHMEFdPElbzMUZ5UVOhfSL4HiHf71bikja8HRLh.xayMVRtA0axQWOhbiLv.iHfLGcuIWYC8lalk1YDEFcgkjaPI2apU1Xz0iHvHxK9.."
 										}
 ,
 										"snapshotlist" : 										{
@@ -1050,7 +1050,7 @@
 														"version" : 1,
 														"isbank" : 0,
 														"isbase64" : 1,
-														"blob" : "326.CMlaKA....fQPMDZ....AzzPv.G.A.......A........................................DfBVMjLgDP....O+fWarAhckI2bo8la8HRLt.iHfTlai8FYo41Y8HRUTYTK3HxO9.BOMkETLU0QI4zTEQEUI4zQSARXiQWZ1UFTxU1bkQWOhTySA8EYoIWYiQWKME1YLMkKi8lalIBHvIWYyUFcDklb8HxP5vUUyUlbywUdgo2buwUPvAGQgQWXbI0ag0VZtcFWsMlY3w0Xu4lcuwlckI2WvIWYyUFcyIBHC8la1ITclYVYxMUZ5UVOhHSM1HBHMEFdPElbzMUZ5UVOhfSL4HiHf71bikja8HRLh.xayMVRtA0axQWOhbiLv.iHfLGcuIWYC8lalk1YDEFcgkjaPI2apU1Xz0iHvHxK9.."
+														"blob" : "326.CMlaKA....fQPMDZ....AzzPv.G.A.......A........................................DfBVMjLgDP....O+fWarAhckI2bo8la8HRLt.iHfTlai8FYo41Y8HRUTYTK3HxO9.BOMkETLU0QI4zTEQEUI4zQSARXiQWZ1UFTxU1bkQWOhLySA8EYoIWYiQWKME1YLMkKi8lalIBHvIWYyUFcDklb8HxP5vUUyUlbywUdgo2buwUPvAGQgQWXbI0ag0VZtcFWsMlY3w0Xu4lcuwlckI2WvIWYyUFcyIBHC8la1ITclYVYxMUZ5UVOhHSM1HBHMEFdPElbzMUZ5UVOhfSL4HiHf71bikja8HRLh.xayMVRtA0axQWOhbiLv.iHfLGcuIWYC8lalk1YDEFcgkjaPI2apU1Xz0iHvHxK9.."
 													}
 ,
 													"fileref" : 													{
@@ -3095,7 +3095,7 @@
  ]
 					}
 ,
-					"patching_rect" : [ 315.799799352884293, 332.0, 159.0, 22.0 ],
+					"patching_rect" : [ 115.799799352884293, 141.0, 159.0, 22.0 ],
 					"saved_object_attributes" : 					{
 						"description" : "",
 						"digest" : "",
@@ -3576,7 +3576,7 @@
  ]
 					}
 ,
-					"patching_rect" : [ 395.799799352884293, 619.285714268684387, 79.0, 22.0 ],
+					"patching_rect" : [ 195.799799352884293, 428.285714268684387, 79.0, 22.0 ],
 					"saved_object_attributes" : 					{
 						"description" : "",
 						"digest" : "",
@@ -3590,21 +3590,6 @@
 			}
 , 			{
 				"box" : 				{
-					"fontsize" : 20.0,
-					"id" : "obj-13",
-					"maxclass" : "comment",
-					"numinlets" : 1,
-					"numoutlets" : 0,
-					"patching_rect" : [ 773.799999999999955, 46.107142865657806, 552.200000000000045, 29.0 ],
-					"presentation" : 1,
-					"presentation_rect" : [ 167.0, 303.0, 500.0, 29.0 ],
-					"text" : "HRTFs (.sofa = SPAT; .conf = MCFX_CONVOLVER)",
-					"textjustification" : 1
-				}
-
-			}
-, 			{
-				"box" : 				{
 					"id" : "obj-12",
 					"maxclass" : "meter~",
 					"numinlets" : 1,
@@ -3612,7 +3597,7 @@
 					"numoutlets" : 1,
 					"orientation" : 2,
 					"outlettype" : [ "float" ],
-					"patching_rect" : [ 85.75, 432.714285731315613, 143.5, 215.0 ]
+					"patching_rect" : [ 33.0, 216.0, 143.5, 215.0 ]
 				}
 
 			}
@@ -3623,20 +3608,8 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 993.5, 395.607142865657806, 85.0, 22.0 ],
+					"patching_rect" : [ 810.5, 375.0, 85.0, 22.0 ],
 					"text" : "192.168.1.107"
-				}
-
-			}
-, 			{
-				"box" : 				{
-					"id" : "obj-20",
-					"maxclass" : "message",
-					"numinlets" : 2,
-					"numoutlets" : 1,
-					"outlettype" : [ "" ],
-					"patching_rect" : [ 1102.0, 395.607142865657806, 85.0, 22.0 ],
-					"text" : "192.168.1.236"
 				}
 
 			}
@@ -3647,7 +3620,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 1065.5, 456.5, 115.0, 22.0 ],
+					"patching_rect" : [ 810.5, 424.5, 115.0, 22.0 ],
 					"text" : "prepend /rendererIp"
 				}
 
@@ -3658,8 +3631,8 @@
 					"maxclass" : "newobj",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 1065.5, 495.5, 158.0, 22.0 ],
-					"text" : "udpsend 192.168.1.77 6000"
+					"patching_rect" : [ 810.5, 463.5, 165.0, 22.0 ],
+					"text" : "udpsend 192.168.1.173 6000"
 				}
 
 			}
@@ -3670,7 +3643,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 530.700200647115707, 49.607142865657806, 97.0, 22.0 ],
+					"patching_rect" : [ 275.700200647115707, 17.607142865657806, 97.0, 22.0 ],
 					"text" : "udpreceive 9000"
 				}
 
@@ -3690,7 +3663,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 0,
 					"offset" : [ 0.0, 0.0 ],
-					"patching_rect" : [ 862.0, 580.714285731315613, 384.0, 130.0 ],
+					"patching_rect" : [ 372.0, 355.5, 384.0, 130.0 ],
 					"viewvisibility" : 1
 				}
 
@@ -4019,7 +3992,7 @@
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 918.0, 557.0, 105.0, 36.0 ],
-									"text" : "5OA_tom-fast.wav"
+									"text" : "3OA_tom-fast.wav"
 								}
 
 							}
@@ -4241,7 +4214,7 @@
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 424.0, 184.321428596973419, 623.0, 22.0 ],
-									"text" : "open C:/TR_FILES/DRR_TEST_STIMULI/5OA_tom-fast.wav"
+									"text" : "open C:/TR_FILES/DRR_TEST_STIMULI/3OA_tom-fast.wav"
 								}
 
 							}
@@ -5348,7 +5321,7 @@
  ]
 					}
 ,
-					"patching_rect" : [ 86.0, 167.214285731315613, 85.0, 22.0 ],
+					"patching_rect" : [ 33.0, 79.214285731315613, 85.0, 22.0 ],
 					"saved_object_attributes" : 					{
 						"description" : "",
 						"digest" : "",
@@ -5370,7 +5343,7 @@
 					"numoutlets" : 5,
 					"outlettype" : [ "signal", "signal", "", "float", "list" ],
 					"parameter_enable" : 1,
-					"patching_rect" : [ 403.799799352884293, 407.0, 55.0, 199.0 ],
+					"patching_rect" : [ 203.799799352884293, 216.0, 55.0, 199.0 ],
 					"relative" : 1,
 					"saved_attribute_attributes" : 					{
 						"focusbordercolor" : 						{
@@ -5399,7 +5372,7 @@
 					"maxclass" : "newobj",
 					"numinlets" : 2,
 					"numoutlets" : 0,
-					"patching_rect" : [ 395.799799352884293, 647.785714268684387, 79.0, 22.0 ],
+					"patching_rect" : [ 195.799799352884293, 456.785714268684387, 79.0, 22.0 ],
 					"text" : "dac~ 1 2"
 				}
 
@@ -5444,13 +5417,6 @@
 				"patchline" : 				{
 					"destination" : [ "obj-18", 0 ],
 					"source" : [ "obj-19", 0 ]
-				}
-
-			}
-, 			{
-				"patchline" : 				{
-					"destination" : [ "obj-19", 0 ],
-					"source" : [ "obj-20", 0 ]
 				}
 
 			}

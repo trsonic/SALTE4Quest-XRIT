@@ -35,14 +35,17 @@ public class DRRTestLogic : MonoBehaviour
     public TestPhase testPhase;
 
     InputDevice leftController, rightController, pointingController;
+    public bool useLeftController4Pointing = false;
 
     float triggerButtonPressedTime, primaryButtonPressedTime, secondaryButtonPressedTime;
 
     public List<DRRTestTrial> trialList = new List<DRRTestTrial>();
     int trialId = 0;
 
-
     RendererControl rc = new RendererControl();
+
+    GameObject joystickIndicator;
+    GameObject frontText;
 
     void Start()
     {
@@ -51,6 +54,12 @@ public class DRRTestLogic : MonoBehaviour
         scene = GameObject.Find("3D Scene");
         foreach (var text in scene.GetComponentsInChildren<Renderer>()) text.enabled = false;
         testPhase = TestPhase.Introduction;
+
+        // create the arrow
+        joystickIndicator = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
+        joystickIndicator.GetComponent<Renderer>().enabled = false;
+
+        frontText = GameObject.Find("3D Scene/FrontText");
     }
 
     void Update()
@@ -74,7 +83,9 @@ public class DRRTestLogic : MonoBehaviour
                 rc.SendHeadRotation(mainCamera);
 
                 // check pointing controller
-                if (rightController.isValid) pointingController = rightController;
+                if (useLeftController4Pointing && leftController.isValid)
+                    pointingController = leftController;
+                else if (rightController.isValid) pointingController = rightController;
 
                 if (pointingController.isValid)
                 {
@@ -117,13 +128,14 @@ public class DRRTestLogic : MonoBehaviour
                     if (triggerButtonPressedTime == 0.0f & triggerButton)
                     {
                         triggerButtonPressedTime = Time.realtimeSinceStartup;
-                        trialList[trialId].directOnly = !trialList[trialId].directOnly;
+                        //trialList[trialId].directOnly = !trialList[trialId].directOnly;
                     }
                     else if ((Time.realtimeSinceStartup - triggerButtonPressedTime) > 0.25f & !triggerButton)
                     {
                         triggerButtonPressedTime = 0.0f;
                     }
 
+                    float changeSceneButtonTimeout = 1.0f;
                     float endTestButtonTimeout = 5.0f;
                     // if primary button pressed go to the next trial
                     pointingController.TryGetFeatureValue(CommonUsages.primaryButton, out bool primaryButton);
@@ -132,11 +144,11 @@ public class DRRTestLogic : MonoBehaviour
                         primaryButtonPressedTime = Time.realtimeSinceStartup;
                         LoadDRRTestTrial(trialId + 1);
                     }
-                    else if ((Time.realtimeSinceStartup - primaryButtonPressedTime) > 0.25f & !primaryButton)
+                    else if ((Time.realtimeSinceStartup - primaryButtonPressedTime) > changeSceneButtonTimeout & !primaryButton)
                     {
                         primaryButtonPressedTime = 0.0f;
                     }
-                    else if ((Time.realtimeSinceStartup - primaryButtonPressedTime) > 0.25f & (Time.realtimeSinceStartup - primaryButtonPressedTime) <= endTestButtonTimeout & primaryButton)
+                    else if ((Time.realtimeSinceStartup - primaryButtonPressedTime) > changeSceneButtonTimeout & (Time.realtimeSinceStartup - primaryButtonPressedTime) <= endTestButtonTimeout & primaryButton)
                     {
                         overrideHMDMsg = true;
                     }
@@ -153,11 +165,11 @@ public class DRRTestLogic : MonoBehaviour
                         secondaryButtonPressedTime = Time.realtimeSinceStartup;
                         LoadDRRTestTrial(trialId - 1);
                     }
-                    else if ((Time.realtimeSinceStartup - secondaryButtonPressedTime) > 0.25f & !secondaryButton)
+                    else if ((Time.realtimeSinceStartup - secondaryButtonPressedTime) > changeSceneButtonTimeout & !secondaryButton)
                     {
                         secondaryButtonPressedTime = 0.0f;
                     }
-                    else if ((Time.realtimeSinceStartup - secondaryButtonPressedTime) > 0.25f & (Time.realtimeSinceStartup - secondaryButtonPressedTime) <= endTestButtonTimeout & secondaryButton)
+                    else if ((Time.realtimeSinceStartup - secondaryButtonPressedTime) > changeSceneButtonTimeout & (Time.realtimeSinceStartup - secondaryButtonPressedTime) <= endTestButtonTimeout & secondaryButton)
                     {
                         overrideHMDMsg = true;
                     }
@@ -167,57 +179,91 @@ public class DRRTestLogic : MonoBehaviour
                         EndTest();
                     }
 
+                    // using joystick
                     pointingController.TryGetFeatureValue(CommonUsages.primary2DAxis, out Vector2 joystickXY);
 
-                    // using joystick to adjust Volume
-                    trialList[trialId].Volume += adjustLevelUsingJoystick(joystickXY.x);
-                    trialList[trialId].Volume = Mathf.Clamp(trialList[trialId].Volume, -18.0f, 18.0f);
+                    //trialList[trialId].Volume += adjustLevelUsingJoystick(joystickXY.x);
+                    //trialList[trialId].Volume = Mathf.Clamp(trialList[trialId].Volume, -18.0f, 18.0f);
 
-                    if(!trialList[trialId].directOnly)
+                    // using joystick to adjust DRR
+                    float DRRadjustment = adjustLevelUsingJoystick(joystickXY.y);
+
+                    // draw indicator
+                    if (DRRadjustment == 0.0f)
                     {
-                        // using joystick to adjust DRR
-                        trialList[trialId].DRR += adjustLevelUsingJoystick(joystickXY.y);
-                        trialList[trialId].DRR = Mathf.Clamp(trialList[trialId].DRR, -18.0f, 30.0f);
+                        joystickIndicator.GetComponent<Renderer>().enabled = false;
+                    }
+                    else
+                    {
+                        joystickIndicator.GetComponent<Renderer>().enabled = true;
+                        joystickIndicator.transform.position = mainCamera.transform.position + mainCamera.transform.forward * 2.5f;
+                        joystickIndicator.transform.rotation = mainCamera.transform.rotation;
+                        joystickIndicator.transform.localScale = new Vector3(0.1f, DRRadjustment, 0.1f);
+                        joystickIndicator.transform.position += new Vector3(0.0f, DRRadjustment, 0.0f);
+
+                        if (DRRadjustment > 0.0f) joystickIndicator.GetComponent<Renderer>().material.color = Color.red;
+                        else joystickIndicator.GetComponent<Renderer>().material.color = Color.green;
                     }
 
-                    rc.SetDRGains(trialList[trialId].getHrirLevel(), trialList[trialId].getBrirLevel());
+                    // update DRR and hide indicator when out of range
+                    float minDRR = -24.0f;
+                    float maxDRR = 36.0f;
+                    if (trialList[trialId].DRR + DRRadjustment < minDRR)
+                    {
+                        trialList[trialId].DRR = minDRR;
+                        pointingController.SendHapticImpulse(0, 0.1f, 0.1f);
+                        joystickIndicator.GetComponent<Renderer>().enabled = false;
+                    }
+                    else if (trialList[trialId].DRR + DRRadjustment > maxDRR)
+                    {
+                        trialList[trialId].DRR = maxDRR;
+                        pointingController.SendHapticImpulse(0, 0.1f, 0.1f);
+                        joystickIndicator.GetComponent<Renderer>().enabled = false;
+                    }
+                    else
+                    {
+                        trialList[trialId].DRR = trialList[trialId].DRR + DRRadjustment;
+                    }
                 }
 
+                rc.SetDRGains(trialList[trialId].getHrirLevel(), trialList[trialId].getBrirLevel());
+
+                // increase timer value
+                trialList[trialId].elapsedTime += Time.deltaTime;
+
+                // HMD-fixed test display
                 if (overrideHMDMsg)
                     TextDisplays.Instance.PrintHMDMessage("Keep holding this button for five seconds to finish the test.");
                 else
-                {
-                    if (trialList[trialId].directOnly)
-                        TextDisplays.Instance.PrintHMDMessage(
-                            trialList[trialId].scene.filepath + "\n"
-                            + trialList[trialId].directSoundRenderer.hrirPath + "\n"
-                            + trialList[trialId].reverberantSoundRenderer.hrirPath + "\n"
-                            + "Volume: " + trialList[trialId].Volume.ToString("F2") + " dB" + "\n"
-                            + "Direct Sound Only");
-                    else
-                        TextDisplays.Instance.PrintHMDMessage(
-                            trialList[trialId].scene.filepath + "\n"
-                            + trialList[trialId].directSoundRenderer.hrirPath + "\n"
-                            + trialList[trialId].reverberantSoundRenderer.hrirPath + "\n"
-                            + "Volume: " + trialList[trialId].Volume.ToString("F2") + " dB" + "\n"
-                            + "DRR: " + trialList[trialId].DRR.ToString("F2") + " dB");
-                }
+                    TextDisplays.Instance.PrintHMDMessage("");
 
+                //TextDisplays.Instance.PrintHMDMessage(
+                //    "Scene " + (trialId+1).ToString() + " of " + trialList.Count.ToString() + "\n"
+                //    //+ trialList[trialId].scene.filepath + "\n"
+                //    //+ trialList[trialId].directSoundRenderer.hrirPath + "\n"
+                //    //+ trialList[trialId].reverberantSoundRenderer.hrirPath + "\n"
+                //    //+ "Volume: " + trialList[trialId].Volume.ToString("F2") + " dB" + "\n"
+                //    + "DRR: " + trialList[trialId].DRR.ToString("F2") + " dB");
+
+                string training = "";
+                if (trialList[trialId].training) training = "TRAINING\n";
+
+                frontText.GetComponent<TextMesh>().text = training + "Scene " + (trialId + 1).ToString() + " of " + trialList.Count.ToString();
 
                 break;
         }
     }
 
-    public void StartTest()
+    public void StartTest(bool training)
     {
         // loudness correction coefficients
         double[][] p = new double[][] {
-            new double[] { -0.000009206314, 0.000224452393, 0.019363702639, -0.271167712856, 2.055690664116 },
-            new double[] { -0.000002849259, -0.000169946667, 0.022698664636, -0.101000178988, -0.604261795485 },
-            new double[] { -0.000007688429, 0.000116646507, 0.020739409901, -0.228377463027, 1.523483998295 },
-            new double[] { -0.000008672970, 0.000181621825, 0.020055350379, -0.254847720960, 1.981056016701 },
-            new double[] { -0.000008071890, 0.000146679988, 0.020265762062, -0.239560727348, 1.764016173812 },
-            new double[] { -0.000012400493, 0.000439292589, 0.017058926078, -0.358680114924, 3.811875127301 },
+            new double[] { -0.000000037468, -0.000007790714, 0.000261129273, 0.017859696911, -0.274247292102, 2.225824124364 },
+            new double[] { 0.000000184002, -0.000013033584, -0.000057836096, 0.022633786766, -0.052693172581, -1.392665157437 },
+            new double[] { 0.000000024528, -0.000009706383, 0.000184452367, 0.019587815007, -0.221500740559, 1.532135334505 },
+            new double[] { 0.000000198037, -0.000012942191, -0.000091792529, 0.022568926588, -0.025604633520, -1.306473759409 },
+            new double[] { -0.000000001704, -0.000008999496, 0.000219352034, 0.018964272456, -0.245217858496, 2.000872024003 },
+            new double[] { 0.000000204001, -0.000013014934, -0.000102702873, 0.022647964862, -0.017603538756, -1.354241183557 },
         };
 
         // define trials
@@ -237,32 +283,25 @@ public class DRRTestLogic : MonoBehaviour
         // add Ambisonic scene based trials
         string[] wavs3OA = new string[]
         {
-            "3OA_audiolab-acoustic-guitar.wav",
+            "3OA_01.ChasingPirates.m4a.wav",
+            "3OA_03.ColdColdHeart.m4a.wav",
+            "3OA_AnechoicViola_7OA_IEM_V2.wav",
+            "3OA_RH-FILM-7OA-MIX.wav",
+            "3OA_RH-GAME-7OA-MIX.wav",
+            "3OA_RockTrack_Live_7OA_MV_V21.wav",
+            "3OA_Soundtrack_Studio_7OA_V3.wav",
+            "3OA_conversation-1.wav",
             "3OA_davidrivas-abbeyroad.wav",
-            "3OA_marco-acappella.wav",
+            "3OA_forest470.wav",
+            "3OA_gravity470.wav",
             "3OA_marco-piano2.wav",
             "3OA_marco-quartet.wav",
-            "3OA_marco-single_trumpet.wav",
+            "3OA_omar.wav",
+            "3OA_protest470.wav",
+            "3OA_tom-fast.wav"
         };
         
-        string[] wavs5OA = new string[]
-        {
-            "5OA_01.ChasingPirates.m4a.wav",
-            "5OA_03.ColdColdHeart.m4a.wav",
-            "5OA_AnechoicSpeech_7OA_MV_V1.wav",
-            "5OA_ElectronicTrack_Studio_7OA_V2.wav",
-            "5OA_RH-FILM-7OA-MIX.wav",
-            "5OA_RH-GAME-7OA-MIX.wav",
-            "5OA_RockTrack_MV_V21.wav",
-            "5OA_conversation-1.wav",
-            "5OA_family470.wav",
-            "5OA_forest470.wav",
-            "5OA_omar.wav",
-            "5OA_protest470.wav",
-            "5OA_synth-disco.wav",
-            "5OA_tom-fast.wav",
-            "5OA_tom-slow.wav",
-        };
+        string[] wavs5OA = new string[] {};
 
         for (int i = 0; i < wavs3OA.Length; i++)
         {
@@ -283,6 +322,9 @@ public class DRRTestLogic : MonoBehaviour
             reverberantRenderer2add = new AudioRenderer(AudioRenderer.AudioRendererType.Ambisonic, "5OA_reverb-Sim+MagLS.conf", 0.0f);
             trialList.Add(new DRRTestTrial(scene2add, directRenderer2add, reverberantRenderer2add, p[5]));
         }
+
+        // set training flag
+        foreach (DRRTestTrial trial in trialList) trial.training = training;
 
         // permute trial list
         trialList.Shuffle();
@@ -312,6 +354,8 @@ public class DRRTestLogic : MonoBehaviour
 
         rc.LoadBRIR(trialList[trialId].reverberantSoundRenderer.hrirPath, trialList[trialId].reverberantSoundRenderer.gaindB);
         TextDisplays.Instance.PrintDebugMessage("Renderer: " + trialList[trialId].reverberantSoundRenderer.hrirPath);
+
+        joystickIndicator.GetComponent<Renderer>().enabled = true;
     }
 
     public void EndTest()
@@ -323,6 +367,8 @@ public class DRRTestLogic : MonoBehaviour
         soundSource.GetComponent<Renderer>().enabled = false;
         UIBuilder.Instance.setUpdateFlag();
         TextDisplays.Instance.PrintHMDMessage("");
+
+        joystickIndicator.GetComponent<Renderer>().enabled = false;
     }
 
     void findControllers()
@@ -340,24 +386,25 @@ public class DRRTestLogic : MonoBehaviour
     float adjustLevelUsingJoystick(float shift)
     {
         float delta = 0.0f;
+        if (Mathf.Abs(shift) > 0.02f) delta = 0.25f * shift;
 
-        float[] ranges = new float[] { 0.99f, 0.75f, 0.50f, 0.25f };
-        float[] deltas = new float[] { 0.20f, 0.10f, 0.05f, 0.01f };
-
-        if      (shift > ranges[0]) delta =      deltas[0];
-        else if (shift < -ranges[0]) delta =    -deltas[0];
-        else if (shift > ranges[1]) delta =      deltas[1];
-        else if (shift < -ranges[1]) delta =    -deltas[1];
-        else if (shift > ranges[2]) delta =      deltas[2];
-        else if (shift < -ranges[2]) delta =    -deltas[2];
-        else if (shift > ranges[3]) delta =      deltas[3];
-        else if (shift < -ranges[3]) delta =    -deltas[3];
+        //float delta = 0.0f;
+        //float[] ranges = new float[] { 0.95f, 0.75f, 0.50f, 0.25f };
+        //float[] deltas = new float[] { 0.3f, 0.15f, 0.06f, 0.03f };
+        //if      (shift > ranges[0]) delta =      deltas[0];
+        //else if (shift < -ranges[0]) delta =    -deltas[0];
+        //else if (shift > ranges[1]) delta =      deltas[1];
+        //else if (shift < -ranges[1]) delta =    -deltas[1];
+        //else if (shift > ranges[2]) delta =      deltas[2];
+        //else if (shift < -ranges[2]) delta =    -deltas[2];
+        //else if (shift > ranges[3]) delta =      deltas[3];
+        //else if (shift < -ranges[3]) delta =    -deltas[3];
 
         return delta;
     }
     void exportResults()
     {
-        string testId = "DRR-test";
+        string testId = "DRR_test";
 
         // create subject id
         string subjId = "";
@@ -365,28 +412,29 @@ public class DRRTestLogic : MonoBehaviour
         for (int i = 0; i < 6; ++i) subjId += alphabet[Random.Range(0, alphabet.Length)];
 
         // get date as string
-        string date = System.DateTime.Now.ToString("yyyyMMddHHmmss");
+        string date = System.DateTime.Now.ToString("yyyyMMdd_HHmmss");
 
         // open and write csv file
-        string csvpath = Application.persistentDataPath + "/" + date + "_" + testId + "_" + subjId + ".csv";
+        string csvpath = Application.persistentDataPath + "/" + date + "-" + testId + "-" + subjId + ".csv";
 
         TextDisplays.Instance.PrintDebugMessage("exporting results...");
         TextDisplays.Instance.PrintDebugMessage(csvpath);
 
         StreamWriter writer = new StreamWriter(csvpath, true);
-        writer.WriteLine("date,testId,subjId,audioFilePath,directFilePath,reverberantFilePath,directOnly,Volume,DRR");
+        writer.WriteLine("date,testId,subjId,training,audioFilePath,directFilePath,reverberantFilePath,Volume,DRR,elapsedTime");
 
         foreach (var trial in trialList)
         {
             string txtLine =    date + "," +
                                 testId + "," +
                                 subjId + "," +
+                                trial.training.ToString() + "," +
                                 trial.scene.filepath + "," +
                                 trial.directSoundRenderer.hrirPath + "," +
                                 trial.reverberantSoundRenderer.hrirPath + "," +
-                                trial.directOnly.ToString() + "," +
                                 trial.Volume.ToString("F2") + "," +
-                                trial.DRR.ToString("F2");
+                                trial.DRR.ToString("F2") + "," +
+                                trial.elapsedTime.ToString("F2");
 
             writer.WriteLine(txtLine);
             TextDisplays.Instance.PrintDebugMessage(txtLine);
@@ -399,12 +447,14 @@ public class DRRTestLogic : MonoBehaviour
 }
 public class DRRTestTrial
 {
+    public bool training;
     public AudioScene scene;
     public AudioRenderer directSoundRenderer;
     public AudioRenderer reverberantSoundRenderer;
-    public bool directOnly = false;
+    //public bool directOnly = false;
     public float Volume = 0.0f;
-    public float DRR = 12.0f + (Random.value - 0.5f) * 9.0f;
+    public float DRR = 6.0f + (Random.value - 0.5f) * 12.0f;
+    public float elapsedTime = 0.0f;
 
     double[] p;
 
@@ -428,16 +478,16 @@ public class DRRTestTrial
     }
     public float getHrirLevel()
     {
-        if (directOnly)
-            return Volume + getLoudnessCorrectionLevel(36.0f) + 36.0f / 2;
-        else
-            return Volume + getLoudnessCorrectionLevel(DRR) + DRR / 2;
+        //if (directOnly)
+        //    return Volume + getLoudnessCorrectionLevel(36.0f) + 36.0f / 2;
+        //else
+        return Volume + getLoudnessCorrectionLevel(DRR) + DRR / 2;
     }
     public float getBrirLevel()
     {
-        if (directOnly)
-            return -120.0f;
-        else
-            return Volume + getLoudnessCorrectionLevel(DRR) - DRR / 2;
+        //if (directOnly)
+        //    return -120.0f;
+        //else
+        return Volume + getLoudnessCorrectionLevel(DRR) - DRR / 2;
     }
 }
