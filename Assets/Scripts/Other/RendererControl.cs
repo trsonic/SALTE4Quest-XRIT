@@ -14,7 +14,10 @@ public class RendererControl
         OSCIO.Instance.SendOSCMessage("/stop", 1);
         OSCIO.Instance.SendOSCMessage("/attenuation", 0.0f);
     }
-
+    public void SendTrialInfo(string info)
+    {
+        OSCIO.Instance.SendOSCMessage("/trialinfo", info);
+    }
     public void LoadAudioFile(string filepath, float gaindb)
     {
         OSCIO.Instance.SendOSCMessage("/mute", 1);

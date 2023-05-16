@@ -370,7 +370,7 @@ public class UIBuilder : MonoBehaviour
                 controllersHelp.SetActive(true);
                 switchHandButton.SetActive(true);
 
-                if (LocalizationTestLogic.Instance.useLeftController4Pointing)
+                if (DRRTestLogic.Instance.useLeftController4Pointing)
                     switchHandButton.GetComponentInChildren<TextMeshProUGUI>().text = "Use right controller";
                 else
                     switchHandButton.GetComponentInChildren<TextMeshProUGUI>().text = "Use left controller";

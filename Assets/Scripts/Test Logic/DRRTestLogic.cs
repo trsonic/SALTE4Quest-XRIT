@@ -34,7 +34,7 @@ public class DRRTestLogic : MonoBehaviour
     public enum TestPhase { Introduction, InProgress }
     public TestPhase testPhase;
 
-    InputDevice leftController, rightController, pointingController;
+    InputDevice leftController, rightController;
     public bool useLeftController4Pointing = false;
 
     float triggerButtonPressedTime, primaryButtonPressedTime, secondaryButtonPressedTime;
@@ -74,15 +74,11 @@ public class DRRTestLogic : MonoBehaviour
 
                 bool overrideHMDMsg = false;
 
-                if (!leftController.isValid | !rightController.isValid)
-                {
-                    findControllers();
-                }
-
                 // send head rotation
                 rc.SendHeadRotation(mainCamera);
 
                 // check pointing controller
+                InputDevice pointingController = new InputDevice();
                 if (useLeftController4Pointing && leftController.isValid)
                     pointingController = leftController;
                 else if (rightController.isValid) pointingController = rightController;
@@ -256,6 +252,9 @@ public class DRRTestLogic : MonoBehaviour
 
     public void StartTest(bool training)
     {
+
+        findControllers();
+
         // loudness correction coefficients
         double[][] p = new double[][] {
             new double[] { -0.000000037468, -0.000007790714, 0.000261129273, 0.017859696911, -0.274247292102, 2.225824124364 },
@@ -346,6 +345,10 @@ public class DRRTestLogic : MonoBehaviour
         else
             soundSource.GetComponent<Renderer>().enabled = false;
 
+        string info = "Trial " + (trialId + 1).ToString() + " of " + trialList.Count.ToString();
+        if (trialList[trialId].training) info += " - TRAINING";
+        rc.SendTrialInfo(info);
+
         rc.LoadAudioFile(trialList[trialId].scene.filepath, trialList[trialId].scene.gaindB);
         TextDisplays.Instance.PrintDebugMessage("Audio file path: " + trialList[trialId].scene.filepath);
 
@@ -405,6 +408,8 @@ public class DRRTestLogic : MonoBehaviour
     void exportResults()
     {
         string testId = "DRR_test";
+
+        if (trialList[0].training) testId += "_training"; // not safe, fix later
 
         // create subject id
         string subjId = "";

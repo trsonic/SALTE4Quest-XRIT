@@ -40,6 +40,30 @@
 		"assistshowspatchername" : 0,
 		"boxes" : [ 			{
 				"box" : 				{
+					"id" : "obj-13",
+					"maxclass" : "newobj",
+					"numinlets" : 1,
+					"numoutlets" : 3,
+					"outlettype" : [ "", "", "int" ],
+					"patching_rect" : [ 290.700200647115707, 328.0, 50.0, 22.0 ],
+					"text" : "console"
+				}
+
+			}
+, 			{
+				"box" : 				{
+					"id" : "obj-2",
+					"maxclass" : "newobj",
+					"numinlets" : 2,
+					"numoutlets" : 2,
+					"outlettype" : [ "", "" ],
+					"patching_rect" : [ 290.700200647115707, 292.0, 81.0, 22.0 ],
+					"text" : "route /trialinfo"
+				}
+
+			}
+, 			{
+				"box" : 				{
 					"id" : "obj-3",
 					"maxclass" : "message",
 					"numinlets" : 2,
@@ -70,7 +94,7 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 323.200200647115707, 244.500013113021851, 114.0, 22.0 ],
-					"text" : "-1.240154"
+					"text" : "-9.639734"
 				}
 
 			}
@@ -82,7 +106,7 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 323.200200647115707, 211.500013113021851, 89.0, 22.0 ],
-					"text" : "3.354607"
+					"text" : "4.62632"
 				}
 
 			}
@@ -118,7 +142,7 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 503.5, 276.5, 526.0, 22.0 ],
-					"text" : "C:/TR_FILES/DRR_TEST_STIMULI/3OA_tom-fast.wav"
+					"text" : "C:/TR_FILES/DRR_TEST_STIMULI/3OA_protest470.wav"
 				}
 
 			}
@@ -166,7 +190,7 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 503.5, 179.607116639614105, 246.0, 22.0 ],
-					"text" : "0.999327 -0.011754 -0.015856 -0.030933"
+					"text" : "0.996469 0.059152 0.05691 0.01765"
 				}
 
 			}
@@ -555,7 +579,7 @@
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 1088.0, 97.0, 281.0, 22.0 ],
-									"text" : "0.999327 -0.011754 -0.015856 -0.030933"
+									"text" : "0.996469 0.059152 0.05691 0.01765"
 								}
 
 							}
@@ -781,7 +805,7 @@
 											"version" : 1,
 											"isbank" : 0,
 											"isbase64" : 1,
-											"blob" : "304.CMlaKA....fQPMDZ....ADjTucC....Y....A..........................................8VMjLgrN....OMkETLU0QI4zTEQEUI4zQSABL8HBLtHCMzDiLyXiM2PyM3TiMwPCLwLyMh.RL8HBLtLyLzjyM2TSN1jSN3HSLzbiLwXCNh.hL8HBLtjyM3HyL0.CL1LyLxLSN2PiMvjCMh.xL8HBLh.BM8HBLtjSN4XiMyHyLybSM2.SL4.CMxjyMh.RM8HBLtPSNzDiLy.yMwPyLxDSLyXCM2PiMh.hM8HBLtPSNx.yMwfiM1jCN4DyL0bCMxDSNh.xM8HBLtPCNzTyLyLSN4LCMyPSNvXCLvTSNh.BN8HBLh.xWw80XnElamUFY8HRLh7hO.."
+											"blob" : "304.CMlaKA....fQPMDZ....ADjTucC....Y....A..........................................8VMjLgrN....OMkETLU0QI4zTEQEUI4zQSABL8HBLtHCMzDiLyXiM2PyM3TiMwPCLwLyMh.RL8HBLtLyLzjyM2TSN1jSN3HSLzbiLwXCNh.hL8HBLtjyM3HyL0.CL1LyLxLSN2PiMvjCMh.xL8HBLh.BM8HBLtjSN3HyLzTyMv.iL1LSN2bCL0.CNh.RM8HBLtTiL4TyM0jCMyjCM1fyL3LyM3jSLh.hM8HBLtTiL3PSM0.SL3jSN2DSNxLCNxfSLh.xM8HBLtTCL3fiL0DCNxjSLzbyLyfCN1biLh.BN8HBLh.xWw80XnElamUFY8HRLh7hO.."
 										}
 ,
 										"snapshotlist" : 										{
@@ -803,7 +827,7 @@
 														"version" : 1,
 														"isbank" : 0,
 														"isbase64" : 1,
-														"blob" : "304.CMlaKA....fQPMDZ....ADjTucC....Y....A..........................................8VMjLgrN....OMkETLU0QI4zTEQEUI4zQSABL8HBLtHCMzDiLyXiM2PyM3TiMwPCLwLyMh.RL8HBLtLyLzjyM2TSN1jSN3HSLzbiLwXCNh.hL8HBLtjyM3HyL0.CL1LyLxLSN2PiMvjCMh.xL8HBLh.BM8HBLtjSN4XiMyHyLybSM2.SL4.CMxjyMh.RM8HBLtPSNzDiLy.yMwPyLxDSLyXCM2PiMh.hM8HBLtPSNx.yMwfiM1jCN4DyL0bCMxDSNh.xM8HBLtPCNzTyLyLSN4LCMyPSNvXCLvTSNh.BN8HBLh.xWw80XnElamUFY8HRLh7hO.."
+														"blob" : "304.CMlaKA....fQPMDZ....ADjTucC....Y....A..........................................8VMjLgrN....OMkETLU0QI4zTEQEUI4zQSABL8HBLtHCMzDiLyXiM2PyM3TiMwPCLwLyMh.RL8HBLtLyLzjyM2TSN1jSN3HSLzbiLwXCNh.hL8HBLtjyM3HyL0.CL1LyLxLSN2PiMvjCMh.xL8HBLh.BM8HBLtjSN3HyLzTyMv.iL1LSN2bCL0.CNh.RM8HBLtTiL4TyM0jCMyjCM1fyL3LyM3jSLh.hM8HBLtTiL3PSM0.SL3jSN2DSNxLCNxfSLh.xM8HBLtTCL3fiL0DCNxjSLzbyLyfCN1biLh.BN8HBLh.xWw80XnElamUFY8HRLh7hO.."
 													}
 ,
 													"fileref" : 													{
@@ -3643,7 +3667,7 @@
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
-					"patching_rect" : [ 275.700200647115707, 17.607142865657806, 97.0, 22.0 ],
+					"patching_rect" : [ 290.700200647115707, 17.607142865657806, 97.0, 22.0 ],
 					"text" : "udpreceive 9000"
 				}
 
@@ -3992,7 +4016,7 @@
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 918.0, 557.0, 105.0, 36.0 ],
-									"text" : "3OA_tom-fast.wav"
+									"text" : "3OA_protest470.wav"
 								}
 
 							}
@@ -4214,7 +4238,7 @@
 									"numoutlets" : 1,
 									"outlettype" : [ "" ],
 									"patching_rect" : [ 424.0, 184.321428596973419, 623.0, 22.0 ],
-									"text" : "open C:/TR_FILES/DRR_TEST_STIMULI/3OA_tom-fast.wav"
+									"text" : "open C:/TR_FILES/DRR_TEST_STIMULI/3OA_protest470.wav"
 								}
 
 							}
@@ -5422,6 +5446,13 @@
 			}
 , 			{
 				"patchline" : 				{
+					"destination" : [ "obj-13", 0 ],
+					"source" : [ "obj-2", 0 ]
+				}
+
+			}
+, 			{
+				"patchline" : 				{
 					"destination" : [ "obj-19", 0 ],
 					"source" : [ "obj-23", 0 ]
 				}
@@ -5496,7 +5527,7 @@
 , 			{
 				"patchline" : 				{
 					"destination" : [ "obj-14", 2 ],
-					"order" : 6,
+					"order" : 7,
 					"source" : [ "obj-67", 0 ]
 				}
 
@@ -5504,7 +5535,15 @@
 , 			{
 				"patchline" : 				{
 					"destination" : [ "obj-16", 1 ],
-					"order" : 7,
+					"order" : 8,
+					"source" : [ "obj-67", 0 ]
+				}
+
+			}
+, 			{
+				"patchline" : 				{
+					"destination" : [ "obj-2", 0 ],
+					"order" : 6,
 					"source" : [ "obj-67", 0 ]
 				}
 
@@ -5536,7 +5575,7 @@
 , 			{
 				"patchline" : 				{
 					"destination" : [ "obj-5", 0 ],
-					"order" : 8,
+					"order" : 9,
 					"source" : [ "obj-67", 0 ]
 				}
 
